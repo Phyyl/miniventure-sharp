@@ -1,4 +1,3 @@
 ﻿using Vildmark;
 
-Game.main(args);
-GameOverrides.Instance.Run();
+Game.Instance.Run();

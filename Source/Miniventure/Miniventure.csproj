@@ -9,7 +9,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Vildmark" Version="0.20.2.3" />
+      <PackageReference Include="Vildmark" Version="0.21.1" />
     </ItemGroup>
 
 </Project>

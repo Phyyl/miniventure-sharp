@@ -8,11 +8,11 @@ namespace MiniventureSharp.Custom
 {
     public class Random
     {
-        public static readonly Random global;
+        public static readonly Random Global;
 
         static Random()
         {
-            global = new Random();
+            Global = new Random();
         }
 
         /**
@@ -32,11 +32,11 @@ namespace MiniventureSharp.Custom
          * to be distinct from any other invocation of this constructor.
          */
         public Random()
-            : this(seedUniquifier() ^ DateTime.Now.Ticks)
+            : this(SeedUniquifier() ^ DateTime.Now.Ticks)
         {
         }
 
-        private static long seedUniquifier()
+        private static long SeedUniquifier()
         {
 
             // L'Ecuyer, "Tables of Linear Congruential Generators of
@@ -46,7 +46,7 @@ namespace MiniventureSharp.Custom
                 long current = uniquifier;
                 long next = current * 181783497276652981L;
 
-                if (compareAndSet(ref uniquifier, current, next))
+                if (CompareAndSet(ref uniquifier, current, next))
                 {
                     return next;
                 }
@@ -59,43 +59,43 @@ namespace MiniventureSharp.Custom
         {
             if (GetType() == typeof(Random))
             {
-                this.seed = initialScramble(seed);
+                this.seed = InitialScramble(seed);
             }
             else
             {
                 // subclass might have overriden setSeed
-                setSeed(seed);
+                SetSeed(seed);
             }
         }
 
-        private static long initialScramble(long seed)
+        private static long InitialScramble(long seed)
         {
             return (seed ^ multiplier) & mask;
         }
 
-        public void setSeed(long seed)
+        public void SetSeed(long seed)
         {
-            Interlocked.Exchange(ref this.seed, initialScramble(seed));
+            Interlocked.Exchange(ref this.seed, InitialScramble(seed));
             haveNextNextGaussian = false;
         }
 
-        protected int next(int bits)
+        protected int Next(int bits)
         {
             long oldseed, nextseed;
             do
             {
                 oldseed = seed;
-                nextseed = (oldseed * multiplier + addend) & mask;
-            } while (!compareAndSet(ref this.seed, oldseed, nextseed));
+                nextseed = ((oldseed * multiplier) + addend) & mask;
+            } while (!CompareAndSet(ref seed, oldseed, nextseed));
             return (int)(nextseed >> (48 - bits));
         }
 
-        public void nextBytes(byte[] bytes)
+        public void NextBytes(byte[] bytes)
         {
             for (int i = 0, len = bytes.Length; i < len;)
             {
-                for (int rnd = nextInt(),
-                         n = Math.min(len - i, sizeof(int));
+                for (int rnd = NextInt(),
+                         n = Math.Min(len - i, sizeof(int));
                      n-- > 0; rnd >>= 8)
                 {
                     bytes[i++] = (byte)rnd;
@@ -103,12 +103,12 @@ namespace MiniventureSharp.Custom
             }
         }
 
-        public int nextInt()
+        public int NextInt()
         {
-            return next(32);
+            return Next(32);
         }
 
-        public int nextInt(int n)
+        public int NextInt(int n)
         {
             if (n <= 0)
             {
@@ -117,44 +117,44 @@ namespace MiniventureSharp.Custom
 
             if ((n & -n) == n)  // i.e., n is a power of 2
             {
-                return (int)((n * (long)next(31)) >> 31);
+                return (int)((n * (long)Next(31)) >> 31);
             }
 
             int bits, val;
             do
             {
-                bits = next(31);
+                bits = Next(31);
                 val = bits % n;
             } while (bits - val + (n - 1) < 0);
             return val;
         }
 
-        public long nextLong()
+        public long NextLong()
         {
             // it's okay that the bottom word remains signed.
-            return ((long)(next(32)) << 32) + next(32);
+            return ((long)Next(32) << 32) + Next(32);
         }
 
-        public bool nextBoolean()
+        public bool NextBoolean()
         {
-            return next(1) != 0;
+            return Next(1) != 0;
         }
 
-        public float nextFloat()
+        public float NextFloat()
         {
-            return next(24) / ((float)(1 << 24));
+            return Next(24) / ((float)(1 << 24));
         }
 
-        public double nextDouble()
+        public double NextDouble()
         {
-            return (((long)(next(26)) << 27) + next(27))
+            return (((long)Next(26) << 27) + Next(27))
                 / (double)(1L << 53);
         }
 
         private double nextNextGaussian;
         private bool haveNextNextGaussian = false;
 
-        public double nextGaussian()
+        public double NextGaussian()
         {
             // See Knuth, ACP, Section 3.4.1 Algorithm C.
             if (haveNextNextGaussian)
@@ -167,18 +167,18 @@ namespace MiniventureSharp.Custom
                 double v1, v2, s;
                 do
                 {
-                    v1 = 2 * nextDouble() - 1; // between -1 and 1
-                    v2 = 2 * nextDouble() - 1; // between -1 and 1
-                    s = v1 * v1 + v2 * v2;
+                    v1 = (2 * NextDouble()) - 1; // between -1 and 1
+                    v2 = (2 * NextDouble()) - 1; // between -1 and 1
+                    s = (v1 * v1) + (v2 * v2);
                 } while (s >= 1 || s == 0);
-                double multiplier = Math.sqrt(-2 * Math.log(s) / s);
+                double multiplier = Math.Sqrt(-2 * Math.Log(s) / s);
                 nextNextGaussian = v2 * multiplier;
                 haveNextNextGaussian = true;
                 return v1 * multiplier;
             }
         }
 
-        private static bool compareAndSet(ref long value, long expect, long update)
+        private static bool CompareAndSet(ref long value, long expect, long update)
         {
             long rc = Interlocked.CompareExchange(ref value, update, expect);
 

@@ -1,17 +1,20 @@
 namespace com.mojang.ld22.item;
 
-public class ToolType {
-	public static ToolType shovel = new ToolType("Shvl", 0); //creates the shovel tool type, the number next to the name deals with the sprite location.
-	public static ToolType hoe = new ToolType("Hoe", 1); //creates the hoe tool type, the number next to the name deals with the sprite location.
-	public static ToolType sword = new ToolType("Swrd", 2); //creates the sword tool type, the number next to the name deals with the sprite location.
-	public static ToolType pickaxe = new ToolType("Pick", 3); //creates the pick tool type, the number next to the name deals with the sprite location.
-	public static ToolType axe = new ToolType("Axe", 4); //creates the axe tool type, the number next to the name deals with the sprite location.
+//TODO: convert to record
+public class ToolType
+{
+    public static readonly ToolType Shovel = new ToolType("Shvl", 0);
+    public static readonly ToolType Hoe = new ToolType("Hoe", 1);
+    public static readonly ToolType Sword = new ToolType("Swrd", 2);
+    public static readonly ToolType Pickaxe = new ToolType("Pick", 3);
+    public static readonly ToolType Axe = new ToolType("Axe", 4);
 
-	public readonly string name; // name of the type
-	public readonly int sprite; // sprite location on the spritesheet
+    public string Name { get; }
+    public int Sprite { get; }
 
-	private ToolType(string name, int sprite) {
-		this.name = name; // adds the name
-		this.sprite = sprite; //adds the sprite location number
-	}
+    private ToolType(string name, int sprite)
+    {
+        Name = name;
+        Sprite = sprite;
+    }
 }

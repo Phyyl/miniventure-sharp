@@ -1,136 +1,236 @@
 namespace com.mojang.ld22.entity;
 
+public abstract class Mob : Entity
+{
+    private int swimDist;
+    protected int XKnockback { get; set; }
+    protected int YKnockback { get; set; }
 
-public class Mob : Entity {
-	public int walkDist = 0; // How far we've walked currently, incremented after each movement
-	public int dir = 0; // The direction the mob is facing, used in attacking and rendering. 0 is down, 1 is up, 2 is left, 3 is right
-	public int hurtTime = 0; // A delay after being hurt, that temporarily prevents further damage for a short time
-	public int xKnockback, yKnockback; // The amount of vertical/horizontal knockback that needs to be inflicted, if it's not 0, it will be moved one pixel at a time.
-	public int maxHealth = 10; // The maximum amount of health the mob can have
-	public int health; // The amount of health we currently have, and set it to the maximum we can have
-	public int swimTimer = 0; // How much we have moved in water currently, used to halve movement speed
-	public int tickTime = 0; // Incremented whenever tick() is called, is effectively the age in ticks
+    protected int ImmuneTime { get; set; }
+    protected int TickTime { get; private set; }
+    protected int WalkDist { get; set; }
 
-	public Mob() {
-		health = maxHealth;
-		x = y = 8; // By default, set x and y coordinates to 8
-		xr = 4; // Sets the x and y radius/size of the mob
-		yr = 3;
-	}
+    public int MaxHealth { get; }
+    public Direction Direction { get; protected set; } = Direction.Down;
+    public int Health { get; set; }
 
-	public override void tick() { //
-		tickTime++; // Increment our tick counter
-		if (level.getTile(x >> 4, y >> 4) == Tile.lava) { // If we are trying to swim in lava
-			hurt(this, 4, dir ^ 1); // Inflict 4 damage to ourselves, sourced from ourselves, with the direction as the opposite of ours
-		}
+    protected Mob(int maxHealth = 10, int x = 8, int y = 8, int horizontalRadius = 4, int verticalRadius = 3)
+        : base(x, y, horizontalRadius, verticalRadius)
+    {
+        MaxHealth = Health = maxHealth;
+    }
 
-		if (health <= 0) { // Check if health is at a death-causing level (less than or equal to 0)
-			die(); // If so, die
-		}
-		if (hurtTime > 0) hurtTime--; // If a timer preventing damage temporarily is set, decrement it's value
-	}
+    public override void Update()
+    {
+        base.Update();
 
-	public virtual void die() { // Kill the mob, called when health drops to 0
-		remove(); // Remove the mob, with the method inherited from Entity
-	}
+        TickTime++;
 
-	public override bool move(int xa, int ya) { // Move the mob, overrides from Entity
-		if (isSwimming()) { // Check if the mob is swimming, ie. in water/lava
-			if (swimTimer++ % 2 == 0) return true; // Increments swimTimer, and continues only every second time (when swimTimer is not divisible by 2 evenly)
-		}
-		if (xKnockback < 0) { // If we have negative horizontal knockback (to the left)
-			move2(-1, 0); // Move to the left 1 pixel
-			xKnockback++; // And increase the knockback by 1 so it is gradually closer to 0, and this will stop being called
-		}
-		if (xKnockback > 0) { // If we have positive horizontal knockback (to the right)
-			move2(1, 0); // Move to the right 1 pixel
-			xKnockback--; // And decrease the knockback by 1 so it is gradually closer to 0, and this will stop being called
-		}
-		if (yKnockback < 0) { // If we have negative vertical knockback (upwards)
-			move2(0, -1); // Move upwards 1 pixel
-			yKnockback++; // And increase the knockback by 1 so it is gradually closer to 0, and this will stop being called
-		}
-		if (yKnockback > 0) { // If we have positive vertical knockback (downwards)
-			move2(0, 1); // Move downwards 1 pixel
-			yKnockback--; // And decrease the knockback by 1 so it is gradually closer to 0, and this will stop being called
-		}
-		if (hurtTime > 0) return true; // If we have been hurt recently and haven't yet cooled down, don't goto with the movement (so only knockback will be performed)
-		if (xa != 0 || ya != 0) { // Only if horizontal or vertical movement is actually happening
-			walkDist++; // Increment our walking/movement counter
-			if (xa < 0) dir = 2; // Set the mob's direction based on movement: left
-			if (xa > 0) dir = 3; // right
-			if (ya < 0) dir = 1; // up
-			if (ya > 0) dir = 0; // down
-		}
-		return base.move(xa, ya); // Call the move method from Entity
-	}
+        if (Level.GetTile(X >> 4, Y >> 4) == Tile.lava)
+        {
+            //TODO: Make this a responsibility of the lava tile
+            Hurt(this, 4, Direction.GetOpposite());
+        }
 
-	public virtual bool isSwimming() { // Check if the mob is swimming
-		Tile tile = level.getTile(x >> 4, y >> 4); // Get the tile the mob is standing on (at x/16, y/16)
-		return tile == Tile.water || tile == Tile.lava; // Check if the tile is liquid, and return true if so
-	}
+        if (Health <= 0)
+        {
+            Die();
+        }
 
-	public override bool blocks(Entity e) { // Check if another entity would be prevented from moving through this one
-		return e.isBlockableBy(this); // Call the method on the other entity to determine this, and return it
-	}
+        if (ImmuneTime > 0)
+        {
+            ImmuneTime--;
+        }
+    }
 
-	public override void hurt(Tile tile, int x, int y, int damage) { // Hurt the mob, when the source of damage is a tile
-		int attackDir = dir ^ 1; // Set attackDir to our own direction, inverted. XORing it with 1 flips the rightmost bit in the variable, this effectively adds one when even, and subtracts one when odd
-		doHurt(damage, attackDir); // Call the method that actually performs damage, and provide it with our new attackDir value
-	}
+    public virtual void Die()
+    {
+        Remove();
+    }
 
-	public override void hurt(Mob mob, int damage, int attackDir) { // Hurt the mob, when the source is another mob
-		doHurt(damage, attackDir); // Call the method that actually performs damage, and use our provided attackDir
-	}
+    public override bool Move(int xa, int ya)
+    {
+        if (IsSwimming())
+        {
+            if (swimDist++ % 2 == 0)
+            {
+                return true;
+            }
+        }
 
-	public virtual void heal(int heal) { // Restore health on the mob
-		if (hurtTime > 0) return; // If the mob has been hurt recently and hasn't cooled down, don't continue
+        if (XKnockback < 0)
+        {
+            Move2(-1, 0);
+            XKnockback++;
+        }
 
-		level.add(new TextParticle("" + heal, x, y, Color.get(-1, 50, 50, 50))); // Add a text particle in our level at our position, that is green and displays the amount healed
-		health += heal; // Actually add the amount to heal to our current health
-		if (health > maxHealth) health = maxHealth; // If our health has exceeded our maximum, lower it back down to said maximum
-	}
+        if (XKnockback > 0)
+        {
+            Move2(1, 0);
+            XKnockback--;
+        }
 
-	public virtual void doHurt(int damage, int attackDir) { // Actually hurt the mob, based on only damage and a direction
-		if (hurtTime > 0) return; // If the mob has been hurt recently and hasn't cooled down, don't continue
+        if (YKnockback < 0)
+        {
+            Move2(0, -1);
+            YKnockback++;
+        }
 
-		if (level.player != null) { // If there is a player in the level
-			int xd = level.player.x - x; // Set xd to the difference between our's and the player's x-coordinate.
-			int yd = level.player.y - y; // Set yd to the difference between our's and the player's y-coordinate.
-			if (xd * xd + yd * yd < 80 * 80) { // Some math to figure out if the distance is less than 80 pixels. Pythagoras' theorem is used on a hypothetical right-angled triangle between our two points, where the hypotenuse is the diagonal distance
-				Sound.monsterHurt.play(); // If we are close enough to the player, play the monsterHurt sound
-			}
-		}
-		level.add(new TextParticle("" + damage, x, y, Color.get(-1, 500, 500, 500))); // Make a text particle at our position in our level, bright red and displaying the damage inflicted
-		health -= damage; // Actually change our health
-		if (attackDir == 0) yKnockback = +6; // If the direction is downwards, add positive vertical knockback
-		if (attackDir == 1) yKnockback = -6; // If the direction is upwards, add negative vertical knockback
-		if (attackDir == 2) xKnockback = -6; // If the direction is to the left, add negative horizontal knockback
-		if (attackDir == 3) xKnockback = +6; // If the direction is to the right, add positive horizontal knockback
-		hurtTime = 10; // Set a delay before we can be hurt again
-	}
+        if (YKnockback > 0)
+        {
+            Move2(0, 1);
+            YKnockback--;
+        }
 
-	public virtual bool findStartPos(Level level) { // Find a place to spawn the mob
-		int x = random.nextInt(level.w); // Pick a random x coordinate, inside the level's bounds
-		int y = random.nextInt(level.h); // Pick a random y coordinate, inside the level's bounds
-		int xx = x * 16 + 8; // Get actual pixel coordinates from this tile coord
-		int yy = y * 16 + 8;
+        if (ImmuneTime > 0)
+        {
+            return true;
+        }
 
-		if (level.player != null) { // If there is a player in our level
-			int xd = level.player.x - xx; // Get the difference between our attempted spawn x, and the player's x
-			int yd = level.player.y - yy; // Get the difference between our attempted spawn y, and the player's y
-			if (xd * xd + yd * yd < 80 * 80) return false; // Use pythagoras' theorem to determine the distance between us and the player, and if it is less than 80 (too close) then return false
-		}
+        if (xa != 0 || ya != 0)
+        {
+            WalkDist++;
 
-		int r = level.monsterDensity * 16; // Get the allowed density of mobs in the level, convert it from a tile to a real coordinate
-		if (level.getEntities(xx - r, yy - r, xx + r, yy + r).size() > 0) return false; // Get a list of mobs in the level, within a box centered on our attempted coordinates, with dimensions of r times 2, and if there are any close to us, return false;
+            if (xa < 0)
+            {
+                Direction = Direction.Left;
+            }
 
-		if (level.getTile(x, y).mayPass(level, x, y, this)) { // Check if the tile we're trying to spawn on is not solid to us
-			this.x = xx; // Set our coordinates to the attempted ones
-			this.y = yy;
-			return true;
-		}
+            if (xa > 0)
+            {
+                Direction = Direction.Right;
+            }
 
-		return false; 
-	}
+            if (ya < 0)
+            {
+                Direction = Direction.Up;
+            }
+
+            if (ya > 0)
+            {
+                Direction = Direction.Down;
+            }
+        }
+
+        return base.Move(xa, ya);
+    }
+
+    public virtual bool IsSwimming()
+    {
+        Tile tile = Level.GetTile(X >> 4, Y >> 4);
+
+        return tile == Tile.water || tile == Tile.lava;
+    }
+
+    public override bool Blocks(Entity e)
+    {
+        return e.IsBlockableBy(this);
+    }
+
+    public override void Hurt(Tile tile, int x, int y, int damage)
+    {
+        DoHurt(damage, Direction.GetOpposite());
+    }
+
+    public override void Hurt(Mob mob, int damage, Direction attackDir)
+    {
+        DoHurt(damage, attackDir);
+    }
+
+    public virtual void Heal(int heal)
+    {
+        if (ImmuneTime > 0)
+        {
+            return;
+        }
+
+        Level.Add(new TextParticle("" + heal, X, Y, Color.Get(-1, 50, 50, 50)));
+
+        Health += heal;
+
+        if (Health > MaxHealth)
+        {
+            Health = MaxHealth;
+        }
+    }
+
+    public virtual void DoHurt(int damage, Direction attackDir)
+    {
+        if (ImmuneTime > 0)
+        {
+            return;
+        }
+
+        if (Level.player != null)
+        {
+            int xd = Level.player.X - X;
+            int yd = Level.player.Y - Y;
+
+            if ((xd * xd) + (yd * yd) < 80 * 80)
+            {
+                Sound.monsterHurt.Play();
+            }
+        }
+
+        Level.Add(new TextParticle("" + damage, X, Y, Color.Get(-1, 500, 500, 500)));
+        Health -= damage;
+
+        if (attackDir == Direction.Down)
+        {
+            YKnockback = +6;
+        }
+
+        if (attackDir == Direction.Up)
+        {
+            YKnockback = -6;
+        }
+
+        if (attackDir == Direction.Left)
+        {
+            XKnockback = -6;
+        }
+
+        if (attackDir == Direction.Right)
+        {
+            XKnockback = +6;
+        }
+
+        ImmuneTime = 10;
+    }
+
+    public virtual bool TrySpawn(Level level)
+    {
+        int x = Random.NextInt(level.Width);
+        int y = Random.NextInt(level.Height);
+
+        int xx = (x * 16) + 8;
+        int yy = (y * 16) + 8;
+
+        if (level.player != null)
+        {
+            int xd = level.player.X - xx; 
+            int yd = level.player.Y - yy;
+
+            if ((xd * xd) + (yd * yd) < 80 * 80)
+            {
+                return false;
+            }
+        }
+
+        int r = level.monsterDensity * 16;
+
+        if (level.GetEntities(xx - r, yy - r, xx + r, yy + r).Count() > 0)
+        {
+            return false;
+        }
+
+        if (level.GetTile(x, y).MayPass(level, x, y, this))
+        {
+            X = xx;
+            Y = yy;
+            return true;
+        }
+
+        return false;
+    }
 }

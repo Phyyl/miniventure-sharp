@@ -1,10 +1,25 @@
 namespace com.mojang.ld22.entity.particle;
 
 
-public class Particle : Entity {
-	public Particle() {
-	}
+public abstract class Particle : Entity
+{
+    private int life;
 
-	public override void tick() {
-	}
+    protected Particle(int x, int y, int life)
+         : base(x, y)
+    {
+        this.life = life;
+    }
+
+    public override void Update()
+    {
+        base.Update();
+
+        life--;
+
+        if (life <= 0)
+        {
+            Remove();
+        }
+    }
 }

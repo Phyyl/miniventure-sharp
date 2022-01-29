@@ -1,49 +1,53 @@
 namespace com.mojang.ld22.entity.particle;
 
 
-public class TextParticle : Entity {
-	private string msg; // Message of the text particle
-	private int col; // Color of the text particle
-	private int time = 0; // time that the particle has been alive
-	public double xa, ya, za; // x,y,z acceleration
-	public double xx, yy, zz; // x,y,z coordinates
+public class TextParticle : Particle
+{
+    private string msg;
+    private int col;
+    private double xa, ya, za;
+    private double xx, yy, zz;
 
-	public TextParticle(string msg, int x, int y, int col) {
-		this.msg = msg; // assigns the message
-		this.x = x; // assigns the x coordinate
-		this.y = y; // assigns the y coordinate
-		this.col = col; // assigns the color
-		xx = x; // assigns the xx coordinate from x
-		yy = y; // assigns the yy coordinate from y
-		zz = 2; // assigns the zz coordinate
-		xa = random.nextGaussian() * 0.3; // assigns the x acceleration
-		ya = random.nextGaussian() * 0.2; // assigns the y acceleration
-		za = random.nextFloat() * 0.7 + 2; // assigns the z acceleration
-	}
+    public TextParticle(string msg, int x, int y, int col)
+        : base(x, y, 60)
+    {
+        this.msg = msg;
+        this.col = col;
 
-	/** Update method, 60 updates (ticks) per second */
-	public override void tick() {
-		time++; // increases time
-		if (time > 60) { // if time is over 60 (1 second) params then[]
-			remove(); // remove this!
-		}
-		xx += xa; // xx moves with xa acceleration
-		yy += ya; // yy moves with ya acceleration
-		zz += za; // zz moves with za acceleration
-		if (zz < 0) { // if zz is bigger than 0
-			zz = 0; // z = 0
-			za *= -0.5; // za multiplies itself by -0.5
-			xa *= 0.6; // xa multiplies itself by 0.6
-			ya *= 0.6; // ya multiplies itself by 0.6
-		}
-		za -= 0.15; // za minuses by 0.15 every tick
-		x = (int) xx; // the x coordinate is xx
-		y = (int) yy; // the y coordinate is yy
-	}
+        xx = x;
+        yy = y;
+        zz = 2;
 
-	public override void render(Screen screen) {
-		Font.draw(msg, screen, x - msg.Length * 4 + 1, y - (int) (zz) + 1, Color.get(-1, 0, 0, 0)); //renders the backdrop
-		Font.draw(msg, screen, x - msg.Length * 4, y - (int) (zz), col); // renders the text
-	}
+        xa = Random.NextGaussian() * 0.3;
+        ya = Random.NextGaussian() * 0.2;
+        za = (Random.NextFloat() * 0.7) + 2;
+    }
 
+    public override void Update()
+    {
+        base.Update();
+
+        xx += xa;
+        yy += ya;
+        zz += za;
+
+        if (zz < 0)
+        {
+            zz = 0;
+            za *= -0.5;
+            xa *= 0.6;
+            ya *= 0.6;
+        }
+
+        za -= 0.15;
+
+        X = (int)xx;
+        Y = (int)yy;
+    }
+
+    public override void Render(Screen screen)
+    {
+        Font.Draw(msg, screen, X - (msg.Length * 4) + 1, Y - (int)zz + 1, Color.Get(-1, 0, 0, 0));
+        Font.Draw(msg, screen, X - (msg.Length * 4), Y - (int)zz, col);
+    }
 }

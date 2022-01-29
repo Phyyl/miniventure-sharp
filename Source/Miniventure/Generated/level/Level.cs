@@ -1,294 +1,403 @@
 namespace com.mojang.ld22.level;
 
+public class Level
+{
+    private Random random = new Random();
 
+    public int Width, Height;
 
-public class Level {
-	private Random random = new Random(); // creates a random object to be used.
+    public byte[] tiles;
+    public byte[] data;
 
-	public int w, h; // width and height of the level
+    //TODO: Either convert to Dictionary or array
+    public List<List<Entity>> entitiesInTiles;
 
-	public byte[] tiles; // an array of all the tiles in the world.
-	public byte[] data; // an array of the data of the tiles in the world.
-	public List<List<Entity>> entitiesInTiles; // An array of each entity in each tile in the world
+    public int grassColor = 141;
+    public int dirtColor = 322;
+    public int sandColor = 550;
+    private int depth;
+    public int monsterDensity = 8;
 
-	public int grassColor = 141; // color of grass
-	public int dirtColor = 322; // color of dirt
-	public int sandColor = 550; // color of sand
-	private int depth; // depth level of the level
-	public int monsterDensity = 8; // affects the number of monsters that are on the level, bigger the number the less monsters spawn.
+    public List<Entity> entities = new List<Entity>();
 
-	public List<Entity> entities = new List<Entity>(); // A list of all the entities in the world
-	private Comparator<Entity> spriteSorter = new Comparator<Entity>() { // creates a sorter for all the entities to be rendered.
-		compare = (Entity e0, Entity e1) => { // compares 2 entities
-			if (e1.y < e0.y) return +1; // If the y position of the first entity is less (higher up) than the second entity, then it will be moved up in sorting.
-			if (e1.y > e0.y) return -1; // If the y position of the first entity is more (lower) than the second entity, then it will be moved down in sorting.
-			return 0; // ends the method
-		}
-	};
+    public Level(int w, int h, int level, Level parentLevel)
+    {
+        if (level < 0)
+        {
+            dirtColor = 222;
+        }
+        depth = level;
+        Width = w;
+        Height = h;
+        byte[][] maps;
 
-	/** Level which the world is contained in */
-	public Level(int w, int h, int level, Level parentLevel) {
-		if (level < 0) { // If the level is less than params 0[]
-			dirtColor = 222; // dirt Color will become gray (222)
-		}
-		this.depth = level; // assigns the depth variable
-		this.w = w; // assigns the width
-		this.h = h; // assigns the height
-		byte[][] maps; // multidimensional array (an array within a array), used for the map
+        if (level == 0)
+        {
+            maps = LevelGen.createAndValidateTopMap(w, h);
+        }
+        else if (level < 0)
+        {
+            maps = LevelGen.createAndValidateUndergroundMap(w, h, -level);
+            monsterDensity = 4;
+        }
+        else
+        {
+            maps = LevelGen.createAndValidateSkyMap(w, h);
+            monsterDensity = 4;
+        }
 
-		if (level == 0) // If the level is 0 (surface)...
-			maps = LevelGen.createAndValidateTopMap(w, h); // create a surface map for the level
-		else if (level < 0) { // if the level is less than 0 (underground)...
-			maps = LevelGen.createAndValidateUndergroundMap(w, h, -level); // create a underground map (depending on the level)
-			monsterDensity = 4; // lowers the monsterDensity value, which makes more enemies spawn
-		} else { // if level is anything else, aka: above 0 (sky) params then[]
-			maps = LevelGen.createAndValidateSkyMap(w, h);  // creates a sky map
-			monsterDensity = 4; // lowers the monsterDensity value, which makes more enemies spawn
-		}
+        tiles = maps[0];
+        data = maps[1];
 
-		tiles = maps[0]; // assigns the tiles in the map
-		data = maps[1]; // assigns the data of the tiles
+        if (parentLevel != null)
+        {
+            for (int y = 0; y < h; y++)
+            {
+                for (int x = 0; x < w; x++)
+                {
+                    if (parentLevel.GetTile(x, y) == Tile.stairsDown)
+                    {
 
-		if (parentLevel != null) { // If the level above this one is not null (aka, not sky)
-			for (int y = 0; y < h; y++) // Loops through the height of the map
-				for (int x = 0; x < w; x++) { // Loops through the width of the map
-					if (parentLevel.getTile(x, y) == Tile.stairsDown) { // If the tile in the level above the current one is a stairs down params then[]
+                        SetTile(x, y, Tile.stairsUp, 0);
 
-						setTile(x, y, Tile.stairsUp, 0); // set a stairs up tile in the same position on the current level
-						
-						Tile tile = Tile.dirt; // assigns a tile to be a dirt
-						if(level == 0) tile = Tile.hardRock; // if the level is 0 (surface) then reassign the tile to be a hard rock.
-						
-						setTile(x - 1, y, tile, 0); // places the tile to the left of the stairs.
-						setTile(x + 1, y, tile, 0); // places the tile to the right of the stairs.
-						setTile(x, y - 1, tile, 0); // places the tile to the above of the stairs.
-						setTile(x, y + 1, tile, 0); // places the tile to the below of the stairs.
-						setTile(x - 1, y - 1, tile, 0); // places the tile to the upper-left position of the stairs.
-						setTile(x - 1, y + 1, tile, 0); // places the tile to the lower-left position of the stairs.
-						setTile(x + 1, y - 1, tile, 0); // places the tile to the upper-right position of the stairs.
-						setTile(x + 1, y + 1, tile, 0); // places the tile to the lower-right position of the stairs.
-					}
+                        Tile tile = Tile.dirt;
+                        if (level == 0)
+                        {
+                            tile = Tile.hardRock;
+                        }
 
-				}
-		}
+                        SetTile(x - 1, y, tile, 0);
+                        SetTile(x + 1, y, tile, 0);
+                        SetTile(x, y - 1, tile, 0);
+                        SetTile(x, y + 1, tile, 0);
+                        SetTile(x - 1, y - 1, tile, 0);
+                        SetTile(x - 1, y + 1, tile, 0);
+                        SetTile(x + 1, y - 1, tile, 0);
+                        SetTile(x + 1, y + 1, tile, 0);
+                    }
 
-		entitiesInTiles = new List<List<Entity>>(w * h); // Creates a new arrayList with the size of width * height.
-		for (int i = 0; i < w * h; i++) { // Loops (width * height) times
-			entitiesInTiles.add(new List<Entity>()); // Adds a entity list in that tile.
-		}
-		
-		if (level==1) { // If the level is 1 (sky) params then[]
-			AirWizard aw = new AirWizard(); // Create the air wizard
-			aw.x = w*8; // set his position to the middle of the map (x-position)
-			aw.y = h*8; // set his position to the middle of the map (y-position)
-			add(aw); // adds the air wizard to the level
-		}
-	}
+                }
+            }
+        }
 
-	/** This method renders all the tiles in the game */
-	public virtual void renderBackground(Screen screen, int xScroll, int yScroll) {
-		int xo = xScroll >> 4; // the game's horizontal scroll offset.
-		int yo = yScroll >> 4; // the game's vertical scroll offset.
-		int w = (screen.w + 15) >> 4; // width of the screen being rendered
-		int h = (screen.h + 15) >> 4; // height of the screen being rendered
-		screen.setOffset(xScroll, yScroll); // sets the scroll offsets.
-		for (int y = yo; y <= h + yo; y++) { // loops through the vertical positions
-			for (int x = xo; x <= w + xo; x++) { // loops through the horizontal positions
-				getTile(x, y).render(screen, this, x, y); // renders the tile on the screen
-			}
-		}
-		screen.setOffset(0, 0); // resets the offset.
-	}
+        entitiesInTiles = new List<List<Entity>>(w * h);
+        for (int i = 0; i < w * h; i++)
+        {
+            entitiesInTiles.Add(new List<Entity>());
+        }
 
-	private List<Entity> rowSprites = new List<Entity>(); // list of entities to be rendered
+        if (level == 1)
+        {
+            AirWizard aw = new AirWizard();
+            aw.X = w * 8;
+            aw.Y = h * 8;
+            Add(aw);
+        }
+    }
 
-	public Player player; // the player object
+    public virtual void renderBackground(Screen screen, int xScroll, int yScroll)
+    {
+        int xo = xScroll >> 4;
+        int yo = yScroll >> 4;
+        int w = (screen.Width + 15) >> 4;
+        int h = (screen.Height + 15) >> 4;
+        screen.SetOffset(xScroll, yScroll);
+        for (int y = yo; y <= h + yo; y++)
+        {
+            for (int x = xo; x <= w + xo; x++)
+            {
+                GetTile(x, y).Render(screen, this, x, y);
+            }
+        }
+        screen.SetOffset(0, 0);
+    }
 
-	/** Renders all the entity sprites on the screen */
-	public virtual void renderSprites(Screen screen, int xScroll, int yScroll) {
-		int xo = xScroll >> 4; // the game's horizontal scroll offset.
-		int yo = yScroll >> 4; // the game's vertical scroll offset.
-		int w = (screen.w + 15) >> 4; // width of the screen being rendered
-		int h = (screen.h + 15) >> 4; // height of the screen being rendered
+    private List<Entity> rowSprites = new List<Entity>();
 
-		screen.setOffset(xScroll, yScroll); // sets the scroll offsets.
-		for (int y = yo; y <= h + yo; y++) { // loops through the vertical positions
-			for (int x = xo; x <= w + xo; x++) { // loops through the horizontal positions
-				if (x < 0 || y < 0 || x >= this.w || y >= this.h) continue; // If the x & y positions of the sprites are within the map's boundaries
-				rowSprites.addAll(entitiesInTiles.get(x + y * this.w)); // adds all of the sprites in the entitiesInTiles array.
-			}
-			if (rowSprites.size() > 0) { // If the rowSprites list size is larger than params 0[]
-				sortAndRender(screen, rowSprites); // sorts and renders the sprites on the screen
-			}
-			rowSprites.clear(); // clears the list
-		}
-		screen.setOffset(0, 0); // resets the offset.
-	}
+    public Player player;
 
-	/** Renders the light off tiles and entities in the underground */
-	public virtual void renderLight(Screen screen, int xScroll, int yScroll) {
-		int xo = xScroll >> 4; // the game's horizontal scroll offset.
-		int yo = yScroll >> 4; // the game's vertical scroll offset.
-		int w = (screen.w + 15) >> 4; // width of the screen being rendered
-		int h = (screen.h + 15) >> 4; // height of the screen being rendered
+    public virtual void RenderSprites(Screen screen, int xScroll, int yScroll)
+    {
+        int xo = xScroll >> 4;
+        int yo = yScroll >> 4;
+        int w = (screen.Width + 15) >> 4;
+        int h = (screen.Height + 15) >> 4;
 
-		screen.setOffset(xScroll, yScroll); // sets the scroll offsets.
-		int r = 4; // radius that plays a part of how far away you can be before light stops rendering
-		for (int y = yo - r; y <= h + yo + r; y++) { // loops through the vertical positions + r
-			for (int x = xo - r; x <= w + xo + r; x++) { // loops through the horizontal positions + r
-				if (x < 0 || y < 0 || x >= this.w || y >= this.h) continue; // If the x & y positions of the sprites are within the map's boundaries
-				List<Entity> entities = entitiesInTiles.get(x + y * this.w); // gets all the entities in the level
-				for (int i = 0; i < entities.size(); i++) { // loops through the list of entities
-					Entity e = entities.get(i); // gets the current entity
-					int elr = e.getLightRadius(); // gets the light radius from the entity.
-					if (elr > 0) screen.renderLight(e.x - 1, e.y - 4, elr * 8); // If the light radius is above 0, then render the light.
-				}
-				int lr = getTile(x, y).getLightRadius(this, x, y); // gets the light radius from local tiles (like lava)
-				if (lr > 0) screen.renderLight(x * 16 + 8, y * 16 + 8, lr * 8); // if the light radius is above 0, then render the light.
-			}
-		}
-		screen.setOffset(0, 0); // resets the offset.
-	}
+        screen.SetOffset(xScroll, yScroll);
 
-	/** Sorts and renders sprites from an entity list */
-	private void sortAndRender(Screen screen, List<Entity> list) {
-		Collections.sort(list, spriteSorter); // sorts the list by the spriteSorter
-		for (int i = 0; i < list.size(); i++) { // loops through the entity list
-			list.get(i).render(screen); // renders the sprite on the screen
-		}
-	}
+        for (int y = yo; y <= h + yo; y++)
+        {
+            for (int x = xo; x <= w + xo; x++)
+            {
+                if (x < 0 || y < 0 || x >= Width || y >= Height)
+                {
+                    continue;
+                }
 
-	/** Gets a tile from the world. */
-	public virtual Tile getTile(int x, int y) {
-		if (x < 0 || y < 0 || x >= w || y >= h) return Tile.rock; // If the tile request is outside the world's boundaries (like x = -5), then returns a rock.
-		return Tile.tiles[tiles[x + y * w]]; // Returns the tile that is at the position
-	}
+                rowSprites.AddRange(entitiesInTiles[x + (y * Width)]);
+            }
 
-	/** Sets a tile to the world */
-	public virtual void setTile(int x, int y, Tile t, int dataVal) {
-		if (x < 0 || y < 0 || x >= w || y >= h) return; // If the tile request position is outside the world boundaries (like x = -1337), then stop the method.
-		tiles[x + y * w] = t.id; // Places the tile at the x & y location
-		data[x + y * w] = (byte) dataVal; // sets the data value of the tile
-	}
+            if (rowSprites.Count > 0)
+            {
+                SortAndRender(screen, rowSprites);
+            }
 
-	/** Gets the data from the x & y position */
-	public virtual int getData(int x, int y) {
-		if (x < 0 || y < 0 || x >= w || y >= h) return 0; // If the data request position is outside the world boundaries, then stop the method.
-		return data[x + y * w] & 0xff; // Returns the last 8 bits(& 0xff) of the data from that position.
-	}
+            rowSprites.Clear();
+        }
+        screen.SetOffset(0, 0);
+    }
 
-	/** Sets a data to the x & y positioned tile */
-	public virtual void setData(int x, int y, int val) {
-		if (x < 0 || y < 0 || x >= w || y >= h) return; // If the data request position is outside the world boundaries, then stop the method.
-		data[x + y * w] = (byte) val; // sets the data as a byte (8-bits) for the data.
-	}
+    public virtual void RenderLight(Screen screen, int xScroll, int yScroll)
+    {
+        int xo = xScroll >> 4;
+        int yo = yScroll >> 4;
+        int w = (screen.Width + 15) >> 4;
+        int h = (screen.Height + 15) >> 4;
 
-	/** Adds a entity to the level */
-	public virtual void add(Entity entity) {
-		if (entity is Player) { // if the entity happens to be a player
-			player = (Player) entity; // the player object will be this entity
-		}
-		entity.removed = false; // sets the entity's removed value to false
-		entities.add(entity); // adds the entity to the entities list
-		entity.init(this); // Initializes the entity
+        screen.SetOffset(xScroll, yScroll);
+        int r = 4;
 
-		insertEntity(entity.x >> 4, entity.y >> 4, entity); // inserts the entity into the world
-	}
+        for (int y = yo - r; y <= h + yo + r; y++)
+        {
+            for (int x = xo - r; x <= w + xo + r; x++)
+            {
+                if (x < 0 || y < 0 || x >= Width || y >= Height)
+                {
+                    continue;
+                }
 
-	/** Removes a entity */
-	public virtual void remove(Entity e) { 
-		entities.remove(e); // removes the entity from the entities list
-		int xto = e.x >> 4; // gets the x position of the entity
-		int yto = e.y >> 4; // gets the y position of the entity
-		removeEntity(xto, yto, e); // removes the entity based on the x & y position.
-	}
+                List<Entity> entities = entitiesInTiles[x + (y * Width)];
 
-	/** Inserts an entity to the entitiesInTiles list */
-	private void insertEntity(int x, int y, Entity e) {
-		if (x < 0 || y < 0 || x >= w || y >= h) return; // if the entity's position is outside the world, then stop the method.
-		entitiesInTiles.get(x + y * w).add(e); // adds the entity to the entitiesInTiles list array.
-	}
+                foreach (var entity in entities)
+                {
+                    int elr = entity.GetLightRadius();
 
-	/** Removes an entity in the entitiesInTiles list */
-	private void removeEntity(int x, int y, Entity e) {
-		if (x < 0 || y < 0 || x >= w || y >= h) return; // if the entity's position is outside the world, then stop the method.
-		entitiesInTiles.get(x + y * w).remove(e); // removes the entity to the entitiesInTiles list array.
-	}
+                    if (elr > 0)
+                    {
+                        screen.RenderLight(entity.X - 1, entity.Y - 4, elr * 8);
+                    }
+                }
 
-	/** Tries to spawn an entity in the world */
-	public virtual void trySpawn(int count) {
-		for (int i = 0; i < count; i++) { // Loops through the count
-			Mob mob; // the mob to be spawned
+                int lr = GetTile(x, y).GetLightRadius(this, x, y);
 
-			int minLevel = 1; // min level (green,red,black colored mob)
-			int maxLevel = 1; // max level (green,red,black colored mob)
-			if (depth < 0) { // if the depth is smaller than params 0[]
-				maxLevel = (-depth) + 1; // the max level changes depending of the depth
-			}
-			if (depth > 0) { // if the depth is larger than params 0[]
-				minLevel = maxLevel = 4; // the max level and the min level are 4.
-			}
+                if (lr > 0)
+                {
+                    screen.RenderLight((x * 16) + 8, (y * 16) + 8, lr * 8);
+                }
+            }
+        }
 
-			int lvl = random.nextInt(maxLevel - minLevel + 1) + minLevel; // the lvl that the mob will be.
-			if (random.nextInt(2) == 0) // if a random variable (0 to 1) is equal to 0 params then[]
-				mob = new Slime(lvl); // mob will be a slime
-			else
-				mob = new Zombie(lvl); // else it will be a zombie
+        screen.SetOffset(0, 0);
+    }
 
-			if (mob.findStartPos(this)) { // If the mob can find a start params position[]
-				this.add(mob); // then add the mob to the world.
-			}
-		}
-	}
+    private void SortAndRender(Screen screen, List<Entity> list)
+    {
+        list.Sort((Entity e0, Entity e1) =>
+        {
+            if (e1.Y < e0.Y)
+            {
+                return 1;
+            }
 
-	/** Update method, updates (ticks) 60 times a second */
-	public virtual void tick() {
-		trySpawn(1); // tries to spawn 1 mob.
-		
-		for (int i = 0; i < w * h / 50; i++) { // Loops (Width * Height / 50) times
-			int xt = random.nextInt(w); // Finds a random value from 0 to (Width - 1)
-			int yt = random.nextInt(h); // Finds a random value from 0 to (Height - 1)
-			getTile(xt, yt).tick(this, xt, yt); // updates the tile at that location.
-		}
-		for (int i = 0; i < entities.size(); i++) { // Loops through all the entities inside the entities list
-			Entity e = entities.get(i); // the current entity
-			int xto = e.x >> 4; // gets the entity's x coordinate
-			int yto = e.y >> 4; // gets the entity's y coordinate
+            if (e1.Y > e0.Y)
+            {
+                return -1;
+            }
 
-			e.tick(); // calls the entity's tick() method.
+            return 0;
+        });
 
-			if (e.removed) { // if the entity's removed value is params true[]
-				entities.remove(i--); // removes the entity from the entities list and makes the list smaller.
-				removeEntity(xto, yto, e); // Removes the entity from the world
-			} else { // if the entity's removed value is params false[]
-				int xt = e.x >> 4; // gets the entity's x coordinate
-				int yt = e.y >> 4; // gets the entity's y coordinate
+        foreach (var item in list)
+        {
+            item.Render(screen);
+        }
+    }
 
-				if (xto != xt || yto != yt) { // If xto and xt, & yto and yt don't params match[] 
-					removeEntity(xto, yto, e); // remove the entity from xto & yto position 
-					insertEntity(xt, yt, e); // adds the entity at the xt & yt position
-				}
-			}
-		}
-	}
+    public virtual Tile GetTile(int x, int y)
+    {
+        if (x < 0 || y < 0 || x >= Width || y >= Height)
+        {
+            return Tile.rock;
+        }
 
-	/** Gets all the entities from a square area of 4 points. */
-	public List<Entity> getEntities(int x0, int y0, int x1, int y1) {
-		List<Entity> result = new List<Entity>(); // result list of entities
-		int xt0 = (x0 >> 4) - 1; // location of x0
-		int yt0 = (y0 >> 4) - 1; // location of y0
-		int xt1 = (x1 >> 4) + 1; // location of x1
-		int yt1 = (y1 >> 4) + 1; // location of y1
-		for (int y = yt0; y <= yt1; y++) { // Loops through the difference between y0 and y1
-			for (int x = xt0; x <= xt1; x++) { // Loops through the difference between x0 & x1
-				if (x < 0 || y < 0 || x >= w || y >= h) continue; // if the x & y position is outside the world, then skip the rest of this loop.
-				List<Entity> entities = entitiesInTiles.get(x + y * this.w); // gets the entity from the x & y position
-				for (int i = 0; i < entities.size(); i++) { // Loops through all the entities in the entities list
-					Entity e = entities.get(i); // gets the current entity
-					if (e.intersects(x0, y0, x1, y1)) result.add(e); // if the entity intersects these 4 points, then add it to the result list.
-				}
-			}
-		}
-		return result; // returns the result list of entities
-	}
+        return Tile.tiles[tiles[x + (y * Width)]];
+    }
+
+    public virtual void SetTile(int x, int y, Tile t, int dataVal)
+    {
+        if (x < 0 || y < 0 || x >= Width || y >= Height)
+        {
+            return;
+        }
+
+        tiles[x + (y * Width)] = t.id;
+        data[x + (y * Width)] = (byte)dataVal;
+    }
+
+    public virtual int GetData(int x, int y)
+    {
+        if (x < 0 || y < 0 || x >= Width || y >= Height)
+        {
+            return 0;
+        }
+
+        return data[x + (y * Width)] & 0xff;
+    }
+
+    public virtual void SetData(int x, int y, int val)
+    {
+        if (x < 0 || y < 0 || x >= Width || y >= Height)
+        {
+            return;
+        }
+
+        data[x + (y * Width)] = (byte)val;
+    }
+
+    public virtual void Add(Entity entity)
+    {
+        if (entity is Player)
+        {
+            player = (Player)entity;
+        }
+
+        entity.Removed = false;
+        entities.Add(entity);
+        entity.Level = this;
+
+        InsertEntity(entity.X >> 4, entity.Y >> 4, entity);
+    }
+
+    public virtual void Remove(Entity e)
+    {
+        entities.Remove(e);
+
+        int xto = e.X >> 4;
+        int yto = e.Y >> 4;
+
+        RemoveEntity(xto, yto, e);
+    }
+
+    private void InsertEntity(int x, int y, Entity e)
+    {
+        if (x < 0 || y < 0 || x >= Width || y >= Height)
+        {
+            return;
+        }
+
+        entitiesInTiles[x + (y * Width)].Add(e);
+    }
+
+    private void RemoveEntity(int x, int y, Entity e)
+    {
+        if (x < 0 || y < 0 || x >= Width || y >= Height)
+        {
+            return;
+        }
+
+        entitiesInTiles[x + (y * Width)].Remove(e);
+    }
+
+    public virtual void TrySpawn(int count)
+    {
+        for (int i = 0; i < count; i++)
+        {
+            Mob mob;
+
+            int minLevel = 1;
+            int maxLevel = 1;
+            if (depth < 0)
+            {
+                maxLevel = (-depth) + 1;
+            }
+            if (depth > 0)
+            {
+                minLevel = maxLevel = 4;
+            }
+
+            int lvl = random.NextInt(maxLevel - minLevel + 1) + minLevel;
+            if (random.NextInt(2) == 0)
+            {
+                mob = new Slime(lvl);
+            }
+            else
+            {
+                mob = new Zombie(lvl);
+            }
+
+            if (mob.TrySpawn(this))
+            {
+                Add(mob);
+            }
+        }
+    }
+
+    public virtual void Update()
+    {
+        TrySpawn(1);
+
+        for (int i = 0; i < Width * Height / 50; i++)
+        {
+            int xt = random.NextInt(Width);
+            int yt = random.NextInt(Height);
+
+            GetTile(xt, yt).Update(this, xt, yt);
+        }
+
+        for (int i = 0; i < entities.Count; i++)
+        {
+            Entity e = entities[i];
+
+            int xto = e.X >> 4;
+            int yto = e.Y >> 4;
+
+            e.Update();
+
+            if (e.Removed)
+            {
+                entities.RemoveAt(i--);
+                RemoveEntity(xto, yto, e);
+            }
+            else
+            {
+                int xt = e.X >> 4;
+                int yt = e.Y >> 4;
+
+                if (xto != xt || yto != yt)
+                {
+                    RemoveEntity(xto, yto, e);
+                    InsertEntity(xt, yt, e);
+                }
+            }
+        }
+    }
+
+    public IEnumerable<Entity> GetEntities(int x0, int y0, int x1, int y1)
+    {
+        int xt0 = (x0 >> 4) - 1;
+        int yt0 = (y0 >> 4) - 1;
+        int xt1 = (x1 >> 4) + 1;
+        int yt1 = (y1 >> 4) + 1;
+
+        for (int y = yt0; y <= yt1; y++)
+        {
+            for (int x = xt0; x <= xt1; x++)
+            {
+                if (x < 0 || y < 0 || x >= Width || y >= Height)
+                {
+                    continue;
+                }
+
+                List<Entity> entities = entitiesInTiles[x + (y * Width)];
+
+                foreach (var entity in entities)
+                {
+                    if (entity.Intersects(x0, y0, x1, y1))
+                    {
+                        yield return entity;
+                    }
+                }
+            }
+        }
+    }
 }
