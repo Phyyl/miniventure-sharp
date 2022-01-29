@@ -1,0 +1,3 @@
+[submodule "generator/miniventure"]
+	path = generator/miniventure
+	url = git@github.com:phyyl/miniventure
