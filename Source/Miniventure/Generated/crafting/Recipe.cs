@@ -1,9 +1,9 @@
 namespace com.mojang.ld22.crafting;
 
 //TODO: Make immutable
-public abstract class Recipe /*: IListItem*/
+public abstract class Recipe
 {
-    public List<Item> costs = new List<Item>();
+    public List<Item> costs = new();
     public Item resultTemplate;
 
     public Recipe(Item resultTemplate)

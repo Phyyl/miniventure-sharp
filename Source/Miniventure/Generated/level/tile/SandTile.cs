@@ -93,16 +93,16 @@ public class SandTile : Tile
     /** What happens when you use an item in this tile */
     public override bool Interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir)
     {
-        if (item is ToolItem)
+        // converts the Item object into a ToolItem object.
+        if (item is ToolItem tool)
         { // if the item happens to be a tool
-            ToolItem tool = (ToolItem)item; // converts the Item object into a ToolItem object.
             if (tool.Type == ToolType.Shovel)
             { // if the type of tool is a params shovel[]
-                if (player.payStamina(4 - (int)tool.Level))
+                if (player.PayStamina(4 - (int)tool.Level))
                 { // if the player can pay the params stamina[]
-                    level.SetTile(xt, yt, Tile.dirt, 0); // set the tile to a dirt tile
+                    level.SetTile(xt, yt, Tile.Dirt, 0); // set the tile to a dirt tile
                     /* Adds a sand resource to the world */
-                    level.Add(new ItemEntity(new ResourceItem(Resource.sand), (xt * 16) + random.NextInt(10) + 3, (yt * 16) + random.NextInt(10) + 3));
+                    level.Add(new ItemEntity(new ResourceItem(Resource.sand), (xt * 16) + Random.NextInt(10) + 3, (yt * 16) + Random.NextInt(10) + 3));
                     return true;
                 }
             }

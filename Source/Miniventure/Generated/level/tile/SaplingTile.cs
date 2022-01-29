@@ -3,8 +3,8 @@ namespace com.mojang.ld22.level.tile;
 
 public class SaplingTile : Tile
 {
-    private Tile onType; // The tile it grows on (Grass/Sand)
-    private Tile growsTo; // What the sapling grows into (Tree/Cactus)
+    private readonly Tile onType; // The tile it grows on (Grass/Sand)
+    private readonly Tile growsTo; // What the sapling grows into (Tree/Cactus)
 
     public SaplingTile(int id, Tile onType, Tile growsTo) : base(id)
     { // Assigns the id

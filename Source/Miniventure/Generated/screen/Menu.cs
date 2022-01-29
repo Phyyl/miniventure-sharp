@@ -21,7 +21,7 @@ public class Menu
     {
     }
 
-    public void RenderItemList<T>(Screen screen, int xo, int yo, int x1, int y1, T[] items, int selected)
+    public static void RenderItemList<T>(Screen screen, int xo, int yo, int x1, int y1, T[] items, int selected)
         where T : IListItem
     {
         bool renderCursor = true;// Renders the ">" "<" arrows between a name.
@@ -33,7 +33,7 @@ public class Menu
         int w = x1 - xo; // Width variable determined by given values
         int h = y1 - yo - 1; // Height variable determined by given values
         int i0 = 0; // Beginning variable of the list loop
-        int i1 = items.Count(); // End variable of the list loop
+        int i1 = items.Length; // End variable of the list loop
         if (i1 > h)
         {
             i1 = h; // If the end variable is larger than the height variable, then end variable will equal height variable.
@@ -41,9 +41,9 @@ public class Menu
 
         int io = selected - (h / 2); // Middle of the list, (selected item). For scrolling effect
 
-        if (io > items.Count() - h)
+        if (io > items.Length - h)
         {
-            io = items.Count() - h; //if the middle is coming near the bottom, then the selected will change.
+            io = items.Length - h; //if the middle is coming near the bottom, then the selected will change.
         }
 
         if (io < 0)

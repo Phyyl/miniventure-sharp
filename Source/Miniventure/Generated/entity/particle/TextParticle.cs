@@ -3,8 +3,8 @@ namespace com.mojang.ld22.entity.particle;
 
 public class TextParticle : Particle
 {
-    private string msg;
-    private int col;
+    private readonly string msg;
+    private readonly int col;
     private double xa, ya, za;
     private double xx, yy, zz;
 

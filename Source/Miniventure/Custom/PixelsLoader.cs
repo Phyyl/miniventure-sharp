@@ -15,7 +15,7 @@ namespace MiniventureSharp.Custom
     {
         public Pixels Load(Stream stream, Assembly assembly, string resourceName)
         {
-            Bitmap bitmap = new Bitmap(stream);
+            Bitmap bitmap = new(stream);
 
             var bits = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), System.Drawing.Imaging.ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppRgb);
             int[] data = new int[bitmap.Width * bitmap.Height];

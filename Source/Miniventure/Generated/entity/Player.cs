@@ -4,12 +4,12 @@ namespace com.mojang.ld22.entity;
 
 public class Player : Mob
 {
-    private InputHandler input;
+    private readonly InputHandler input;
     private int attackTime;
     private Direction attackDir;
 
     public Game game;
-    public Inventory inventory = new Inventory();
+    public Inventory inventory = new();
     public Item attackItem;
     public Item activeItem;
     public int stamina;
@@ -19,7 +19,6 @@ public class Player : Mob
     public int maxStamina = 10;
     private int onStairDelay;
     public int invulnerableTime = 0;
-
 
     public Player(Game game, InputHandler input)
     {
@@ -43,11 +42,11 @@ public class Player : Mob
         }
 
         Tile onTile = Level.GetTile(X >> 4, Y >> 4);
-        if (onTile == Tile.stairsDown || onTile == Tile.stairsUp)
+        if (onTile == Tile.StairsDown || onTile == Tile.StairsUp)
         {
             if (onStairDelay == 0)
             {
-                changeLevel((onTile == Tile.stairsUp) ? 1 : -1);
+                ChangeLevel((onTile == Tile.StairsUp) ? 1 : -1);
                 onStairDelay = 10;
                 return;
             }
@@ -91,22 +90,22 @@ public class Player : Mob
         int xa = 0;
         int ya = 0;
 
-        if (input.up.down)
+        if (input.Up.Down)
         {
             ya--;
         }
 
-        if (input.down.down)
+        if (input.Down.Down)
         {
             ya++;
         }
 
-        if (input.left.down)
+        if (input.Left.Down)
         {
             xa--;
         }
 
-        if (input.right.down)
+        if (input.Right.Down)
         {
             xa++;
         }
@@ -128,7 +127,7 @@ public class Player : Mob
             Move(xa, ya);
         }
 
-        if (input.attack.clicked)
+        if (input.Attack.Clicked)
         {
             if (stamina == 0)
             {
@@ -142,7 +141,7 @@ public class Player : Mob
             }
         }
 
-        if (input.menu.clicked)
+        if (input.Menu.Clicked)
         {
             if (!Use())
             {
@@ -380,7 +379,6 @@ public class Player : Mob
         return dmg;
     }
 
-    /** Draws the player on the screen */
     public override void Render(Screen screen)
     {
         int xt = 0;
@@ -505,7 +503,6 @@ public class Player : Mob
         inventory.Add(itemEntity.item);
     }
 
-    /** Returns if the entity can swim */
     public override bool CanSwim()
     {
         return true;
@@ -519,7 +516,7 @@ public class Player : Mob
             int x = Random.NextInt(level.Width);
             int y = Random.NextInt(level.Height);
 
-            if (level.GetTile(x, y) == Tile.grass)
+            if (level.GetTile(x, y) == Tile.Grass)
             {
                 X = (x * 16) + 8;
                 Y = (y * 16) + 8;
@@ -529,8 +526,7 @@ public class Player : Mob
         }
     }
 
-    /** Pays the stamina used for an action */
-    public virtual bool payStamina(int cost)
+    public bool PayStamina(int cost)
     {
         if (cost > stamina)
         {
@@ -541,21 +537,19 @@ public class Player : Mob
         return true;
     }
 
-    /** Changes the level */
-    public virtual void changeLevel(int dir)
+    public void ChangeLevel(int dir)
     {
         game.ScheduleLevelChange(dir);
     }
 
-    /** Gets the player's light radius underground */
     public override int GetLightRadius()
     {
         int r = 2;
         if (activeItem != null)
         {
-            if (activeItem is FurnitureItem)
+            if (activeItem is FurnitureItem item1)
             {
-                int rr = ((FurnitureItem)activeItem).furniture.GetLightRadius();
+                int rr = item1.furniture.GetLightRadius();
                 if (rr > r)
                 {
                     r = rr;
@@ -565,27 +559,21 @@ public class Player : Mob
         return r;
     }
 
-    /** What happens when the player dies */
-
-    public virtual void die()
+    public override void Die()
     {
         base.Die();
         Sound.playerDeath.Play();
     }
 
-    /** What happens when the player touches an entity */
-
-    public virtual void touchedBy(Entity entity)
+    public override void TouchedBy(Entity entity)
     {
-        if (!(entity is Player))
+        if (entity is not Player)
         {
             entity.TouchedBy(this);
         }
     }
 
-    /** What happens when the player is hurt */
-
-    public virtual void doHurt(int damage, int attackDir)
+    public override void DoHurt(int damage, Direction attackDir)
     {
         if (ImmuneTime > 0 || invulnerableTime > 0)
         {
@@ -595,34 +583,33 @@ public class Player : Mob
         Sound.playerHurt.Play();
         Level.Add(new TextParticle("" + damage, X, Y, Color.Get(-1, 504, 504, 504)));
         Health -= damage;
-        if (attackDir == 0)
+        if (attackDir == Direction.Down)
         {
-            YKnockback = +6;
+            YKnockback = 6;
         }
 
-        if (attackDir == 1)
+        if (attackDir == Direction.Up)
         {
             YKnockback = -6;
         }
 
-        if (attackDir == 2)
+        if (attackDir == Direction.Left)
         {
             XKnockback = -6;
         }
 
-        if (attackDir == 3)
+        if (attackDir == Direction.Right)
         {
-            XKnockback = +6;
+            XKnockback = 6;
         }
 
         ImmuneTime = 10;
         invulnerableTime = 30;
     }
 
-    /** What happens when the player wins */
-    public virtual void gameWon()
+    public void GameWon()
     {
         Level.player.invulnerableTime = 60 * 5;
-        game.won();
+        game.Won();
     }
 }

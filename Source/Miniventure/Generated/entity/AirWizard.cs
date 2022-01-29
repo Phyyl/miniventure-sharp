@@ -211,7 +211,7 @@ public class AirWizard : Mob
         screen.Render(xo + 8 - (8 * flip2), yo + 8, xt + 1 + ((yt + 1) * 32), col2, (MirrorFlags)flip2); 
     }
 
-    public virtual void touchedBy(Entity entity)
+    public override void TouchedBy(Entity entity)
     {
         if (entity is Player)
         { 
@@ -219,14 +219,14 @@ public class AirWizard : Mob
         }
     }
 
-    public virtual void die()
+    public override void Die()
     {
         base.Die(); 
 
         if (Level.player != null)
         { 
             Level.player.score += 1000; 
-            Level.player.gameWon(); 
+            Level.player.GameWon(); 
         }
 
         Sound.bossdeath.Play(); 

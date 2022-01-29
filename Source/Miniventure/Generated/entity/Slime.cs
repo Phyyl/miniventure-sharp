@@ -5,7 +5,7 @@ public class Slime : Mob
 {
     private int xa, ya;
     private int jumpTime = 0;
-    private int lvl;
+    private readonly int lvl;
 
     public Slime(int lvl)
         : base(lvl * lvl * 5, Random.NextInt(64 * 16), Random.NextInt(64 * 16))
@@ -71,10 +71,9 @@ public class Slime : Mob
         }
     }
 
-    //@Override
-    public virtual void die()
+    public override void Die()
     {
-        base.Die(); // Parent death call
+        base.Die();
 
         int count = Random.NextInt(2) + 1; // Random amount of slime(item) to drop from 1 to 2
         for (int i = 0; i < count; i++)
@@ -134,12 +133,11 @@ public class Slime : Mob
         screen.Render(xo + 8, yo + 8, xt + 1 + ((yt + 1) * 32), col, 0); // draws the bottom-right tile
     }
 
-    //@Override
-    public virtual void touchedBy(Entity entity)
+    public override void TouchedBy(Entity entity)
     {
         if (entity is Player)
-        { // if we touch the player
-            entity.Hurt(this, lvl, Direction); // attack
+        {
+            entity.Hurt(this, lvl, Direction);
         }
     }
 }

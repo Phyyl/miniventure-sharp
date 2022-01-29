@@ -12,12 +12,12 @@ public class LavaTile : Tile
         connectsToLava = true; // this tile can connect to lava
     }
 
-    private Random wRandom = new Random();
+    private readonly Random wRandom = new();
 
     public override void Render(Screen screen, Level level, int x, int y)
     {
         /* Sets the seed for which it will affect random variables */
-        wRandom.SetSeed(((tickCount + (((x / 2) - y) * 4311)) / 10 * 54687121) + (x * 3271612) + (y * 3412987161));
+        wRandom.SetSeed(((TickCount + (((x / 2) - y) * 4311)) / 10 * 54687121) + (x * 3271612) + (y * 3412987161));
 
         int col = Color.Get(500, 500, 520, 550); // main color of the lava
         int transitionColor1 = Color.Get(3, 500, level.dirtColor - 111, level.dirtColor); // transition color with dirt
@@ -85,16 +85,16 @@ public class LavaTile : Tile
         int xn = xt; // next x position
         int yn = yt; // next y position
 
-        if (random.NextBoolean()) // makes a random decision of true or false
+        if (Random.NextBoolean()) // makes a random decision of true or false
         {
-            xn += (random.NextInt(2) * 2) - 1; // if that decision is true, then the next x position = (random value between 0 to 1) * 2 - 1
+            xn += (Random.NextInt(2) * 2) - 1; // if that decision is true, then the next x position = (random value between 0 to 1) * 2 - 1
         }
         else
         {
-            yn += (random.NextInt(2) * 2) - 1; // if that decision is false, then the next y position = (random value between 0 to 1) * 2 - 1
+            yn += (Random.NextInt(2) * 2) - 1; // if that decision is false, then the next y position = (random value between 0 to 1) * 2 - 1
         }
 
-        if (level.GetTile(xn, yn) == Tile.hole)
+        if (level.GetTile(xn, yn) == Tile.Hole)
         { // if the next positions are a hole tile params then[]
             level.SetTile(xn, yn, this, 0); // set that hole tile to a lava tile
         }

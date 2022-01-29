@@ -4,7 +4,7 @@ namespace com.mojang.ld22.item;
 
 public class ToolItem : Item
 {
-    private Random random = new Random();
+    private readonly Random random = new();
 
     public static readonly int MAX_LEVEL = 5; // How many different levels of tools there are
     public static readonly string[] LEVEL_NAMES = {

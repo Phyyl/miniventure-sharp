@@ -3,7 +3,7 @@ namespace com.mojang.ld22.screen;
 
 public class InstructionsMenu : Menu
 {
-    private Menu parent; // Creates a parent object to go back to
+    private readonly Menu parent; // Creates a parent object to go back to
 
     /** The about menu is a read menu about what you have to do in the game. Only contains text and a black background */
     public InstructionsMenu(Menu parent)
@@ -13,7 +13,7 @@ public class InstructionsMenu : Menu
 
     public override void Update()
     {
-        if (input.attack.clicked || input.menu.clicked)
+        if (input.Attack.Clicked || input.Menu.Clicked)
         {
             game.Menu= parent;  // If the user presses the "Attack" or "Menu" button, it will go back to the parent menu.
         }

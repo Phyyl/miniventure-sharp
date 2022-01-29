@@ -4,7 +4,7 @@ namespace com.mojang.ld22.gfx;
 
 public class Screen
 {
-    private static int[] dither = new int[] { 0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5, };
+    private static readonly int[] dither = new int[] { 0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5, };
 
     private readonly Pixels spriteSheet;
 
@@ -12,8 +12,8 @@ public class Screen
     public int Height { get; }
     public Pixels Pixels { get; }
 
-    public int xOffset { get; set; }
-    public int yOffset { get; set; }
+    public int XOffset { get; set; }
+    public int YOffset { get; set; }
 
     public Screen(int width, int height, Pixels spriteSheet)
     {
@@ -35,8 +35,8 @@ public class Screen
 
     public void Render(int xp, int yp, int tile, int colors, MirrorFlags flags)
     {
-        xp -= xOffset;
-        yp -= yOffset;
+        xp -= XOffset;
+        yp -= YOffset;
 
         int xTile = tile % 32;
         int yTile = tile / 32;
@@ -82,8 +82,8 @@ public class Screen
 
     public void SetOffset(int xOffset, int yOffset)
     {
-        this.xOffset = xOffset;
-        this.yOffset = yOffset;
+        this.XOffset = xOffset;
+        this.YOffset = yOffset;
     }
 
     public void Overlay(Screen screen, int xa, int ya)
@@ -102,8 +102,8 @@ public class Screen
 
     public void RenderLight(int x, int y, int r)
     {
-        x -= xOffset;
-        y -= yOffset;
+        x -= XOffset;
+        y -= YOffset;
 
         int x0 = x - r;
         int x1 = x + r;

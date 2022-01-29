@@ -5,7 +5,7 @@ public class FlowerTile : GrassTile
 {
     public FlowerTile(int id) : base(id)
     { // this is here so that errors won't yell at us. Calls the GrassTile.java part of this class
-        tiles[id] = this; // assigns the id
+        Tiles[id] = this; // assigns the id
         connectsToGrass = true; // this tile can connect to grass.
     }
 
@@ -42,16 +42,16 @@ public class FlowerTile : GrassTile
     /** What happens when you use an item on the tile */
     public override bool Interact(Level level, int x, int y, Player player, Item item, Direction attackDir)
     {
-        if (item is ToolItem)
+        // converts the Item object into a ToolItem object
+        if (item is ToolItem tool)
         { // if the item happens to be a params tool[]
-            ToolItem tool = (ToolItem)item; // converts the Item object into a ToolItem object
             if (tool.Type == ToolType.Shovel)
             { // if the type of the tool is a params shovel[]
-                if (player.payStamina(4 - (int)tool.Level))
+                if (player.PayStamina(4 - (int)tool.Level))
                 { // if the player can pay the params stamina[]
-                    level.Add(new ItemEntity(new ResourceItem(Resource.flower), (x * 16) + random.NextInt(10) + 3, (y * 16) + random.NextInt(10) + 3)); // adds a flower to the level
-                    level.Add(new ItemEntity(new ResourceItem(Resource.flower), (x * 16) + random.NextInt(10) + 3, (y * 16) + random.NextInt(10) + 3)); // adds a flowre to the level
-                    level.SetTile(x, y, Tile.grass, 0); // sets the tile to a grass tile
+                    level.Add(new ItemEntity(new ResourceItem(Resource.flower), (x * 16) + Random.NextInt(10) + 3, (y * 16) + Random.NextInt(10) + 3)); // adds a flower to the level
+                    level.Add(new ItemEntity(new ResourceItem(Resource.flower), (x * 16) + Random.NextInt(10) + 3, (y * 16) + Random.NextInt(10) + 3)); // adds a flowre to the level
+                    level.SetTile(x, y, Tile.Grass, 0); // sets the tile to a grass tile
                     return true;
                 }
             }
@@ -62,11 +62,11 @@ public class FlowerTile : GrassTile
     /** What happens when you punch the tile */
     public override void Hurt(Level level, int x, int y, Mob source, int dmg, Direction attackDir)
     {
-        int count = random.NextInt(2) + 1; // random count between 1 and 2.
+        int count = Random.NextInt(2) + 1; // random count between 1 and 2.
         for (int i = 0; i < count; i++)
         { // cycles through the count
-            level.Add(new ItemEntity(new ResourceItem(Resource.flower), (x * 16) + random.NextInt(10) + 3, (y * 16) + random.NextInt(10) + 3)); // adds a flower to the world
+            level.Add(new ItemEntity(new ResourceItem(Resource.flower), (x * 16) + Random.NextInt(10) + 3, (y * 16) + Random.NextInt(10) + 3)); // adds a flower to the world
         }
-        level.SetTile(x, y, Tile.grass, 0); // sets the tile to a grass tile
+        level.SetTile(x, y, Tile.Grass, 0); // sets the tile to a grass tile
     }
 }

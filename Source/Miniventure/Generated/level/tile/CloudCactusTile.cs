@@ -29,19 +29,19 @@ public class CloudCactusTile : Tile
 
     public override void Hurt(Level level, int x, int y, Mob source, int dmg, Direction attackDir)
     {
-        hurt(level, x, y, 0); // If you punch it, it will do 0 damage
+        Hurt(level, x, y, 0); // If you punch it, it will do 0 damage
     }
 
     public override bool Interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir)
     {
-        if (item is ToolItem)
+        // makes a ToolItem conversion of item.
+        if (item is ToolItem tool)
         { // If the item the player is holding is a params tool[]
-            ToolItem tool = (ToolItem)item; // makes a ToolItem conversion of item.
             if (tool.Type == ToolType.Pickaxe)
             { // if the tool happens to be a params pickaxe[]
-                if (player.payStamina(6 - (int)tool.Level))
+                if (player.PayStamina(6 - (int)tool.Level))
                 { // if the player can pay the params stamina[]
-                    hurt(level, xt, yt, 1); // Do 1 damage to the cloud cactus (call the method below this one)
+                    Hurt(level, xt, yt, 1); // Do 1 damage to the cloud cactus (call the method below this one)
                     return true;
                 }
             }
@@ -50,7 +50,7 @@ public class CloudCactusTile : Tile
     }
 
     /** This hurt method is special, called from the interact method above. */
-    public virtual void hurt(Level level, int x, int y, int dmg)
+    public virtual void Hurt(Level level, int x, int y, int dmg)
     {
         int damage = level.GetData(x, y) + 1; // Adds the damage to the tile's data
         level.Add(new SmashParticle((x * 16) + 8, (y * 16) + 8)); // Adds a smash particle
@@ -59,7 +59,7 @@ public class CloudCactusTile : Tile
         { //if the damage you did is over params 0[]
             if (damage >= 10)
             { //if the current damage the cloud cactus has is equal to or larger than params 0[]
-                level.SetTile(x, y, Tile.cloud, 0);// set the tile to cloud (destroys the cloud cactus tile)
+                level.SetTile(x, y, Tile.Cloud, 0);// set the tile to cloud (destroys the cloud cactus tile)
             }
             else
             {

@@ -34,7 +34,7 @@ public class WheatTile : Tile
     public override void Update(Level level, int xt, int yt)
     {
         /* random.nextBoolean() gives a random choice between true or false */
-        if (random.NextBoolean() == false)
+        if (Random.NextBoolean() == false)
         {
             return; // if the random bool is false, then skip the rest of the code
         }
@@ -49,14 +49,14 @@ public class WheatTile : Tile
     /** determines what happens when an item is used in the tile */
     public override bool Interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir)
     {
-        if (item is ToolItem)
+        // converts an Item object into a ToolItem object
+        if (item is ToolItem tool)
         { // if the item is a params tool[]
-            ToolItem tool = (ToolItem)item; // converts an Item object into a ToolItem object
             if (tool.Type == ToolType.Shovel)
             { // if the type is a shovel
-                if (player.payStamina(4 - (int)tool.Level))
+                if (player.PayStamina(4 - (int)tool.Level))
                 { // if the player can pay the params stamina[]
-                    level.SetTile(xt, yt, Tile.dirt, 0); // then set the tile to a dirt tile
+                    level.SetTile(xt, yt, Tile.Dirt, 0); // then set the tile to a dirt tile
                     return true;
                 }
             }
@@ -67,7 +67,7 @@ public class WheatTile : Tile
     /** What happens when you step on the tile */
     public override void SteppedOn(Level level, int xt, int yt, Entity entity)
     {
-        if (random.NextInt(60) != 0)
+        if (Random.NextInt(60) != 0)
         {
             return; // if a random number between 0 and 59 does NOT equal 0, then skip the rest of this code
         }
@@ -77,39 +77,39 @@ public class WheatTile : Tile
             return; // if the age of this tile is less than 2, then skip the rest of this code
         }
 
-        harvest(level, xt, yt); // harvest the tile
+        Harvest(level, xt, yt); // harvest the tile
     }
 
     /** What happens when you punch the tile */
     public override void Hurt(Level level, int x, int y, Mob source, int dmg, Direction attackDir)
     {
-        harvest(level, x, y); // harvest the tile
+        Harvest(level, x, y); // harvest the tile
     }
 
-    private void harvest(Level level, int x, int y)
+    private void Harvest(Level level, int x, int y)
     {
         int age = level.GetData(x, y); // gets the current age of the tile
 
-        int count = random.NextInt(2); // creates a random amount from 0 to 1 
+        int count = Random.NextInt(2); // creates a random amount from 0 to 1 
         for (int i = 0; i < count; i++)
         { // cycles through the count
-            level.Add(new ItemEntity(new ResourceItem(Resource.seeds), (x * 16) + random.NextInt(10) + 3, (y * 16) + random.NextInt(10) + 3)); // adds seeds to the world
+            level.Add(new ItemEntity(new ResourceItem(Resource.seeds), (x * 16) + Random.NextInt(10) + 3, (y * 16) + Random.NextInt(10) + 3)); // adds seeds to the world
         }
 
         count = 0; // reset the count
         if (age == 50)
         { // if the age is equal to 50 (fully grown) params then[]
-            count = random.NextInt(3) + 2; // count will be anywhere between 2 to 4
+            count = Random.NextInt(3) + 2; // count will be anywhere between 2 to 4
         }
         else if (age >= 40)
         { // if the age is larger or equal to 40 params then[]
-            count = random.NextInt(2) + 1; // count will be anywhere between 1 and 2
+            count = Random.NextInt(2) + 1; // count will be anywhere between 1 and 2
         }
         for (int i = 0; i < count; i++)
         { // loops through the count
-            level.Add(new ItemEntity(new ResourceItem(Resource.wheat), (x * 16) + random.NextInt(10) + 3, (y * 16) + random.NextInt(10) + 3)); // adds wheat to the world
+            level.Add(new ItemEntity(new ResourceItem(Resource.wheat), (x * 16) + Random.NextInt(10) + 3, (y * 16) + Random.NextInt(10) + 3)); // adds wheat to the world
         }
 
-        level.SetTile(x, y, Tile.dirt, 0); // sets the tile to a dirt tile
+        level.SetTile(x, y, Tile.Dirt, 0); // sets the tile to a dirt tile
     }
 }

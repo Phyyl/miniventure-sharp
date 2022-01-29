@@ -18,24 +18,24 @@ public class DirtTile : Tile
 
     public override bool Interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir)
     {
-        if (item is ToolItem)
+        // Makes a ToolItem conversion of item.
+        if (item is ToolItem tool)
         { // if the player's current item is a params tool[]
-            ToolItem tool = (ToolItem)item; // Makes a ToolItem conversion of item.
             if (tool.Type == ToolType.Shovel)
             { // if the tool is a params shovel[]
-                if (player.payStamina(4 - (int)tool.Level))
+                if (player.PayStamina(4 - (int)tool.Level))
                 { // if the player can pay the params stamina[]
-                    level.SetTile(xt, yt, Tile.hole, 0); //sets the tile to a hole
-                    level.Add(new ItemEntity(new ResourceItem(Resource.dirt), (xt * 16) + random.NextInt(10) + 3, (yt * 16) + random.NextInt(10) + 3)); // pops out a dirt resource
+                    level.SetTile(xt, yt, Tile.Hole, 0); //sets the tile to a hole
+                    level.Add(new ItemEntity(new ResourceItem(Resource.dirt), (xt * 16) + Random.NextInt(10) + 3, (yt * 16) + Random.NextInt(10) + 3)); // pops out a dirt resource
                     Sound.monsterHurt.Play();// sound plays
                     return true;
                 }
             }
             if (tool.Type == ToolType.Hoe)
             { // if the tool is a params hoe[]
-                if (player.payStamina(4 - (int)tool.Level))
+                if (player.PayStamina(4 - (int)tool.Level))
                 { // if the player can pay the params stamina[]
-                    level.SetTile(xt, yt, Tile.farmland, 0); //sets the tile to a FarmTile
+                    level.SetTile(xt, yt, Tile.Farmland, 0); //sets the tile to a FarmTile
                     Sound.monsterHurt.Play(); //sound plays
                     return true;
                 }

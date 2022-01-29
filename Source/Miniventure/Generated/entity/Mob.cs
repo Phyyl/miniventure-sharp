@@ -26,7 +26,7 @@ public abstract class Mob : Entity
 
         TickTime++;
 
-        if (Level.GetTile(X >> 4, Y >> 4) == Tile.lava)
+        if (Level.GetTile(X >> 4, Y >> 4) == Tile.Lava)
         {
             //TODO: Make this a responsibility of the lava tile
             Hurt(this, 4, Direction.GetOpposite());
@@ -119,7 +119,7 @@ public abstract class Mob : Entity
     {
         Tile tile = Level.GetTile(X >> 4, Y >> 4);
 
-        return tile == Tile.water || tile == Tile.lava;
+        return tile == Tile.Water || tile == Tile.Lava;
     }
 
     public override bool Blocks(Entity e)
@@ -219,7 +219,7 @@ public abstract class Mob : Entity
 
         int r = level.monsterDensity * 16;
 
-        if (level.GetEntities(xx - r, yy - r, xx + r, yy + r).Count() > 0)
+        if (level.GetEntities(xx - r, yy - r, xx + r, yy + r).Any())
         {
             return false;
         }

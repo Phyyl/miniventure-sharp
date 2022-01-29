@@ -60,6 +60,7 @@ public class Crafting
                 new ResourceRecipe(Resource.ironIngot).AddCost(Resource.ironOre, 4).AddCost(Resource.coal, 1),
                 new ResourceRecipe(Resource.goldIngot).AddCost(Resource.goldOre, 4).AddCost(Resource.coal, 1),
                 new ResourceRecipe(Resource.glass).AddCost(Resource.sand, 4).AddCost(Resource.coal, 1),
+                new ResourceRecipe(Resource.coal).AddCost(Resource.wood, 10)
             };
 
             OvenRecipes = new Recipe[]

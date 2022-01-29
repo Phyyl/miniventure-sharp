@@ -21,14 +21,14 @@ public class FarmTile : Tile
     /* What happens when you use a tool on this tile */
     public override bool Interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir)
     {
-        if (item is ToolItem)
+        // converts the Item object to a ToolItem object
+        if (item is ToolItem tool)
         { // if the item happens to be a params tool[]
-            ToolItem tool = (ToolItem)item; // converts the Item object to a ToolItem object
             if (tool.Type == ToolType.Shovel)
             { // if the type of the tool is a params shovel[]
-                if (player.payStamina(4 - (int)tool.Level))
+                if (player.PayStamina(4 - (int)tool.Level))
                 { // If the player can pay the params stamina[]
-                    level.SetTile(xt, yt, Tile.dirt, 0); // sets the tile into a dirt tile
+                    level.SetTile(xt, yt, Tile.Dirt, 0); // sets the tile into a dirt tile
                     return true;
                 }
             }
@@ -49,7 +49,7 @@ public class FarmTile : Tile
     public override void SteppedOn(Level level, int xt, int yt, Entity entity)
     {
 
-        if (random.NextInt(60) != 0)
+        if (Random.NextInt(60) != 0)
         {
             return; // if a random number between 0 and 59 does NOT equal 0, then skip the rest of this code
         }
@@ -59,7 +59,7 @@ public class FarmTile : Tile
             return; // if the age of this tile is less than 5, then skip the rest of this code
         }
         //if (entity is Player) // uncommented this bit if you only want the player to trample crops.
-        level.SetTile(xt, yt, Tile.dirt, 0); // sets the tile to dirt.
+        level.SetTile(xt, yt, Tile.Dirt, 0); // sets the tile to dirt.
 
     }
 }

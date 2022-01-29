@@ -3,7 +3,7 @@ namespace com.mojang.ld22.screen;
 
 public class InventoryMenu : Menu
 {
-    private Player player; // The player that this inventory belongs to
+    private readonly Player player; // The player that this inventory belongs to
     private int selected = 0; // The selected item of the inventory.
 
     public InventoryMenu(Player player)
@@ -19,17 +19,17 @@ public class InventoryMenu : Menu
 
     public override void Update()
     {
-        if (input.menu.clicked)
+        if (input.Menu.Clicked)
         {
             game.Menu = null; // If the player presses the "Menu" key, then the game will go back to the normal game
         }
 
-        if (input.up.clicked)
+        if (input.Up.Clicked)
         {
             selected--; // If the player presses up, then the selection on the list will go up by 1.
         }
 
-        if (input.down.clicked)
+        if (input.Down.Clicked)
         {
             selected++; // If the player presses down, then the selection on the list will go down by 1.
         }
@@ -50,7 +50,7 @@ public class InventoryMenu : Menu
             selected -= len; // If you go past the bottom item in your inventory, it will loop to the top
         }
 
-        if (input.attack.clicked && len > 0)
+        if (input.Attack.Clicked && len > 0)
         { // If your inventory is not empty, and the player presses the "Attack" params key[]
             Item item = player.inventory.Items[selected]; // The item will be removed from the inventory
             player.inventory.Items.RemoveAt(selected); // The item will be removed from the inventory

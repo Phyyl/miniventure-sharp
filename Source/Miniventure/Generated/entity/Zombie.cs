@@ -5,7 +5,7 @@ namespace com.mojang.ld22.entity;
 public class Zombie : Mob
 {
     private int xa, ya;
-    private int lvl;
+    private readonly int lvl;
     private int randomWalkTime = 0;
 
     public Zombie(int lvl)
@@ -123,8 +123,7 @@ public class Zombie : Mob
         screen.Render(xo + 8 - (8 * flip2), yo + 8, xt + 1 + ((yt + 1) * 32), col, (MirrorFlags)flip2); // draws the bottom-right tile
     }
 
-    //@Override
-    public virtual void touchedBy(Entity entity)
+    public override void TouchedBy(Entity entity)
     {
         if (entity is Player)
         { // if the entity touches the player
@@ -132,8 +131,7 @@ public class Zombie : Mob
         }
     }
 
-    //@Override
-    public virtual void die()
+    public override void Die()
     {
         base.Die(); // Parent death call
 

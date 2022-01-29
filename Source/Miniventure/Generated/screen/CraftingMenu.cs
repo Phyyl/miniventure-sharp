@@ -2,10 +2,10 @@ namespace com.mojang.ld22.screen;
 
 public class CraftingMenu : Menu
 {
-    private Player player;
+    private readonly Player player;
     private int selected = 0;
 
-    private InventoryRecipe[] recipes;
+    private readonly InventoryRecipe[] recipes;
 
     private class InventoryRecipe : IListItem
     {
@@ -53,17 +53,17 @@ public class CraftingMenu : Menu
 
     public override void Update()
     {
-        if (input.menu.clicked)
+        if (input.Menu.Clicked)
         {
             game.Menu = null;
         }
 
-        if (input.up.clicked)
+        if (input.Up.Clicked)
         {
             selected--;
         }
 
-        if (input.down.clicked)
+        if (input.Down.Clicked)
         {
             selected++;
         }
@@ -85,7 +85,7 @@ public class CraftingMenu : Menu
             selected -= len;
         }
 
-        if (input.attack.clicked && len > 0)
+        if (input.Attack.Clicked && len > 0)
         {
             Recipe r = recipes[selected].Recipe;
 
@@ -122,9 +122,9 @@ public class CraftingMenu : Menu
                 int yo = (5 + i) * 8; // y coordinate of the cost item
                 screen.Render(xo, yo, item.GetSprite(), item.GetColor(), 0); // renders the cost item
                 int requiredAmt = 1; // required amount need to craft (normally 1)
-                if (item is ResourceItem)
+                if (item is ResourceItem item1)
                 { // If the item is a params resource[]
-                    requiredAmt = ((ResourceItem)item).Count; // get's the amount needed to craft the item
+                    requiredAmt = item1.Count; // get's the amount needed to craft the item
                 }
                 int has = player.inventory.Count(item); // This is the amount of the resource you have in your inventory
                 int color = Color.Get(-1, 555, 555, 555); // color in the 'cost' window
@@ -137,7 +137,7 @@ public class CraftingMenu : Menu
                     has = 99; // if the player has over 99 of the resource, then just display 99 (for space)
                 }
 
-                Font.Draw("" + requiredAmt + "/" + has, screen, xo + 8, yo, color); // Draw "#required/#has" text next to the icon 
+                Font.Draw("" + has + "/" + requiredAmt, screen, xo + 8, yo, color); // Draw "#required/#has" text next to the icon 
             }
         }
 

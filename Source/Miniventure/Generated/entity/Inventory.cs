@@ -39,7 +39,7 @@ public class Inventory
 
     public bool HasResources(Resource r, int count)
     {
-        return FindResource(r)?.Count > count;
+        return FindResource(r)?.Count >= count;
     }
 
     public bool RemoveResource(Resource r, int count)

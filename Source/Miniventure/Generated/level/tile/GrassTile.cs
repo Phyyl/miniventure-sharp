@@ -61,16 +61,16 @@ public class GrassTile : Tile
         int xn = xt; // next x position
         int yn = yt; // next y position
 
-        if (random.NextBoolean()) // makes a random decision of true or false
+        if (Random.NextBoolean()) // makes a random decision of true or false
         {
-            xn += (random.NextInt(2) * 2) - 1; // if that decision is true, then the next x position = (random value between 0 to 1) * 2 - 1
+            xn += (Random.NextInt(2) * 2) - 1; // if that decision is true, then the next x position = (random value between 0 to 1) * 2 - 1
         }
         else
         {
-            yn += (random.NextInt(2) * 2) - 1; // if that decision is false, then the next y position = (random value between 0 to 1) * 2 - 1
+            yn += (Random.NextInt(2) * 2) - 1; // if that decision is false, then the next y position = (random value between 0 to 1) * 2 - 1
         }
 
-        if (level.GetTile(xn, yn) == Tile.dirt)
+        if (level.GetTile(xn, yn) == Tile.Dirt)
         { // if the next positions are a dirt tile params then[]
             level.SetTile(xn, yn, this, 0); // set that dirt tile to a grass tile
         }
@@ -78,20 +78,20 @@ public class GrassTile : Tile
 
     public override bool Interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir)
     {
-        if (item is ToolItem)
+        // converts the Item object into a ToolItem object.
+        if (item is ToolItem tool)
         { // if the item happens to be a tool
-            ToolItem tool = (ToolItem)item; // converts the Item object into a ToolItem object.
 
             if (tool.Type == ToolType.Shovel)
             { // if the type of tool is a params shovel[]
-                if (player.payStamina(4 - (int)tool.Level))
+                if (player.PayStamina(4 - (int)tool.Level))
                 { // if the player can pay the params stamina[]
-                    level.SetTile(xt, yt, Tile.dirt, 0); // sets the tile to a dirt tile
+                    level.SetTile(xt, yt, Tile.Dirt, 0); // sets the tile to a dirt tile
                     Sound.monsterHurt.Play(); // plays a sound
-                    if (random.NextInt(5) == 0)
+                    if (Random.NextInt(5) == 0)
                     { // if a random value between 0 to 4 equals 0 params then[]
                       //Adds seeds to the world
-                        level.Add(new ItemEntity(new ResourceItem(Resource.seeds), (xt * 16) + random.NextInt(10) + 3, (yt * 16) + random.NextInt(10) + 3));
+                        level.Add(new ItemEntity(new ResourceItem(Resource.seeds), (xt * 16) + Random.NextInt(10) + 3, (yt * 16) + Random.NextInt(10) + 3));
                         return true;
                     }
                 }
@@ -99,16 +99,16 @@ public class GrassTile : Tile
 
             if (tool.Type == ToolType.Hoe)
             { // if the type of tool is a params hoe[]
-                if (player.payStamina(4 - (int)tool.Level))
+                if (player.PayStamina(4 - (int)tool.Level))
                 { // if the player can pay the params stamina[]
                     Sound.monsterHurt.Play(); // plays a sound
-                    if (random.NextInt(5) == 0)
+                    if (Random.NextInt(5) == 0)
                     { // if a random value between 0 to 4 equals 0 params then[]
                       //Adds seeds to the world
-                        level.Add(new ItemEntity(new ResourceItem(Resource.seeds), (xt * 16) + random.NextInt(10) + 3, (yt * 16) + random.NextInt(10) + 3));
+                        level.Add(new ItemEntity(new ResourceItem(Resource.seeds), (xt * 16) + Random.NextInt(10) + 3, (yt * 16) + Random.NextInt(10) + 3));
                         return true; // skips the rest of the code
                     }
-                    level.SetTile(xt, yt, Tile.farmland, 0); // sets the tile to farmland
+                    level.SetTile(xt, yt, Tile.Farmland, 0); // sets the tile to farmland
                     return true;
                 }
             }

@@ -19,8 +19,6 @@ public class Game : VildmarkGame
     public const int GameWidth = 267;
     public const int Scale = 3;
 
-    private readonly List<KeyListener> keyListeners = new();
-
     private RenderContext renderContext;
     private GLTexture2D texture;
     private Menu menu;
@@ -31,7 +29,7 @@ public class Game : VildmarkGame
     private Screen lightScreen;
     private InputHandler input;
 
-    private int[] colors = new int[256];
+    private readonly int[] colors = new int[256];
     private int tickCount = 0;
     public int gameTime = 0;
 
@@ -107,7 +105,7 @@ public class Game : VildmarkGame
         }
     }
 
-    public virtual void changeLevel(int dir)
+    public void ChangeLevel(int dir)
     {
         level.Remove(player);
         currentLevel += dir;
@@ -117,7 +115,7 @@ public class Game : VildmarkGame
         level.Add(player);
     }
 
-    public virtual void render()
+    public void Render()
     {
         int xScroll = player.X - (screen.Width / 2); // scrolls the screen in the x axis.
         int yScroll = player.Y - ((screen.Height - 8) / 2); //scrolls the screen in the y axis.
@@ -154,7 +152,7 @@ public class Game : VildmarkGame
             }
         }
 
-        level.renderBackground(screen, xScroll, yScroll); // Calls the renderBackground() method in Level.java
+        level.RenderBackground(screen, xScroll, yScroll); // Calls the renderBackground() method in Level.java
         level.RenderSprites(screen, xScroll, yScroll); // Calls the renderSprites() method in Level.java
 
         // this creates the fog-of-war (darkness) in the caves
@@ -165,7 +163,7 @@ public class Game : VildmarkGame
             screen.Overlay(lightScreen, xScroll, yScroll); // overlays the light screen over the main screen.
         }
 
-        renderGui(); // calls the renderGui() method.
+        RenderGui(); // calls the renderGui() method.
 
         if (false)
         {
@@ -191,8 +189,7 @@ public class Game : VildmarkGame
         renderContext.RenderRectangle(new RectangleF(0, 0, Window.Width, Window.Height), texture);
     }
 
-    /** Renders the GUI on the screen used in the main game (hearts, Stamina bolts, name of the current item, etc, etc) */
-    private void renderGui()
+    private void RenderGui()
     {
         for (int y = 0; y < 2; y++)
         {
@@ -289,42 +286,20 @@ public class Game : VildmarkGame
         pendingLevelChange = dir;
     }
 
-    public void addKeyListener(KeyListener listener)
-    {
-        keyListeners.Add(listener);
-    }
-
     public override void Load()
     {
         renderContext = Create2DRenderContext();
         texture = new GLTexture2D(GameWidth, GameHeight, pixelInternalFormat: PixelInternalFormat.Rgb, magFilter: TextureMagFilter.Nearest);
-        input = new InputHandler(this);
+        input = new InputHandler(Keyboard);
         spriteSheet = ResourceLoader.LoadEmbedded<Pixels>("icons.png");
         pixels = new Pixels(GameWidth, GameHeight);
         screen = new Screen(GameWidth, GameHeight, spriteSheet);
         lightScreen = new Screen(GameWidth, GameHeight, spriteSheet);
 
         InitColors();
-
         ResetGame();
 
         Menu = new TitleMenu();
-
-        Window.OnKeyPressed += key =>
-        {
-            foreach (var keyListener in keyListeners)
-            {
-                keyListener.keyPressed(new KeyEvent((int)key));
-            }
-        };
-
-        Window.OnKeyReleased += key =>
-        {
-            foreach (var keyListener in keyListeners)
-            {
-                keyListener.keyReleased(new KeyEvent((int)key));
-            }
-        };
     }
     public override void Update(float delta)
     {
@@ -342,7 +317,7 @@ public class Game : VildmarkGame
             gameTime++;
         }
 
-        input.tick();
+        input.Update();
 
         if (menu != null)
         {
@@ -376,13 +351,13 @@ public class Game : VildmarkGame
             }
 
             level.Update();
-            Tile.tickCount++;
+            Tile.TickCount++;
         }
     }
 
     public override void Render(float delta)
     {
-        render();
+        Render();
         texture.SetData(pixels.Width, pixels.Height, pixels.Data.AsSpan());
 
         renderContext.Begin();
@@ -399,7 +374,7 @@ public class Game : VildmarkGame
         settings.Height = GameHeight * Scale;
     }
 
-    public virtual void won()
+    public void Won()
     {
         wonTimer = 60 * 3; // the pause time before the win menu shows up.
         hasWon = true; //confirms that the player has indeed, won the game.

@@ -3,7 +3,7 @@ namespace com.mojang.ld22.screen;
 
 public class LevelTransitionMenu : Menu
 {
-    private int dir; // Direction that you are changing levels. (going up or down stairs)
+    private readonly int dir; // Direction that you are changing levels. (going up or down stairs)
     private int time = 0; // Time it spends on this menu
 
     public LevelTransitionMenu(int dir)
@@ -16,7 +16,7 @@ public class LevelTransitionMenu : Menu
         time += 2; // Ticks up 2 times per tick
         if (time == 30)
         {
-            game.changeLevel(dir); // When time equals 30, it will change the level
+            game.ChangeLevel(dir); // When time equals 30, it will change the level
         }
 
         if (time == 60)

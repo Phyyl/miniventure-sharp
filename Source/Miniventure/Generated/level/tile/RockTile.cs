@@ -103,20 +103,20 @@ public class RockTile : Tile
     /** What happens when you punch the tile */
     public override void Hurt(Level level, int x, int y, Mob source, int dmg, Direction attackDir)
     {
-        hurt(level, x, y, dmg); // do a punch amount of damage to it (1-3)
+        Hurt(level, x, y, dmg); // do a punch amount of damage to it (1-3)
     }
 
     /** What happens when you use an item in this tile (like a pick-axe) */
     public override bool Interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir)
     {
-        if (item is ToolItem)
+        // converts the Item object to a ToolItem object
+        if (item is ToolItem tool)
         { //if the item is a tool
-            ToolItem tool = (ToolItem)item; // converts the Item object to a ToolItem object
             if (tool.Type == ToolType.Pickaxe)
             { // if the type of tool is a params pickaxe[]
-                if (player.payStamina(4 - (int)tool.Level))
+                if (player.PayStamina(4 - (int)tool.Level))
                 { // if the player can pay the params stamina[]
-                    hurt(level, xt, yt, random.NextInt(10) + ((int)tool.Level * 5) + 10); // hurts the tile, damage based on the tool's level.
+                    Hurt(level, xt, yt, Random.NextInt(10) + ((int)tool.Level * 5) + 10); // hurts the tile, damage based on the tool's level.
                     return true;
                 }
             }
@@ -124,26 +124,26 @@ public class RockTile : Tile
         return false;
     }
 
-    public virtual void hurt(Level level, int x, int y, int dmg)
+    public virtual void Hurt(Level level, int x, int y, int dmg)
     {
         int damage = level.GetData(x, y) + dmg; // adds the damage.
         level.Add(new SmashParticle((x * 16) + 8, (y * 16) + 8)); // creates a smash particle
         level.Add(new TextParticle("" + dmg, (x * 16) + 8, (y * 16) + 8, Color.Get(-1, 500, 500, 500))); // adds text telling how much damage you did.
         if (damage >= 50)
         { // if the damage is larger or equal to 50 params then[]
-            int count = random.NextInt(4) + 1; // count is between 1 to 4
+            int count = Random.NextInt(4) + 1; // count is between 1 to 4
             for (int i = 0; i < count; i++)
             { //loops through the count
                 /* adds stone to the world */
-                level.Add(new ItemEntity(new ResourceItem(Resource.stone), (x * 16) + random.NextInt(10) + 3, (y * 16) + random.NextInt(10) + 3));
+                level.Add(new ItemEntity(new ResourceItem(Resource.stone), (x * 16) + Random.NextInt(10) + 3, (y * 16) + Random.NextInt(10) + 3));
             }
-            count = random.NextInt(2); // count is between 0 and 1
+            count = Random.NextInt(2); // count is between 0 and 1
             for (int i = 0; i < count; i++)
             { // loops through the count
                 /* adds coal to the world */
-                level.Add(new ItemEntity(new ResourceItem(Resource.coal), (x * 16) + random.NextInt(10) + 3, (y * 16) + random.NextInt(10) + 3));
+                level.Add(new ItemEntity(new ResourceItem(Resource.coal), (x * 16) + Random.NextInt(10) + 3, (y * 16) + Random.NextInt(10) + 3));
             }
-            level.SetTile(x, y, Tile.dirt, 0); // sets the tile to dirt
+            level.SetTile(x, y, Tile.Dirt, 0); // sets the tile to dirt
         }
         else
         {

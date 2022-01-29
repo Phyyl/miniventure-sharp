@@ -19,15 +19,15 @@ public class CloudTile : Tile
         int col = Color.Get(444, 444, 555, 555); // Color of the cloud
         int transitionColor = Color.Get(333, 444, 555, -1); //Transitional color between connections
 
-        bool u = level.GetTile(x, y - 1) == Tile.infiniteFall; //Checks if the tile above it is a infiniteFall tile.
-        bool d = level.GetTile(x, y + 1) == Tile.infiniteFall; //Checks if the tile below it is a infiniteFall tile.
-        bool l = level.GetTile(x - 1, y) == Tile.infiniteFall; //Checks if the tile to the left is a infiniteFall tile.
-        bool r = level.GetTile(x + 1, y) == Tile.infiniteFall; //Checks if the tile to the right is a infiniteFall tile.
+        bool u = level.GetTile(x, y - 1) == Tile.InfiniteFall; //Checks if the tile above it is a infiniteFall tile.
+        bool d = level.GetTile(x, y + 1) == Tile.InfiniteFall; //Checks if the tile below it is a infiniteFall tile.
+        bool l = level.GetTile(x - 1, y) == Tile.InfiniteFall; //Checks if the tile to the left is a infiniteFall tile.
+        bool r = level.GetTile(x + 1, y) == Tile.InfiniteFall; //Checks if the tile to the right is a infiniteFall tile.
 
-        bool ul = level.GetTile(x - 1, y - 1) == Tile.infiniteFall; //Checks if the upper-left tile is an infiniteFall tile.
-        bool dl = level.GetTile(x - 1, y + 1) == Tile.infiniteFall; //Checks if the lower-left tile is an infiniteFall tile.
-        bool ur = level.GetTile(x + 1, y - 1) == Tile.infiniteFall; //Checks if the upper-right tile is an infiniteFall tile.
-        bool dr = level.GetTile(x + 1, y + 1) == Tile.infiniteFall; //Checks if the lower-right tile is an infiniteFall tile.
+        bool ul = level.GetTile(x - 1, y - 1) == Tile.InfiniteFall; //Checks if the upper-left tile is an infiniteFall tile.
+        bool dl = level.GetTile(x - 1, y + 1) == Tile.InfiniteFall; //Checks if the lower-left tile is an infiniteFall tile.
+        bool ur = level.GetTile(x + 1, y - 1) == Tile.InfiniteFall; //Checks if the upper-right tile is an infiniteFall tile.
+        bool dr = level.GetTile(x + 1, y + 1) == Tile.InfiniteFall; //Checks if the lower-right tile is an infiniteFall tile.
 
         /* Commenter Note: All sentences with a "*" at the end means I'm making a guess, and not 100% sure. Please confirm it sometime in the future. */
 
@@ -104,18 +104,19 @@ public class CloudTile : Tile
 
     public override bool Interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir)
     {
-        if (item is ToolItem)
-        { // If the player's current item is a params tool[]
-            ToolItem tool = (ToolItem)item; // Makes a ToolItem conversion of item.
+        if (item is ToolItem tool)
+        {
             if (tool.Type == ToolType.Shovel)
-            { // If the tool is a params shovel[]
-                if (player.payStamina(5))
-                { //If the player can pay 5 stamina
-                    int count = random.NextInt(2) + 1;// count is random from 0 to 1 and adds one. (1-2 count)
+            {
+                if (player.PayStamina(5))
+                {
+                    int count = Random.NextInt(2) + 1;
+                    
                     for (int i = 0; i < count; i++)
-                    { //cycles through the count
-                        level.Add(new ItemEntity(new ResourceItem(Resource.cloud), (xt * 16) + random.NextInt(10) + 3, (yt * 16) + random.NextInt(10) + 3)); //adds a cloud item to the game
+                    {
+                        level.Add(new ItemEntity(new ResourceItem(Resource.cloud), (xt * 16) + Random.NextInt(10) + 3, (yt * 16) + Random.NextInt(10) + 3)); //adds a cloud item to the game
                     }
+
                     return true;
                 }
             }

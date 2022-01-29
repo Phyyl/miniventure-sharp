@@ -13,12 +13,12 @@ public class TitleMenu : Menu
 
     public override void Update()
     {
-        if (input.up.clicked)
+        if (input.Up.Clicked)
         {
             selected--; // If the player presses the up key, then move up 1 option in the list
         }
 
-        if (input.down.clicked)
+        if (input.Down.Clicked)
         {
             selected++; // If the player presses the down key, then move down 1 option in the list
         }
@@ -34,7 +34,7 @@ public class TitleMenu : Menu
             selected -= len; // If the selected option is more than or equal to the size of the list, then move it back to 0;
         }
 
-        if (input.attack.clicked || input.menu.clicked)
+        if (input.Attack.Clicked || input.Menu.Clicked)
         { //If either the "Attack" or "Menu" keys are pressed params then[]
             if (selected == 0)
             { //If the selection is 0 ("Start game")

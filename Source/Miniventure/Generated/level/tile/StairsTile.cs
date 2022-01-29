@@ -3,7 +3,7 @@ namespace com.mojang.ld22.level.tile;
 
 public class StairsTile : Tile
 {
-    private bool leadsUp; // value to tell if the stairs lead up or not
+    private readonly bool leadsUp; // value to tell if the stairs lead up or not
 
     public StairsTile(int id, bool leadsUp) : base(id)
     { // assigns the id

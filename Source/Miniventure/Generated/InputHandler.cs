@@ -1,209 +1,131 @@
+using OpenTK.Windowing.GraphicsLibraryFramework;
+using Vildmark.Windowing;
+
 namespace com.mojang.ld22;
 
-//TODO: Use Update method instead of events
-public class InputHandler : KeyListener
+public class InputHandler
 {
-    public class Key
-    {
-        public int presses, absorbs; // presses determine how long you held it down, absorbs will determined if you clicked or held it down.
-        public bool down, clicked; // bools to tell if the player has clicked the button, or held down the button.
+    private readonly InputKey[] keys;
 
-        public Key(InputHandler inputHandler)
+    public InputKey Up { get; }
+    public InputKey Down { get; }
+    public InputKey Left { get; }
+    public InputKey Right { get; }
+    public InputKey Attack { get; }
+    public InputKey Menu { get; }
+
+    public void ReleaseAll()
+    {
+        for (int i = 0; i < keys.Length; i++)
         {
-            inputHandler.keys.Add(this); //Adds this object to a list of Keys used in the game.
+            keys[i].Down = false;
+        }
+    }
+
+    public void Update()
+    {
+        for (int i = 0; i < keys.Length; i++)
+        {
+            keys[i].Update();
+        }
+    }
+
+    public InputHandler(IKeyboard keyboard)
+    {
+        keyboard.OnKeyPressed += Keyboard_OnKeyPressed;
+        keyboard.OnKeyReleased += Keyboard_OnKeyReleased;
+
+        keys = new[]
+        {
+            Up = new InputKey(),
+            Down = new InputKey(),
+            Left = new InputKey(),
+            Right = new InputKey(),
+            Attack = new InputKey(),
+            Menu = new InputKey()
+        };
+    }
+
+    private void Keyboard_OnKeyPressed(Keys key)
+    {
+        Toggle(key, true);
+    }
+
+    private void Keyboard_OnKeyReleased(Keys key)
+    {
+        Toggle(key, false);
+    }
+
+    private void Toggle(Keys key, bool pressed)
+    {
+        InputKey inputKey = key switch
+        {
+            Keys.KeyPad8 => Up,
+            Keys.KeyPad2 => Down,
+            Keys.KeyPad4 => Left,
+            Keys.KeyPad6 => Right,
+            Keys.W => Up,
+            Keys.S => Down,
+            Keys.A => Left,
+            Keys.D => Right,
+            Keys.Up => Up,
+            Keys.Down => Down,
+            Keys.Left => Left,
+            Keys.Right => Right,
+            Keys.Tab => Menu,
+            Keys.LeftAlt => Menu,
+            Keys.RightAlt => Menu,
+            Keys.Menu => Menu,
+            Keys.Space => Attack,
+            Keys.LeftControl => Attack,
+            Keys.RightControl => Attack,
+            Keys.KeyPad0 => Attack,
+            Keys.Insert => Attack,
+            Keys.Enter => Menu,
+            Keys.X => Menu,
+            Keys.C => Attack,
+            _ => default
+        };
+
+        if (inputKey is null)
+        {
+            return;
         }
 
-        public virtual void toggle(bool pressed)
+        inputKey.Toggle(pressed);
+    }
+
+    public class InputKey
+    {
+        private int presses, absorbs;
+
+        public bool Down { get; set; }
+        public bool Clicked { get; set; }
+
+        public virtual void Toggle(bool pressed)
         {
-            if (pressed != down)
+            if (pressed != Down)
             {
-                down = pressed; //If the key is being pressed, then down is true.
+                Down = pressed;
             }
             if (pressed)
             {
-                presses++; //If pressed, then presses value goes up.
+                presses++;
             }
         }
 
-        public virtual void tick()
+        public virtual void Update()
         {
             if (absorbs < presses)
-            { //if presses are above absorbs
-                absorbs++;//increase the absorbs value
-                clicked = true;//clicked is true
+            {
+                absorbs++;
+                Clicked = true;
             }
             else
             {
-                clicked = false;//else clicked is false
+                Clicked = false;
             }
         }
     }
 
-    public List<Key> keys = new List<Key>(); // List of keys used in the game
-
-    /* Action keys */
-    public Key up;
-    public Key down;
-    public Key left;
-    public Key right;
-    public Key attack;
-    public Key menu;
-
-
-    /** This is used to stop all of the actions when the game is out of focus. */
-    public virtual void releaseAll()
-    {
-        for (int i = 0; i < keys.Count; i++)
-        {
-            keys[i].down = false; //turns all the keys down value to false
-        }
-    }
-
-    public virtual void tick()
-    {
-        for (int i = 0; i < keys.Count; i++)
-        {
-            keys[i].tick(); //Ticks every key to see if it is pressed.
-        }
-    }
-
-    public InputHandler(Game game)
-    {
-        game.addKeyListener(this); // Adds this to Game.java so it can detect when a key is being pressed.
-
-        up = new Key(this);
-        down = new Key(this);
-        left = new Key(this);
-        right = new Key(this);
-        attack = new Key(this);
-        menu = new Key(this);
-    }
-
-    public override void keyPressed(KeyEvent ke)
-    {
-        toggle(ke, true); // triggered when a key is pressed.
-    }
-
-    public override void keyReleased(KeyEvent ke)
-    {
-        toggle(ke, false); // triggered when a key is let go.
-    }
-
-    /** This method is used to turn keyboard key presses into actions */
-    private void toggle(KeyEvent ke, bool pressed)
-    {
-        if (ke.getKeyCode() == KeyEvent.VK_NUMPAD8)
-        {
-            up.toggle(pressed); //press keypad 8, moves up
-        }
-
-        if (ke.getKeyCode() == KeyEvent.VK_NUMPAD2)
-        {
-            down.toggle(pressed); //press keypad 2, moves down
-        }
-
-        if (ke.getKeyCode() == KeyEvent.VK_NUMPAD4)
-        {
-            left.toggle(pressed); //press keypad 4, moves left
-        }
-
-        if (ke.getKeyCode() == KeyEvent.VK_NUMPAD6)
-        {
-            right.toggle(pressed); //press keypad 6, moves right
-        }
-
-        if (ke.getKeyCode() == KeyEvent.VK_W)
-        {
-            up.toggle(pressed); //press W, moves up
-        }
-
-        if (ke.getKeyCode() == KeyEvent.VK_S)
-        {
-            down.toggle(pressed); //press S, moves down
-        }
-
-        if (ke.getKeyCode() == KeyEvent.VK_A)
-        {
-            left.toggle(pressed); //press A, moves left
-        }
-
-        if (ke.getKeyCode() == KeyEvent.VK_D)
-        {
-            right.toggle(pressed); //press D, moves right
-        }
-
-        if (ke.getKeyCode() == KeyEvent.VK_UP)
-        {
-            up.toggle(pressed); //press up arrow, moves up
-        }
-
-        if (ke.getKeyCode() == KeyEvent.VK_DOWN)
-        {
-            down.toggle(pressed); //press down arrow, moves down
-        }
-
-        if (ke.getKeyCode() == KeyEvent.VK_LEFT)
-        {
-            left.toggle(pressed); //press left arrow, moves left
-        }
-
-        if (ke.getKeyCode() == KeyEvent.VK_RIGHT)
-        {
-            right.toggle(pressed); //press right arrow, moves right
-        }
-
-        if (ke.getKeyCode() == KeyEvent.VK_TAB)
-        {
-            menu.toggle(pressed); //press Tab, menu toggled
-        }
-
-        if (ke.getKeyCode() == KeyEvent.VK_ALT)
-        {
-            menu.toggle(pressed); //press Alt, menu toggled
-        }
-
-        if (ke.getKeyCode() == KeyEvent.VK_ALT_GRAPH)
-        {
-            menu.toggle(pressed); //press Alt-Graph, menu toggled
-        }
-
-        if (ke.getKeyCode() == KeyEvent.VK_SPACE)
-        {
-            attack.toggle(pressed); //press space, attack toggled
-        }
-
-        if (ke.getKeyCode() == KeyEvent.VK_CONTROL)
-        {
-            attack.toggle(pressed); //press Ctrl, attack toggled
-        }
-
-        if (ke.getKeyCode() == KeyEvent.VK_NUMPAD0)
-        {
-            attack.toggle(pressed); //press keypad 0, attack toggled
-        }
-
-        if (ke.getKeyCode() == KeyEvent.VK_INSERT)
-        {
-            attack.toggle(pressed); //press Insert, attack toggled
-        }
-
-        if (ke.getKeyCode() == KeyEvent.VK_ENTER)
-        {
-            menu.toggle(pressed); //press Enter, attack toggled
-        }
-
-        if (ke.getKeyCode() == KeyEvent.VK_X)
-        {
-            menu.toggle(pressed); //press X, menu toggled
-        }
-
-        if (ke.getKeyCode() == KeyEvent.VK_C)
-        {
-            attack.toggle(pressed); // press C, attack toggled
-        }
-    }
-
-    public override void keyTyped(KeyEvent ke)
-    {
-    } // this is here because KeyListiner needs it to be.
 }

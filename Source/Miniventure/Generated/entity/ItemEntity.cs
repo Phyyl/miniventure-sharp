@@ -3,7 +3,7 @@ namespace com.mojang.ld22.entity;
 
 public class ItemEntity : Entity
 {
-    private int lifeTime;
+    private readonly int lifeTime;
     public double xa, ya, za;
     public double xx, yy, zz;
     public Item item;

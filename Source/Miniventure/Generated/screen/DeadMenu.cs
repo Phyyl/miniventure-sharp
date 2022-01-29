@@ -18,7 +18,7 @@ public class DeadMenu : Menu
         {
             inputDelay--; // the inputDelay will minus by 1. 
         }
-        else if (input.attack.clicked || input.menu.clicked)
+        else if (input.Attack.Clicked || input.Menu.Clicked)
         {
             game.Menu = new TitleMenu(); //If the delay is equal or lower than 0, then the person can go back to the title menu.
         }
@@ -36,7 +36,7 @@ public class DeadMenu : Menu
         minutes %= 60; // fixes the number of minutes in the game. Without this, 1h 24min would look like: 1h 84min.
         seconds %= 60; // fixes the number of seconds in the game. Without this, 2min 35sec would look like: 2min 155sec.
 
-        string timestring = ""; //Full text of time.
+        string timestring;
         if (hours > 0)
         {
             timestring = hours + "h" + (minutes < 10 ? "0" : "") + minutes + "m";// If over an hour has passed, then it will show hours and minutes.

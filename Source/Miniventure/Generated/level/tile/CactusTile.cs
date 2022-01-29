@@ -31,12 +31,12 @@ public class CactusTile : Tile
         level.Add(new TextParticle("" + dmg, (x * 16) + 8, (y * 16) + 8, Color.Get(-1, 500, 500, 500))); // creates a text particle about how much damage has been done.
         if (damage >= 10)
         { // If the damage is equal to, or larger than 10 params then[]
-            int count = random.NextInt(2) + 1; // count is random from 0 to 1 and adds one. (1-2 count)
+            int count = Random.NextInt(2) + 1; // count is random from 0 to 1 and adds one. (1-2 count)
             for (int i = 0; i < count; i++)
             { //cycles through the count
-                level.Add(new ItemEntity(new ResourceItem(Resource.cactusFlower), (x * 16) + random.NextInt(10) + 3, (y * 16) + random.NextInt(10) + 3));//adds a cactus flower
+                level.Add(new ItemEntity(new ResourceItem(Resource.cactusFlower), (x * 16) + Random.NextInt(10) + 3, (y * 16) + Random.NextInt(10) + 3));//adds a cactus flower
             }
-            level.SetTile(x, y, Tile.sand, 0); // sets the tile to cactus
+            level.SetTile(x, y, Tile.Sand, 0); // sets the tile to cactus
         }
         else
         {

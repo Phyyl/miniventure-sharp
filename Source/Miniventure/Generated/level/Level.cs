@@ -2,7 +2,7 @@ namespace com.mojang.ld22.level;
 
 public class Level
 {
-    private Random random = new Random();
+    private readonly Random random = new();
 
     public int Width, Height;
 
@@ -15,10 +15,10 @@ public class Level
     public int grassColor = 141;
     public int dirtColor = 322;
     public int sandColor = 550;
-    private int depth;
+    private readonly int depth;
     public int monsterDensity = 8;
 
-    public List<Entity> entities = new List<Entity>();
+    public List<Entity> entities = new();
 
     public Level(int w, int h, int level, Level parentLevel)
     {
@@ -33,16 +33,16 @@ public class Level
 
         if (level == 0)
         {
-            maps = LevelGen.createAndValidateTopMap(w, h);
+            maps = LevelGen.CreateAndValidateTopMap(w, h);
         }
         else if (level < 0)
         {
-            maps = LevelGen.createAndValidateUndergroundMap(w, h, -level);
+            maps = LevelGen.CreateAndValidateUndergroundMap(w, h, -level);
             monsterDensity = 4;
         }
         else
         {
-            maps = LevelGen.createAndValidateSkyMap(w, h);
+            maps = LevelGen.CreateAndValidateSkyMap(w, h);
             monsterDensity = 4;
         }
 
@@ -55,15 +55,15 @@ public class Level
             {
                 for (int x = 0; x < w; x++)
                 {
-                    if (parentLevel.GetTile(x, y) == Tile.stairsDown)
+                    if (parentLevel.GetTile(x, y) == Tile.StairsDown)
                     {
 
-                        SetTile(x, y, Tile.stairsUp, 0);
+                        SetTile(x, y, Tile.StairsUp, 0);
 
-                        Tile tile = Tile.dirt;
+                        Tile tile = Tile.Dirt;
                         if (level == 0)
                         {
-                            tile = Tile.hardRock;
+                            tile = Tile.HardRock;
                         }
 
                         SetTile(x - 1, y, tile, 0);
@@ -88,14 +88,14 @@ public class Level
 
         if (level == 1)
         {
-            AirWizard aw = new AirWizard();
+            AirWizard aw = new();
             aw.X = w * 8;
             aw.Y = h * 8;
             Add(aw);
         }
     }
 
-    public virtual void renderBackground(Screen screen, int xScroll, int yScroll)
+    public void RenderBackground(Screen screen, int xScroll, int yScroll)
     {
         int xo = xScroll >> 4;
         int yo = yScroll >> 4;
@@ -112,7 +112,7 @@ public class Level
         screen.SetOffset(0, 0);
     }
 
-    private List<Entity> rowSprites = new List<Entity>();
+    private readonly List<Entity> rowSprites = new();
 
     public Player player;
 
@@ -190,7 +190,7 @@ public class Level
         screen.SetOffset(0, 0);
     }
 
-    private void SortAndRender(Screen screen, List<Entity> list)
+    private static void SortAndRender(Screen screen, List<Entity> list)
     {
         list.Sort((Entity e0, Entity e1) =>
         {
@@ -217,10 +217,10 @@ public class Level
     {
         if (x < 0 || y < 0 || x >= Width || y >= Height)
         {
-            return Tile.rock;
+            return Tile.Rock;
         }
 
-        return Tile.tiles[tiles[x + (y * Width)]];
+        return Tile.Tiles[tiles[x + (y * Width)]];
     }
 
     public virtual void SetTile(int x, int y, Tile t, int dataVal)
@@ -256,9 +256,9 @@ public class Level
 
     public virtual void Add(Entity entity)
     {
-        if (entity is Player)
+        if (entity is Player player1)
         {
-            player = (Player)entity;
+            player = player1;
         }
 
         entity.Removed = false;
@@ -388,7 +388,7 @@ public class Level
                     continue;
                 }
 
-                List<Entity> entities = entitiesInTiles[x + (y * Width)];
+                Entity[] entities = entitiesInTiles[x + (y * Width)].ToArray();
 
                 foreach (var entity in entities)
                 {

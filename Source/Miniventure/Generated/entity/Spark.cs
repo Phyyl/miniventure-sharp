@@ -4,11 +4,11 @@ namespace com.mojang.ld22.entity;
 
 public class Spark : Entity
 {
-    private int lifeTime; // how much time until the spark disappears
+    private readonly int lifeTime; // how much time until the spark disappears
     public double xa, ya; // the x and y acceleration
     public double xx, yy; // the x and y positions
     private int time; // the amount of time that has occurred
-    private AirWizard owner; // the AirWizard that created this spark
+    private readonly AirWizard owner; // the AirWizard that created this spark
 
     public Spark(AirWizard owner, double xa, double ya)
         : base(owner.X, owner.Y, 0, 0)

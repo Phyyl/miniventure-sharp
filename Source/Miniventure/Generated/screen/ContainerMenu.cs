@@ -3,10 +3,10 @@ namespace com.mojang.ld22.screen;
 
 public class ContainerMenu : Menu
 {
-    private Player player; // The player that is looking inside the chest
-    private Inventory container; // The inventory of the chest
+    private readonly Player player; // The player that is looking inside the chest
+    private readonly Inventory container; // The inventory of the chest
     private int selected = 0; // The selected item
-    private string title; // The title of the chest
+    private readonly string title; // The title of the chest
     private int oSelected; // the old selected option (this is used to temporarily save spots moving from chest to inventory & vice-versa)
     private int window = 0; // currently selected window (player's inventory, or chest's inventory)
 
@@ -20,19 +20,19 @@ public class ContainerMenu : Menu
 
     public override void Update()
     {
-        if (input.menu.clicked)
+        if (input.Menu.Clicked)
         {
             game.Menu = null; // If the player selects the "menu" key, then it will exit the chest
         }
 
-        if (input.left.clicked)
+        if (input.Left.Clicked)
         { //if the left key is params pressed[]
             window = 0; // The current window will be of the chest
             int tmp = selected; // temp integer will be the currently selected
             selected = oSelected; // selected will become the oSelected
             oSelected = tmp; // oSelected will become the temp integer (save spot for when you switch)
         }
-        if (input.right.clicked)
+        if (input.Right.Clicked)
         { //if the right key is params pressed[]
             window = 1; // The current window will be of the player's inventory
             int tmp = selected; // temp integer will be the currently selected
@@ -61,12 +61,12 @@ public class ContainerMenu : Menu
         Inventory i2 = window == 0 ? player.inventory : container; // If the window is equal to 0, then the backup inventory is the player inventory, else it's the chest's
 
         int len = i.Items.Count; // Size of the main inventory
-        if (input.up.clicked)
+        if (input.Up.Clicked)
         {
             selected--; // If the up key is press then the selection will go up one item
         }
 
-        if (input.down.clicked)
+        if (input.Down.Clicked)
         {
             selected++; // If the down key is pressed then the selection will go down one item
         }
@@ -86,7 +86,7 @@ public class ContainerMenu : Menu
             selected -= len; // If the current selection goes past the bottom entry, then it will loop to the top.
         }
 
-        if (input.attack.clicked && len > 0)
+        if (input.Attack.Clicked && len > 0)
         {
             Item item = i.Items[selected];
             i.Items.RemoveAt(selected);

@@ -5,9 +5,9 @@ namespace com.mojang.ld22.level.levelgen;
 
 public class LevelGen
 {
-    private static readonly Random random = new Random(); //Initializes the random class
+    private static readonly Random random = new(); //Initializes the random class
     public double[] values; //An array of doubles, used to help making noise for the map
-    private int w, h; // width and height of the map
+    private readonly int w, h; // width and height of the map
 
     /** This creates noise to create random values for level generation */
     public LevelGen(int w, int h, int featureSize)
@@ -21,7 +21,7 @@ public class LevelGen
         { // Loops through the width of the map, going up by the featureSize value each time. 
             for (int x = 0; x < w; x += featureSize)
             { // Loops through the width of the map a second time, going up by the featureSize value each time.
-                setSample(x, y, (random.NextFloat() * 2) - 1); // sets a random value at a x and y point.
+                SetSample(x, y, (random.NextFloat() * 2) - 1); // sets a random value at a x and y point.
             }
         }
 
@@ -35,10 +35,10 @@ public class LevelGen
             { // Loops through the width value of the map, going up by the stepSize value each time. 
                 for (int x = 0; x < w; x += stepSize)
                 { // Loops through the width value of the map, going up by the stepSize value each time. 
-                    double a = sample(x, y); // gets a sample value from the x and y value.
-                    double b = sample(x + stepSize, y); // gets a sample value from the next value of x, and the current y value.
-                    double c = sample(x, y + stepSize); // gets a sample value from the current x, and next value of y.
-                    double d = sample(x + stepSize, y + stepSize); // gets a sample value from the next x value and next y value.
+                    double a = Sample(x, y); // gets a sample value from the x and y value.
+                    double b = Sample(x + stepSize, y); // gets a sample value from the next value of x, and the current y value.
+                    double c = Sample(x, y + stepSize); // gets a sample value from the current x, and next value of y.
+                    double d = Sample(x + stepSize, y + stepSize); // gets a sample value from the next x value and next y value.
 
                     /* Well doesn't this one look complicated? No worries, just look at it step by step. 
 					 *  The first thing it does is add up a+b+c+d as one variable. Then divides that number by 4 (making an average).
@@ -50,19 +50,19 @@ public class LevelGen
 					 *   hope this helps a little bit, I'm not an algebra teacher lol. */
                     double e = ((a + b + c + d) / 4.0) + (((random.NextFloat() * 2) - 1) * stepSize * scale);
 
-                    setSample(x + halfStep, y + halfStep, e); // sets the value e at the next x value and next y value. repeat these until loop is done.
+                    SetSample(x + halfStep, y + halfStep, e); // sets the value e at the next x value and next y value. repeat these until loop is done.
                 }
             }
             for (int y = 0; y < w; y += stepSize)
             { // Loops through the width value of the map, going up by the stepSize value each time. 
                 for (int x = 0; x < w; x += stepSize)
                 { // Loops through the width value of the map, going up by the stepSize value each time. 
-                    double a = sample(x, y); // gets a sample value from the x and y value.
-                    double b = sample(x + stepSize, y); // gets a sample value from the next value of x, and the current y value.
-                    double c = sample(x, y + stepSize); // gets a sample value from the current x, and next value of y.
-                    double d = sample(x + halfStep, y + halfStep); // gets a sample value from the next x value and next y value.
-                    double e = sample(x + halfStep, y - halfStep); // gets a sample value from the next x value and the previous y value.
-                    double f = sample(x - halfStep, y + halfStep); // gets a sample value from the previous x value and the next y value.
+                    double a = Sample(x, y); // gets a sample value from the x and y value.
+                    double b = Sample(x + stepSize, y); // gets a sample value from the next value of x, and the current y value.
+                    double c = Sample(x, y + stepSize); // gets a sample value from the current x, and next value of y.
+                    double d = Sample(x + halfStep, y + halfStep); // gets a sample value from the next x value and next y value.
+                    double e = Sample(x + halfStep, y - halfStep); // gets a sample value from the next x value and the previous y value.
+                    double f = Sample(x - halfStep, y + halfStep); // gets a sample value from the previous x value and the next y value.
 
                     /* H & g are the same as e from the last paragraph. So see that for more info. */
 
@@ -72,8 +72,8 @@ public class LevelGen
                     /* (Average of a,c,d,f) + ((value from 0 to 1) * 2 - 1) * (stepSize value) * (scale value) * 0.5 */
                     double g = ((a + c + d + f) / 4.0) + (((random.NextFloat() * 2) - 1) * stepSize * scale * 0.5);
 
-                    setSample(x + halfStep, y, H); // sets the H value at the half-way position of the next x value, and the current y value. 
-                    setSample(x, y + halfStep, g); // sets the g value at the current x value, and half-way position of the next y value.
+                    SetSample(x + halfStep, y, H); // sets the H value at the half-way position of the next x value, and the current y value. 
+                    SetSample(x, y + halfStep, g); // sets the g value at the current x value, and half-way position of the next y value.
                 }
             }
             stepSize /= 2; // cuts the stepSize value in half.
@@ -83,23 +83,23 @@ public class LevelGen
     }
 
     /** Returns a value from the values array based on the X and Y coordinates */
-    private double sample(int x, int y)
+    private double Sample(int x, int y)
     {
         return values[(x & (w - 1)) + ((y & (h - 1)) * w)];
     }
 
     /** Sets a value in the values array based on the X and Y coordinates */
-    private void setSample(int x, int y, double value)
+    private void SetSample(int x, int y, double value)
     {
         values[(x & (w - 1)) + ((y & (h - 1)) * w)] = value;
     }
 
     /** Creates and determines if the surface map is ready to be played. */
-    public static byte[][] createAndValidateTopMap(int w, int h)
+    public static byte[][] CreateAndValidateTopMap(int w, int h)
     {
         do
         { // Keep repeating this loop until it's params done[]
-            byte[][] result = createTopMap(w, h); // creates the terrain.
+            byte[][] result = CreateTopMap(w, h); // creates the terrain.
 
             int[] count = new int[256]; // creates a new integer array
 
@@ -111,27 +111,27 @@ public class LevelGen
 
             /* continue (in this context), will start the loop all over again. */
 
-            if (count[Tile.rock.id & 0xff] < 100)
+            if (count[Tile.Rock.id & 0xff] < 100)
             {
                 continue; // If there are less than 100 rock tiles on the map, then restart the loop
             }
 
-            if (count[Tile.sand.id & 0xff] < 100)
+            if (count[Tile.Sand.id & 0xff] < 100)
             {
                 continue; // If there are less than 100 sand tiles on the map, then restart the loop
             }
 
-            if (count[Tile.grass.id & 0xff] < 100)
+            if (count[Tile.Grass.id & 0xff] < 100)
             {
                 continue; // If there are less than 100 grass tiles, then restart the loop
             }
 
-            if (count[Tile.tree.id & 0xff] < 100)
+            if (count[Tile.Tree.id & 0xff] < 100)
             {
                 continue; // If there are less than 100 trees, then restart the loop
             }
 
-            if (count[Tile.stairsDown.id & 0xff] < 2)
+            if (count[Tile.StairsDown.id & 0xff] < 2)
             {
                 continue; // If there are less than 2 staircases going down, then restart the loop
             }
@@ -142,11 +142,11 @@ public class LevelGen
     }
 
     /** Creates and determines if the underground map is ready to be played. */
-    public static byte[][] createAndValidateUndergroundMap(int w, int h, int depth)
+    public static byte[][] CreateAndValidateUndergroundMap(int w, int h, int depth)
     {
         do
         { // Keep repeating this loop until it's params done[]
-            byte[][] result = createUndergroundMap(w, h, depth); // creates the terrain.
+            byte[][] result = CreateUndergroundMap(w, h, depth); // creates the terrain.
 
             int[] count = new int[256]; // creates a new integer array
 
@@ -155,24 +155,24 @@ public class LevelGen
             { // Loops though the Width * Height of the map
                 count[result[0][i] & 0xff]++; // Increases the data value by 1, trust me it's important.
             }
-            if (count[Tile.rock.id & 0xff] < 100)
+            if (count[Tile.Rock.id & 0xff] < 100)
             {
                 continue; // If there are less than 100 rock tiles on the map, then restart the loop
             }
 
-            if (count[Tile.dirt.id & 0xff] < 100)
+            if (count[Tile.Dirt.id & 0xff] < 100)
             {
                 continue; // If there are less than 100 dirt tiles on the map, then restart the loop
             }
 
-            if (count[(Tile.ironOre.id & 0xff) + depth - 1] < 20)
+            if (count[(Tile.IronOre.id & 0xff) + depth - 1] < 20)
             {
                 continue; // If there are less than 20 ore tiles on the map, then restart the loop
             }
 
             if (depth < 3)
             {
-                if (count[Tile.stairsDown.id & 0xff] < 2)
+                if (count[Tile.StairsDown.id & 0xff] < 2)
                 {
                     continue; // if there is less than 2 stairs down on the map (besides lava level), then restart the loop.
                 }
@@ -184,11 +184,11 @@ public class LevelGen
     }
 
     /** Creates and determines if the sky map is ready to be played. */
-    public static byte[][] createAndValidateSkyMap(int w, int h)
+    public static byte[][] CreateAndValidateSkyMap(int w, int h)
     {
         do
         { // Keep repeating this loop until it's params done[]
-            byte[][] result = createSkyMap(w, h); // creates the terrain.
+            byte[][] result = CreateSkyMap(w, h); // creates the terrain.
 
             int[] count = new int[256]; // creates a new integer array
 
@@ -197,12 +197,12 @@ public class LevelGen
             { // Loops though the Width * Height of the map
                 count[result[0][i] & 0xff]++; // Increases the data value by 1, trust me it's important.
             }
-            if (count[Tile.cloud.id & 0xff] < 2000)
+            if (count[Tile.Cloud.id & 0xff] < 2000)
             {
                 continue; //If there are less than 2000 clouds on the map, then restart the loop
             }
 
-            if (count[Tile.stairsDown.id & 0xff] < 2)
+            if (count[Tile.StairsDown.id & 0xff] < 2)
             {
                 continue; //If there are less than 2 stairs down on the map, then restart the loop
             }
@@ -213,15 +213,14 @@ public class LevelGen
     }
 
     /** Creates the surface map */
-    private static byte[][] createTopMap(int w, int h)
+    private static byte[][] CreateTopMap(int w, int h)
     {
+        LevelGen mnoise1 = new(w, h, 16); // creates noise used for map generation, see the top of this class for more info.
+        LevelGen mnoise2 = new(w, h, 16); // creates noise used for map generation, see the top of this class for more info.
+        LevelGen mnoise3 = new(w, h, 16); // creates noise used for map generation, see the top of this class for more info.
 
-        LevelGen mnoise1 = new LevelGen(w, h, 16); // creates noise used for map generation, see the top of this class for more info.
-        LevelGen mnoise2 = new LevelGen(w, h, 16); // creates noise used for map generation, see the top of this class for more info.
-        LevelGen mnoise3 = new LevelGen(w, h, 16); // creates noise used for map generation, see the top of this class for more info.
-
-        LevelGen noise1 = new LevelGen(w, h, 32); // creates noise used for map generation, see the top of this class for more info.
-        LevelGen noise2 = new LevelGen(w, h, 32); // creates noise used for map generation, see the top of this class for more info.
+        LevelGen noise1 = new(w, h, 32); // creates noise used for map generation, see the top of this class for more info.
+        LevelGen noise2 = new(w, h, 32); // creates noise used for map generation, see the top of this class for more info.
 
         byte[] map = new byte[w * h]; // The tiles of the map
         byte[] data = new byte[w * h]; // the data of the tiles
@@ -266,15 +265,15 @@ public class LevelGen
                 val = val + 1 - (dist * 20); // new value of val, takes distance into account.
                 if (val < -0.5)
                 { // If the readonly value is less than -0.params 5[]
-                    map[i] = Tile.water.id; // the tile will become water
+                    map[i] = Tile.Water.id; // the tile will become water
                 }
                 else if (val > 0.5 && mval < -1.5)
                 { // else if the val is larger 0.5 and mval is smaller than -1.params 5[]
-                    map[i] = Tile.rock.id; // the tile will become rock
+                    map[i] = Tile.Rock.id; // the tile will become rock
                 }
                 else
                 { // If the values don't agree with those params then[]
-                    map[i] = Tile.grass.id; // the tile will become grass.
+                    map[i] = Tile.Grass.id; // the tile will become grass.
                 }
             }
         }
@@ -302,9 +301,9 @@ public class LevelGen
                         {
                             if (xx >= 0 && yy >= 0 && xx < w && yy < h)
                             { // if xx or yy is equal or larger than 0, and smaller than the width and height of the params map[]
-                                if (map[xx + (yy * w)] == Tile.grass.id)
+                                if (map[xx + (yy * w)] == Tile.Grass.id)
                                 { // If the specific xx and yy coordinates happen to be a grass params tile[]
-                                    map[xx + (yy * w)] = Tile.sand.id; // Then replace that tile with a sand tile.
+                                    map[xx + (yy * w)] = Tile.Sand.id; // Then replace that tile with a sand tile.
                                 }
                             }
                         }
@@ -323,9 +322,9 @@ public class LevelGen
                 int yy = y + random.NextInt(15) - random.NextInt(15); // y + (random value between 0 to 14) - (random value between 0 to 14)
                 if (xx >= 0 && yy >= 0 && xx < w && yy < h)
                 { // if xx or yy is equal or larger than 0, and smaller than the width and height of the params map[]
-                    if (map[xx + (yy * w)] == Tile.grass.id)
+                    if (map[xx + (yy * w)] == Tile.Grass.id)
                     { // If the specific xx and yy coordinates happen to be a grass params tile[]
-                        map[xx + (yy * w)] = Tile.tree.id; // replace the tile with a tree
+                        map[xx + (yy * w)] = Tile.Tree.id; // replace the tile with a tree
                     }
                 }
             }
@@ -342,9 +341,9 @@ public class LevelGen
                 int yy = y + random.NextInt(5) - random.NextInt(5); // y + (random value between 0 to 4) - (random value between 0 to 4)
                 if (xx >= 0 && yy >= 0 && xx < w && yy < h)
                 { // if xx or yy is equal or larger than 0, and smaller than the width and height of the params map[]
-                    if (map[xx + (yy * w)] == Tile.grass.id)
+                    if (map[xx + (yy * w)] == Tile.Grass.id)
                     { // If the specific xx and yy coordinates happen to be a grass params tile[]
-                        map[xx + (yy * w)] = Tile.flower.id; // replace the tile with a flower tile
+                        map[xx + (yy * w)] = Tile.Flower.id; // replace the tile with a flower tile
                         data[xx + (yy * w)] = (byte)(col + (random.NextInt(4) * 16)); // Adds data to the tile, (flipping it sideways)
                     }
                 }
@@ -357,9 +356,9 @@ public class LevelGen
             int yy = random.NextInt(h);// A random number between 0 to the map's height (minus 1, because 0 is the first number)
             if (xx >= 0 && yy >= 0 && xx < w && yy < h)
             { // if xx or yy is equal or larger than 0, and smaller than the width and height of the params map[]
-                if (map[xx + (yy * w)] == Tile.sand.id)
+                if (map[xx + (yy * w)] == Tile.Sand.id)
                 { // If the specific xx and yy coordinates happen to be a sand params tile[]
-                    map[xx + (yy * w)] = Tile.cactus.id; // replaces that sand tile with a cactus tile
+                    map[xx + (yy * w)] = Tile.Cactus.id; // replaces that sand tile with a cactus tile
                 }
             }
         }
@@ -374,14 +373,14 @@ public class LevelGen
             {
                 for (int xx = x - 1; xx <= x + 1; xx++)
                 { // Loops if xx is smaller or equal to x + 1
-                    if (map[xx + (yy * w)] != Tile.rock.id)
+                    if (map[xx + (yy * w)] != Tile.Rock.id)
                     {
                         goto stairsLoop; // If the current tile is NOT a rock tile, then it skips the loops back to the top.
                     }
                 }
             }
 
-            map[x + (y * w)] = Tile.stairsDown.id; // replaces the stone tile with a stairsDown tile.
+            map[x + (y * w)] = Tile.StairsDown.id; // replaces the stone tile with a stairsDown tile.
             count++; // adds the count of stairs by 1.
             if (count == 4)
             {
@@ -398,22 +397,22 @@ public class LevelGen
     }
 
     /** Creates the underground maps (mines, water mines, lava mines) */
-    private static byte[][] createUndergroundMap(int w, int h, int depth)
+    private static byte[][] CreateUndergroundMap(int w, int h, int depth)
     {
-        LevelGen mnoise1 = new LevelGen(w, h, 16);
-        LevelGen mnoise2 = new LevelGen(w, h, 16);  /* creates noise used for map generation, see the top of this class for more info. */
-        LevelGen mnoise3 = new LevelGen(w, h, 16);
+        LevelGen mnoise1 = new(w, h, 16);
+        LevelGen mnoise2 = new(w, h, 16);  /* creates noise used for map generation, see the top of this class for more info. */
+        LevelGen mnoise3 = new(w, h, 16);
 
-        LevelGen nnoise1 = new LevelGen(w, h, 16);
-        LevelGen nnoise2 = new LevelGen(w, h, 16);  /* creates noise used for map generation, see the top of this class for more info. */
-        LevelGen nnoise3 = new LevelGen(w, h, 16);
+        LevelGen nnoise1 = new(w, h, 16);
+        LevelGen nnoise2 = new(w, h, 16);  /* creates noise used for map generation, see the top of this class for more info. */
+        LevelGen nnoise3 = new(w, h, 16);
 
-        LevelGen wnoise1 = new LevelGen(w, h, 16);
-        LevelGen wnoise2 = new LevelGen(w, h, 16);  /* creates noise used for map generation, see the top of this class for more info. */
-        LevelGen wnoise3 = new LevelGen(w, h, 16);
+        LevelGen wnoise1 = new(w, h, 16);
+        LevelGen wnoise2 = new(w, h, 16);  /* creates noise used for map generation, see the top of this class for more info. */
+        LevelGen wnoise3 = new(w, h, 16);
 
-        LevelGen noise1 = new LevelGen(w, h, 32);  /* creates noise used for map generation, see the top of this class for more info. */
-        LevelGen noise2 = new LevelGen(w, h, 32);
+        LevelGen noise1 = new(w, h, 32);  /* creates noise used for map generation, see the top of this class for more info. */
+        LevelGen noise2 = new(w, h, 32);
 
         byte[] map = new byte[w * h];  // The tiles of the map
         byte[] data = new byte[w * h];  // The data of the tiles
@@ -445,9 +444,9 @@ public class LevelGen
                 nval = (Math.Abs(nval - nnoise3.values[i]) * 3) - 2;
 
                 /* Gets a absolute value from the values from 2 noise objects */
-                double wval = Math.Abs(wnoise1.values[i] - wnoise2.values[i]);
+                _ = Math.Abs(wnoise1.values[i] - wnoise2.values[i]);
                 /* Gets a absolute value from the values from the previous wval object and mnoise3, times it by 3 and subtracts by 2.*/
-                wval = (Math.Abs(nval - wnoise3.values[i]) * 3) - 2;
+                double wval = (Math.Abs(nval - wnoise3.values[i]) * 3) - 2;
 
                 double xd = (x / (w - 1.0) * 2) - 1; // The x distance: (x value) / ((width value) - 1) * 2 - 1
                 double yd = (y / (h - 1.0) * 2) - 1; // The y distance: (y value) / ((height value) - 1) * 2 - 1
@@ -470,20 +469,20 @@ public class LevelGen
                 {//if val is larger than -2, and wval is larger than -2 + (currentdepth / 2 * 3)
                     if (depth > 2) // if the depth is larger than params 2[]
                     {
-                        map[i] = Tile.lava.id; // the tile will become lava
+                        map[i] = Tile.Lava.id; // the tile will become lava
                     }
                     else
                     {
-                        map[i] = Tile.water.id; // else it will become water
+                        map[i] = Tile.Water.id; // else it will become water
                     }
                 }
                 else if (val > -2 && (mval < -1.7 || nval < -1.4))
                 {//if val is larger than -2, and mval is smaller than -1.7 OR nval is smaller than -1.4 params then[]
-                    map[i] = Tile.dirt.id; // the till will be dirt
+                    map[i] = Tile.Dirt.id; // the till will be dirt
                 }
                 else
                 {
-                    map[i] = Tile.rock.id; // else it will be rock
+                    map[i] = Tile.Rock.id; // else it will be rock
                 }
             }
         }
@@ -502,9 +501,9 @@ public class LevelGen
                     int yy = y + random.NextInt(5) - random.NextInt(5); // y + (random number between 0 to 4) - (random number between 0 to 4)
                     if (xx >= r && yy >= r && xx < w - r && yy < h - r)
                     { // If xx & yy are equal to or larger than r, and smaller than (w - r) and (h - r) params then[]
-                        if (map[xx + (yy * w)] == Tile.rock.id)
+                        if (map[xx + (yy * w)] == Tile.Rock.id)
                         { // If the current tile is a rock params tile[]
-                            map[xx + (yy * w)] = (byte)((Tile.ironOre.id & 0xff) + depth - 1); // Then set the ore tile (changes from Iron, Gold, & Gem depending on the depth)
+                            map[xx + (yy * w)] = (byte)((Tile.IronOre.id & 0xff) + depth - 1); // Then set the ore tile (changes from Iron, Gold, & Gem depending on the depth)
                         }
                     }
                 }
@@ -523,14 +522,14 @@ public class LevelGen
                 {
                     for (int xx = x - 1; xx <= x + 1; xx++)
                     {  // Loops if xx is smaller or equal to x + 1
-                        if (map[xx + (yy * w)] != Tile.rock.id)
+                        if (map[xx + (yy * w)] != Tile.Rock.id)
                         {
                             goto stairsLoop; // If the current Tile is not a rock then start the main loop all over.
                         }
                     }
                 }
 
-                map[x + (y * w)] = Tile.stairsDown.id; // sets the tile to a stairsDown tile
+                map[x + (y * w)] = Tile.StairsDown.id; // sets the tile to a stairsDown tile
                 count++; //increases the count value
                 if (count == 4)
                 {
@@ -547,10 +546,10 @@ public class LevelGen
         return new byte[][] { map, data };  // returns the map's tiles and data.
     }
 
-    private static byte[][] createSkyMap(int w, int h)
+    private static byte[][] CreateSkyMap(int w, int h)
     {
-        LevelGen noise1 = new LevelGen(w, h, 8);  // creates noise used for map generation, see the top of this class for more info.
-        LevelGen noise2 = new LevelGen(w, h, 8);  // creates noise used for map generation, see the top of this class for more info.
+        LevelGen noise1 = new(w, h, 8);  // creates noise used for map generation, see the top of this class for more info.
+        LevelGen noise2 = new(w, h, 8);  // creates noise used for map generation, see the top of this class for more info.
 
         byte[] map = new byte[w * h]; // The tiles of the map
         byte[] data = new byte[w * h]; // The data of the tiles
@@ -591,11 +590,11 @@ public class LevelGen
 
                 if (val < -0.25)
                 { // If val is smaller than -0.25 params then[]
-                    map[i] = Tile.infiniteFall.id; // the tile is a infiniteFall tile
+                    map[i] = Tile.InfiniteFall.id; // the tile is a infiniteFall tile
                 }
                 else
                 {
-                    map[i] = Tile.cloud.id; // else it will be a cloud tile
+                    map[i] = Tile.Cloud.id; // else it will be a cloud tile
                 }
             }
         }
@@ -610,14 +609,14 @@ public class LevelGen
             {
                 for (int xx = x - 1; xx <= x + 1; xx++)
                 { // Loops if xx is smaller or equal to x + 1
-                    if (map[xx + (yy * w)] != Tile.cloud.id)
+                    if (map[xx + (yy * w)] != Tile.Cloud.id)
                     {
                         goto cactusLoop; // If the current tile is NOT a cloud tile, then it skips the loops back to the top.
                     }
                 }
             }
 
-            map[x + (y * w)] = Tile.cloudCactus.id; // replaces the cloud tile with a cloud cactus tile.
+            map[x + (y * w)] = Tile.CloudCactus.id; // replaces the cloud tile with a cloud cactus tile.
         cactusLoop: while (false)
             {
                 ;
@@ -634,14 +633,14 @@ public class LevelGen
             {
                 for (int xx = x - 1; xx <= x + 1; xx++)
                 { // Loops if xx is smaller or equal to x + 1
-                    if (map[xx + (yy * w)] != Tile.cloud.id)
+                    if (map[xx + (yy * w)] != Tile.Cloud.id)
                     {
                         goto stairsLoop; // If the current tile is NOT a cloud tile, then it skips the loops back to the top.
                     }
                 }
             }
 
-            map[x + (y * w)] = Tile.stairsDown.id; // replaces the cloud tile with a stairs tile.
+            map[x + (y * w)] = Tile.StairsDown.id; // replaces the cloud tile with a stairs tile.
             count++; // increases the count value by 1
             if (count == 2)
             {

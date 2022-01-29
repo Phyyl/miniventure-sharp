@@ -77,20 +77,20 @@ public class TreeTile : Tile
     /** What happens when you punch the tree. */
     public override void Hurt(Level level, int x, int y, Mob source, int dmg, Direction attackDir)
     {
-        hurt(level, x, y, dmg); // you do damage to it
+        Hurt(level, x, y, dmg); // you do damage to it
     }
 
     /** What happens when you use a item on the tree */
     public override bool Interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir)
     {
-        if (item is ToolItem)
+        // converts the Item object to a ToolItem object
+        if (item is ToolItem tool)
         { // if the item is a params tool[]
-            ToolItem tool = (ToolItem)item; // converts the Item object to a ToolItem object
             if (tool.Type == ToolType.Axe)
             { // if the type of tool is an params axe[]
-                if (player.payStamina(4 - (int)tool.Level))
+                if (player.PayStamina(4 - (int)tool.Level))
                 { // if the player can pay the stamina
-                    hurt(level, xt, yt, random.NextInt(10) + ((int)tool.Level * 5) + 10); // do extra damage to the tree
+                    Hurt(level, xt, yt, Random.NextInt(10) + ((int)tool.Level * 5) + 10); // do extra damage to the tree
                     return true;
                 }
             }
@@ -98,13 +98,13 @@ public class TreeTile : Tile
         return false;
     }
 
-    private void hurt(Level level, int x, int y, int dmg)
+    private void Hurt(Level level, int x, int y, int dmg)
     {
         {
-            int count = random.NextInt(10) == 0 ? 1 : 0; //if a random number between 0 to 9 equals 0, then count will equal 1. else it will be 0.
+            int count = Random.NextInt(10) == 0 ? 1 : 0; //if a random number between 0 to 9 equals 0, then count will equal 1. else it will be 0.
             for (int i = 0; i < count; i++)
             { // loop through the count
-                level.Add(new ItemEntity(new ResourceItem(Resource.apple), (x * 16) + random.NextInt(10) + 3, (y * 16) + random.NextInt(10) + 3));//add an apple to the world
+                level.Add(new ItemEntity(new ResourceItem(Resource.apple), (x * 16) + Random.NextInt(10) + 3, (y * 16) + Random.NextInt(10) + 3));//add an apple to the world
             }
         }
         int damage = level.GetData(x, y) + dmg; // adds damage value to the tree's data.
@@ -112,17 +112,17 @@ public class TreeTile : Tile
         level.Add(new TextParticle("" + dmg, (x * 16) + 8, (y * 16) + 8, Color.Get(-1, 500, 500, 500))); // creates a text particle to tell how much damage the player did.
         if (damage >= 20)
         { // if damage is larger than or equal to 0
-            int count = random.NextInt(2) + 1; // random number between 1 to 2
+            int count = Random.NextInt(2) + 1; // random number between 1 to 2
             for (int i = 0; i < count; i++)
             { // cycles through the count
-                level.Add(new ItemEntity(new ResourceItem(Resource.wood), (x * 16) + random.NextInt(10) + 3, (y * 16) + random.NextInt(10) + 3)); // adds wood to the world
+                level.Add(new ItemEntity(new ResourceItem(Resource.wood), (x * 16) + Random.NextInt(10) + 3, (y * 16) + Random.NextInt(10) + 3)); // adds wood to the world
             }
-            count = random.NextInt(random.NextInt(4) + 1); // random number between 1 to 4
+            count = Random.NextInt(Random.NextInt(4) + 1); // random number between 1 to 4
             for (int i = 0; i < count; i++)
             { // cycles through the count
-                level.Add(new ItemEntity(new ResourceItem(Resource.acorn), (x * 16) + random.NextInt(10) + 3, (y * 16) + random.NextInt(10) + 3)); // adds an acorn to the world
+                level.Add(new ItemEntity(new ResourceItem(Resource.acorn), (x * 16) + Random.NextInt(10) + 3, (y * 16) + Random.NextInt(10) + 3)); // adds an acorn to the world
             }
-            level.SetTile(x, y, Tile.grass, 0); // sets the tile to grass
+            level.SetTile(x, y, Tile.Grass, 0); // sets the tile to grass
         }
         else
         {
