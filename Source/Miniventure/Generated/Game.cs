@@ -163,12 +163,11 @@ public class Game : VildmarkGame
             screen.Overlay(lightScreen, xScroll, yScroll); // overlays the light screen over the main screen.
         }
 
-        RenderGui(); // calls the renderGui() method.
+        RenderGui();
 
-        if (false)
+        if (!Window.IsFocused)
         {
-            //TODO: Implement window focus check in Vildmark
-            //renderFocusNagger();
+            RenderFocusNagger();
         }
 
         for (int y = 0; y < screen.Height; y++)
@@ -305,12 +304,12 @@ public class Game : VildmarkGame
     {
         tickCount++;
 
-        //TODO:
-        //if (!hasFocus())
-        //{
-        //    input.releaseAll();
-        //    return;
-        //}
+    TODO:
+        if (!Window.IsFocused)
+        {
+            input.ReleaseAll();
+            return;
+        }
 
         if (!player.Removed && !hasWon)
         {
