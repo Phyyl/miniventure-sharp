@@ -2,9 +2,9 @@ using Vildmark.Serialization;
 
 namespace Miniventure.Entities;
 
-public class Inventory : ISerializable
+public class Inventory : ISerializable, IDeserializable
 {
-    public List<Item> Items { get; } = new List<Item>();
+    public List<Item> Items { get; private set; } = new List<Item>();
 
     public virtual void Add(Item item)
     {
@@ -88,11 +88,11 @@ public class Inventory : ISerializable
 
     public void Serialize(IWriter writer)
     {
-
+        writer.WriteObjects(Items.ToArray(), true);
     }
 
     public void Deserialize(IReader reader)
     {
-
+        Items = reader.ReadObjects<Item>(true).ToList();
     }
 }

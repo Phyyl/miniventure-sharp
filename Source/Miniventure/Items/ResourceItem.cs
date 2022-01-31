@@ -1,10 +1,11 @@
-namespace Miniventure.Items;
+using Vildmark.Serialization;
 
+namespace Miniventure.Items;
 
 public class ResourceItem : Item
 {
-    public Resource Resource;
-    public int Count = 1;
+    public Resource Resource { get; set; }
+    public int Count { get; set; } = 1;
 
     public ResourceItem(Resource resource)
     {
@@ -17,24 +18,24 @@ public class ResourceItem : Item
         Count = count;
     }
 
+    private ResourceItem()
+    {
+    }
 
     public override int GetColor()
     {
         return Resource.Color;
     }
 
-
     public override int GetSprite()
     {
         return Resource.Sprite;
     }
 
-
     public override void RenderIcon(Screen screen, int x, int y)
     {
         screen.Render(x, y, Resource.Sprite, Resource.Color, 0);
     }
-
 
     public override void RenderInventory(Screen screen, int x, int y)
     {
@@ -72,5 +73,21 @@ public class ResourceItem : Item
     public override bool IsDepleted()
     {
         return Count <= 0;
+    }
+
+    public override void Serialize(IWriter writer)
+    {
+        base.Serialize(writer);
+
+        writer.WriteString(Resource.Name);
+        writer.WriteValue(Count);
+    }
+
+    public override void Deserialize(IReader reader)
+    {
+        base.Deserialize(reader);
+
+        Resource = Resource.All.GetValueOrDefault(reader.ReadString());
+        Count = reader.ReadValue<int>();
     }
 }

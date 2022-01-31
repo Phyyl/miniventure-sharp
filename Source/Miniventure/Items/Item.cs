@@ -3,7 +3,7 @@ using Vildmark.Serialization;
 namespace Miniventure.Items;
 
 
-public class Item : IListItem, ISerializable
+public class Item : IListItem, ISerializable, IDeserializable
 {
     public virtual int GetColor()
     {

@@ -1,16 +1,39 @@
-namespace Miniventure.Entities;
+using Vildmark.Serialization;
 
+namespace Miniventure.Entities;
 
 public class Slime : Mob
 {
     private int xa, ya;
     private int jumpTime = 0;
-    private readonly int lvl;
+    private int lvl;
 
     public Slime(int lvl)
         : base(lvl * lvl * 5, Random.NextInt(64 * 16), Random.NextInt(64 * 16))
     {
         this.lvl = lvl;
+    }
+
+    private Slime() : this(0) { }
+
+    public override void Serialize(IWriter writer)
+    {
+        base.Serialize(writer);
+
+        writer.WriteValue(xa);
+        writer.WriteValue(ya);
+        writer.WriteValue(jumpTime);
+        writer.WriteValue(lvl);
+    }
+
+    public override void Deserialize(IReader reader)
+    {
+        base.Deserialize(reader);
+
+        xa = reader.ReadValue<int>();
+        ya = reader.ReadValue<int>();
+        jumpTime = reader.ReadValue<int>();
+        lvl = reader.ReadValue<int>();
     }
 
     public override void Update()

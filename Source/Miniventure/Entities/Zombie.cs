@@ -1,15 +1,39 @@
+using Vildmark.Serialization;
+
 namespace Miniventure.Entities;
 
 public class Zombie : Mob
 {
     private int xa, ya;
-    private readonly int lvl;
+    private int lvl;
     private int randomWalkTime = 0;
 
     public Zombie(int lvl)
         : base(lvl * lvl * 10, Random.NextInt(64 * 16), Random.NextInt(64 * 16))
     {
         this.lvl = lvl;
+    }
+
+    private Zombie() : this(0) { }
+
+    public override void Serialize(IWriter writer)
+    {
+        base.Serialize(writer);
+
+        writer.WriteValue(xa);
+        writer.WriteValue(ya);
+        writer.WriteValue(randomWalkTime);
+        writer.WriteValue(lvl);
+    }
+
+    public override void Deserialize(IReader reader)
+    {
+        base.Deserialize(reader);
+
+        xa = reader.ReadValue<int>();
+        ya = reader.ReadValue<int>();
+        randomWalkTime = reader.ReadValue<int>();
+        lvl = reader.ReadValue<int>();
     }
 
     public override void Update()

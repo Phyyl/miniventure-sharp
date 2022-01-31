@@ -1,11 +1,10 @@
-﻿namespace Miniventure.Levels.Generation;
+﻿namespace Miniventure.Levels;
 
-public class TopLevelGenerationProvider : LevelGenerationProvider
+public class TopLevel : Level
 {
-    public TopLevelGenerationProvider(int width, int height, Level parentLevel)
-        : base(width, height, 0, parentLevel)
-    {
-    }
+    public override int Depth => 0;
+
+    public TopLevel() : base(128, 128) { }
 
     protected override void Generate(LevelData data)
     {
@@ -80,7 +79,7 @@ public class TopLevelGenerationProvider : LevelGenerationProvider
                         {
                             if (xx >= 0 && yy >= 0 && xx < Width && yy < Height)
                             {
-                                if (data[xx, yy].ID == Tile.Grass.Key)
+                                if (data[xx, yy].ID == Tile.Grass.ID)
                                 {
                                     data[xx, yy] = Tile.Sand;
                                 }
@@ -103,7 +102,7 @@ public class TopLevelGenerationProvider : LevelGenerationProvider
 
                 if (xx >= 0 && yy >= 0 && xx < Width && yy < Height)
                 {
-                    if (data[xx, yy].ID == Tile.Grass.Key)
+                    if (data[xx, yy].ID == Tile.Grass.ID)
                     {
                         data[xx, yy] = Tile.Tree;
                     }
@@ -124,9 +123,9 @@ public class TopLevelGenerationProvider : LevelGenerationProvider
 
                 if (xx >= 0 && yy >= 0 && xx < Width && yy < Height)
                 {
-                    if (data[xx, yy].ID == Tile.Grass.Key)
+                    if (data[xx, yy].ID == Tile.Grass.ID)
                     {
-                        data[xx, yy] = new(Tile.Flower.Key, (byte)(col + Random.NextInt(4) * 16));
+                        data[xx, yy] = new(Tile.Flower.ID, (byte)(col + Random.NextInt(4) * 16));
                     }
                 }
             }
@@ -139,7 +138,7 @@ public class TopLevelGenerationProvider : LevelGenerationProvider
 
             if (xx >= 0 && yy >= 0 && xx < Width && yy < Height)
             {
-                if (data[xx, yy].ID == Tile.Sand.Key)
+                if (data[xx, yy].ID == Tile.Sand.ID)
                 {
                     data[xx, yy] = Tile.Cactus;
                 }
@@ -157,7 +156,7 @@ public class TopLevelGenerationProvider : LevelGenerationProvider
             {
                 for (int xx = x - 1; xx <= x + 1; xx++)
                 {
-                    if (data[xx, yy].ID != Tile.Rock.Key)
+                    if (data[xx, yy].ID != Tile.Rock.ID)
                     {
                         goto stairsLoop;
                     }
@@ -172,7 +171,7 @@ public class TopLevelGenerationProvider : LevelGenerationProvider
                 break;
             }
 
-        stairsLoop:
+stairsLoop:
             while (false) ;
         }
     }
@@ -181,27 +180,27 @@ public class TopLevelGenerationProvider : LevelGenerationProvider
     {
         int[] count = CountTiles(data);
 
-        if (count[Tile.Rock.Key] < 100)
+        if (count[Tile.Rock.ID] < 100)
         {
             return false;
         }
 
-        if (count[Tile.Sand.Key] < 100)
+        if (count[Tile.Sand.ID] < 100)
         {
             return false;
         }
 
-        if (count[Tile.Grass.Key] < 100)
+        if (count[Tile.Grass.ID] < 100)
         {
             return false;
         }
 
-        if (count[Tile.Tree.Key] < 100)
+        if (count[Tile.Tree.ID] < 100)
         {
             return false;
         }
 
-        if (count[Tile.StairsDown.Key] < 2)
+        if (count[Tile.StairsDown.ID] < 2)
         {
             return false;
         }

@@ -1,23 +1,59 @@
+using Vildmark.Serialization;
+
 namespace Miniventure.Entities;
 
 public abstract class Mob : Entity
 {
     private int swimDist;
+
+    protected int TickTime { get; private set; }
+
     protected int XKnockback { get; set; }
     protected int YKnockback { get; set; }
-
     protected int ImmuneTime { get; set; }
-    protected int TickTime { get; private set; }
     protected int WalkDist { get; set; }
 
-    public int MaxHealth { get; }
-    public Direction Direction { get; protected set; } = Direction.Down;
     public int Health { get; set; }
+    public int MaxHealth { get; private set; }
 
-    protected Mob(int maxHealth = 10, int x = 8, int y = 8, int horizontalRadius = 4, int verticalRadius = 3)
+    public Direction Direction { get; protected set; } = Direction.Down;
+
+    protected Mob(int maxHealth, int x = 8, int y = 8, int horizontalRadius = 4, int verticalRadius = 3)
         : base(x, y, horizontalRadius, verticalRadius)
     {
-        MaxHealth = Health = maxHealth;
+        Health = MaxHealth = maxHealth;
+    }
+
+    public override void Serialize(IWriter writer)
+    {
+        base.Serialize(writer);
+
+        writer.WriteValue(swimDist);
+        writer.WriteValue(TickTime);
+
+        writer.WriteValue(XKnockback);
+        writer.WriteValue(YKnockback);
+        writer.WriteValue(ImmuneTime);
+        writer.WriteValue(WalkDist);
+        writer.WriteValue(MaxHealth);
+        writer.WriteValue(Health);
+        writer.WriteValue(Direction);
+    }
+
+    public override void Deserialize(IReader reader)
+    {
+        base.Deserialize(reader);
+
+        swimDist = reader.ReadValue<int>();
+        TickTime = reader.ReadValue<int>();
+
+        XKnockback = reader.ReadValue<int>();
+        YKnockback = reader.ReadValue<int>();
+        ImmuneTime = reader.ReadValue<int>();
+        WalkDist = reader.ReadValue<int>();
+        MaxHealth = reader.ReadValue<int>();
+        Health = reader.ReadValue<int>();
+        Direction = reader.ReadValue<Direction>();
     }
 
     public override void Update()

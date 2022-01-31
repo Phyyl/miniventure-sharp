@@ -1,52 +1,109 @@
+using Vildmark.Serialization;
+
 namespace Miniventure.Levels;
 
-public record struct LevelTile(byte ID, byte Data = 0)
+public abstract class Level : ISerializable, IDeserializable
 {
-    public static implicit operator LevelTile(Tile tile) => new LevelTile(tile.Key);
-}
+    protected Random Random { get; } = new();
 
-public class Level
-{
-    private readonly Random random = new();
-
-    public int GrassColor { get; }
-    public int DirtColor { get; }
-    public int SandColor { get; }
-    public int MonsterDensity { get; }
-
-    private readonly List<Entity> entities;
+    private readonly List<Entity> entities = new();
     private readonly List<List<Entity>> entitiesInTiles;
 
-    public int Width { get; }
-    public int Height { get; }
-    public int Depth { get; }
-    public LevelData Data { get; }
+    protected virtual Tile TileAroundStairs => Tile.HardRock;
 
+    public virtual int DirtColor => 322;
+    public virtual int GrassColor => 141;
+    public virtual int SandColor => 550;
+    public virtual int MonsterDensity => 8;
+
+    public int Width => Data.Width;
+    public int Height => Data.Height;
+    public LevelData Data { get; private set; }
     public Player Player { get; private set; }
 
-    public Level(ILevelProvider provider)
+    public abstract int Depth { get; }
+
+    public Level(int width, int height)
     {
-        Width = provider.Width;
-        Height = provider.Height;
-        Depth = provider.Depth;
-
-        DirtColor = provider.DirtColor;
-        GrassColor = provider.GrassColor;
-        SandColor = provider.SandColor;
-
-        MonsterDensity = provider.MonsterDensity;
-
-        Data = provider.GetLevelData();
-        entities = provider.GetEntities().ToList();
+        Data = new LevelData(width, height);
 
         //TODO: yeah no
-        entitiesInTiles = new List<List<Entity>>(Width * Height);
-
+        entitiesInTiles = new(width * height);
         for (int i = 0; i < entitiesInTiles.Capacity; i++)
         {
             entitiesInTiles.Add(new List<Entity>());
         }
     }
+
+    public virtual void Serialize(IWriter writer)
+    {
+        writer.WriteObject(Data);
+        writer.WriteObjects(entities.ToArray(), true);
+    }
+
+    public virtual void Deserialize(IReader reader)
+    {
+        Data = reader.ReadObject<LevelData>();
+
+        entities.Clear();
+
+        foreach (var entity in reader.ReadObjects<Entity>(true))
+        {
+            Add(entity);
+        }
+    }
+
+    public void Generate(Level parentLevel)
+    {
+        do
+        {
+            Generate(Data);
+        } while (!Validate(Data));
+
+        PlaceStairs(Data, parentLevel);
+
+        entities.Clear();
+        entities.AddRange(GenerateEntities());
+    }
+
+    private void PlaceStairs(LevelData data, Level parentLevel)
+    {
+        if (parentLevel is null)
+        {
+            return;
+        }
+
+        for (int y = 0; y < data.Height; y++)
+        {
+            for (int x = 0; x < data.Width; x++)
+            {
+                if (parentLevel.GetTile(x, y) != Tile.StairsDown)
+                {
+                    continue;
+                }
+
+                data[x, y] = new(Tile.StairsUp.ID, 0);
+
+                Tile tile = TileAroundStairs;
+
+                data[x - 1, y] = new(tile.ID, 0);
+                data[x + 1, y] = new(tile.ID, 0);
+                data[x, y - 1] = new(tile.ID, 0);
+                data[x, y + 1] = new(tile.ID, 0);
+                data[x - 1, y - 1] = new(tile.ID, 0);
+                data[x - 1, y + 1] = new(tile.ID, 0);
+                data[x + 1, y - 1] = new(tile.ID, 0);
+                data[x + 1, y + 1] = new(tile.ID, 0);
+
+            }
+        }
+    }
+
+    protected abstract void Generate(LevelData levelData);
+
+    protected abstract bool Validate(LevelData data);
+
+    protected virtual IEnumerable<Entity> GenerateEntities() => Enumerable.Empty<Entity>();
 
     public virtual void RenderBackground(Screen screen, int xScroll, int yScroll)
     {
@@ -184,7 +241,7 @@ public class Level
             return;
         }
 
-        Data[x, y] = new(tile.Key, tileData);
+        Data[x, y] = new(tile.ID, tileData);
     }
 
     public virtual byte GetData(int x, int y)
@@ -269,8 +326,8 @@ public class Level
                 minLevel = maxLevel = 4;
             }
 
-            int lvl = random.NextInt(maxLevel - minLevel + 1) + minLevel;
-            if (random.NextInt(2) == 0)
+            int lvl = Random.NextInt(maxLevel - minLevel + 1) + minLevel;
+            if (Random.NextInt(2) == 0)
             {
                 mob = new Slime(lvl);
             }
@@ -292,8 +349,8 @@ public class Level
 
         for (int i = 0; i < Width * Height / 50; i++)
         {
-            int xt = random.NextInt(Width);
-            int yt = random.NextInt(Height);
+            int xt = Random.NextInt(Width);
+            int yt = Random.NextInt(Height);
 
             GetTile(xt, yt).Update(this, xt, yt);
         }
@@ -353,5 +410,20 @@ public class Level
                 }
             }
         }
+    }
+
+    protected static int[] CountTiles(LevelData data)
+    {
+        int[] count = new int[byte.MaxValue];
+
+        for (int y = 0; y < data.Height; y++)
+        {
+            for (int x = 0; x < data.Width; x++)
+            {
+                count[data[x, y].ID]++;
+            }
+        }
+
+        return count;
     }
 }

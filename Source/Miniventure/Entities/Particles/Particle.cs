@@ -2,7 +2,6 @@ using Vildmark.Serialization;
 
 namespace Miniventure.Entities.Particles;
 
-
 public abstract class Particle : Entity
 {
     private int life;

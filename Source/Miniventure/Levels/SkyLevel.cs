@@ -1,18 +1,11 @@
-﻿namespace Miniventure.Levels.Generation;
+﻿namespace Miniventure.Levels;
 
-public class SkyLevelGenerationProvider : LevelGenerationProvider
+public class SkyLevel : Level
 {
     public override int MonsterDensity => 4;
+    public override int Depth => 1;
 
-    public SkyLevelGenerationProvider(int width, int height, Level parentLevel = null)
-        : base(width, height, 1, parentLevel)
-    {
-    }
-
-    public override IEnumerable<Entity> GetEntities()
-    {
-        yield return new AirWizard(Width * 8, Height * 8);
-    }
+    public SkyLevel() : base(128, 128) { }
 
     protected override void Generate(LevelData data)
     {
@@ -65,7 +58,7 @@ public class SkyLevelGenerationProvider : LevelGenerationProvider
             {
                 for (int xx = x - 1; xx <= x + 1; xx++)
                 {
-                    if (data[xx, yy].ID != Tile.Cloud.Key)
+                     if (data[xx, yy].ID != Tile.Cloud.ID)
                     {
                         goto cactusLoop;
                     }
@@ -74,7 +67,7 @@ public class SkyLevelGenerationProvider : LevelGenerationProvider
 
             data[x, y] = Tile.CloudCactus;
 
-        cactusLoop:
+cactusLoop:
             while (false) ;
         }
 
@@ -89,7 +82,7 @@ public class SkyLevelGenerationProvider : LevelGenerationProvider
             {
                 for (int xx = x - 1; xx <= x + 1; xx++)
                 {
-                    if (data[xx, yy].ID != Tile.Cloud.Key)
+                    if (data[xx, yy].ID != Tile.Cloud.ID)
                     {
                         goto stairsLoop;
                     }
@@ -104,7 +97,7 @@ public class SkyLevelGenerationProvider : LevelGenerationProvider
                 break;
             }
 
-        stairsLoop:
+stairsLoop:
             while (false) ;
         }
     }
@@ -113,16 +106,21 @@ public class SkyLevelGenerationProvider : LevelGenerationProvider
     {
         int[] count = CountTiles(data);
 
-        if (count[Tile.Cloud.Key] < 2000)
+        if (count[Tile.Cloud.ID] < 2000)
         {
             return false;
         }
 
-        if (count[Tile.StairsDown.Key] < 2)
+        if (count[Tile.StairsDown.ID] < 2)
         {
             return false;
         }
 
         return true;
+    }
+
+    protected override IEnumerable<Entity> GenerateEntities()
+    {
+        yield return new AirWizard(Width * 8, Height * 8);
     }
 }

@@ -5,6 +5,7 @@ global using System.Threading;
 global using System.IO;
 
 global using Color = Miniventure.Graphics.Color;
+global using Miniventure;
 global using Miniventure.Crafting;
 global using Miniventure.Entities;
 global using Miniventure.Entities.Particles;

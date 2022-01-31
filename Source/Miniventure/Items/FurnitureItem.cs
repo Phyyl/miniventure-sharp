@@ -12,6 +12,8 @@ public class FurnitureItem : Item
         this.furniture = furniture;
     }
 
+    private FurnitureItem() { }
+
     public override int GetColor()
     {
         return furniture.col;
@@ -75,7 +77,7 @@ public class FurnitureItem : Item
     {
         base.Deserialize(reader);
 
-        reader.ReadObject<Furniture>(true);
+        furniture = reader.ReadObject<Furniture>(true);
         placed = reader.ReadValue<bool>();
     }
 }

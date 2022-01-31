@@ -2,7 +2,7 @@
 
 namespace Miniventure.Levels;
 
-public class LevelData : ISerializable
+public class LevelData : ISerializable, IDeserializable
 {
     private LevelTile[,] tiles;
 

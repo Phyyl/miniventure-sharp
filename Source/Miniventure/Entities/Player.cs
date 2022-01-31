@@ -1,33 +1,81 @@
+using Vildmark.Serialization;
+
 namespace Miniventure.Entities;
 
 public class Player : Mob
 {
-    private readonly InputHandler input;
+    public const int maxStamina = 10;
+
+    private int onStairDelay;
     private int attackTime;
     private Direction attackDir;
 
-    public Game game;
-    public Inventory inventory = new();
-    public Item attackItem;
-    public Item activeItem;
     public int stamina;
     public int staminaRecharge;
     public int staminaRechargeDelay;
     public int score;
-    public int maxStamina = 10;
-    private int onStairDelay;
     public int invulnerableTime = 0;
 
-    public Player(Game game, InputHandler input)
+    public Inventory inventory = new();
+    public Item attackItem;
+    public Item activeItem;
+
+    public Player()
+        : base(10)
     {
-        this.game = game;
-        this.input = input;
         X = 24;
         Y = 24;
+
         stamina = maxStamina;
 
         inventory.Add(new FurnitureItem(new Workbench()));
         inventory.Add(new PowerGloveItem());
+    }
+
+    public override void Serialize(IWriter writer)
+    {
+        base.Serialize(writer);
+
+        writer.WriteValue(onStairDelay);
+        writer.WriteValue(attackTime);
+        writer.WriteValue(attackDir);
+        writer.WriteValue(stamina);
+        writer.WriteValue(staminaRecharge);
+        writer.WriteValue(staminaRechargeDelay);
+        writer.WriteValue(score);
+        writer.WriteValue(invulnerableTime);
+
+        writer.WriteObject(inventory);
+        writer.WriteObject(attackItem, true);
+        writer.WriteObject(activeItem, true);
+    }
+
+    public override void Deserialize(IReader reader)
+    {
+        base.Deserialize(reader);
+
+        onStairDelay = reader.ReadValue<int>();
+        attackTime = reader.ReadValue<int>();
+        attackDir = reader.ReadValue<Direction>();
+        stamina = reader.ReadValue<int>();
+        staminaRecharge = reader.ReadValue<int>();
+        staminaRechargeDelay = reader.ReadValue<int>();
+        score = reader.ReadValue<int>();
+        invulnerableTime = reader.ReadValue<int>();
+
+        inventory = reader.ReadObject<Inventory>();
+        attackItem = reader.ReadObject<Item>(true);
+        activeItem = reader.ReadObject<Item>(true);
+
+    }
+
+    public void Take(Furniture furniture)
+    {
+        if (activeItem is not null)
+        {
+            inventory.Add(0, activeItem);
+            activeItem = new FurnitureItem(furniture);
+        }
     }
 
     public override void Update()
@@ -88,22 +136,22 @@ public class Player : Mob
         int xa = 0;
         int ya = 0;
 
-        if (input.Up.Down)
+        if (Game.Instance.Input.Up.Down)
         {
             ya--;
         }
 
-        if (input.Down.Down)
+        if (Game.Instance.Input.Down.Down)
         {
             ya++;
         }
 
-        if (input.Left.Down)
+        if (Game.Instance.Input.Left.Down)
         {
             xa--;
         }
 
-        if (input.Right.Down)
+        if (Game.Instance.Input.Right.Down)
         {
             xa++;
         }
@@ -125,7 +173,7 @@ public class Player : Mob
             Move(xa, ya);
         }
 
-        if (input.Attack.Clicked)
+        if (Game.Instance.Input.Attack.Clicked)
         {
             if (stamina == 0)
             {
@@ -139,11 +187,11 @@ public class Player : Mob
             }
         }
 
-        if (input.Menu.Clicked)
+        if (Game.Instance.Input.Menu.Clicked)
         {
             if (!Use())
             {
-                game.Menu = new InventoryMenu(this);
+                Game.Instance.Menu = new InventoryMenu(this);
             }
         }
 
@@ -498,7 +546,7 @@ public class Player : Mob
     {
         itemEntity.Take(this);
 
-        inventory.Add(itemEntity.item);
+        inventory.Add(itemEntity.Item);
     }
 
     public override bool CanSwim()
@@ -508,7 +556,6 @@ public class Player : Mob
 
     public override bool TrySpawn(Level level)
     {
-
         while (true)
         {
             int x = Random.NextInt(level.Width);
@@ -537,7 +584,7 @@ public class Player : Mob
 
     public void ChangeLevel(int dir)
     {
-        game.ScheduleLevelChange(dir);
+        Game.Instance.ScheduleLevelChange(dir);
     }
 
     public override int GetLightRadius()
@@ -608,6 +655,6 @@ public class Player : Mob
     public void GameWon()
     {
         Level.Player.invulnerableTime = 60 * 5;
-        game.won();
+        Game.Instance.Won();
     }
 }

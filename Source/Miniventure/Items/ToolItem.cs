@@ -1,6 +1,6 @@
+using Vildmark.Serialization;
+
 namespace Miniventure.Items;
-
-
 
 public class ToolItem : Item
 {
@@ -19,9 +19,8 @@ public class ToolItem : Item
         Color.Get(-1, 100, 321, 055),
     };
 
-    public ToolType Type { get; }
-    public ToolLevel Level { get; }
-
+    public ToolType Type { get; private set; }
+    public ToolLevel Level { get; private set; }
 
     public ToolItem(ToolType type, ToolLevel level)
     {
@@ -29,9 +28,10 @@ public class ToolItem : Item
         Level = level;
     }
 
+    private ToolItem() { }
+
     public override int GetColor()
     {
-
         return LEVEL_COLORS[(int)Level];
     }
 
@@ -96,5 +96,21 @@ public class ToolItem : Item
         }
 
         return false;
+    }
+
+    public override void Serialize(IWriter writer)
+    {
+        base.Serialize(writer);
+
+        writer.WriteString(Type.Name);
+        writer.WriteValue(Level);
+    }
+
+    public override void Deserialize(IReader reader)
+    {
+        base.Deserialize(reader);
+
+        Type = ToolType.All.GetValueOrDefault(reader.ReadString());
+        Level = reader.ReadValue<ToolLevel>();
     }
 }

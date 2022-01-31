@@ -23,6 +23,13 @@ public class AirWizard : Mob
     public override void Serialize(IWriter writer)
     {
         base.Serialize(writer);
+
+        writer.WriteValue(xa);
+        writer.WriteValue(ya);
+        writer.WriteValue(randomWalkTime);
+        writer.WriteValue(attackDelay);
+        writer.WriteValue(attackTime);
+        writer.WriteValue(attackType);
     }
 
     public override void Deserialize(IReader reader)

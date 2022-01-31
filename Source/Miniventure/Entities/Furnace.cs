@@ -3,15 +3,13 @@ namespace Miniventure.Entities;
 public class Furnace : Furniture
 {
     public Furnace()
-        : base("Furnace", horizontalRadius: 3, verticalRadius: 2)
+        : base("Furnace", 3, Color.Get(-1, 000, 222, 333), horizontalRadius: 3, verticalRadius: 2)
     {
-        col = Color.Get(-1, 000, 222, 333);
-        sprite = 3;
     }
 
     public override bool Use(Player player, Direction attackDir)
     {
-        player.game.Menu = new CraftingMenu(Recipes.FurnaceRecipes, player);
+        Game.Instance.Menu = new CraftingMenu(Recipes.FurnaceRecipes, player);
 
         return true;
     }

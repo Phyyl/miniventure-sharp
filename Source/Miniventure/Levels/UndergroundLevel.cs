@@ -1,22 +1,27 @@
-﻿namespace Miniventure.Levels.Generation;
+﻿namespace Miniventure.Levels;
 
-public class UndergroundLevelGenerationProvider : LevelGenerationProvider
+public class UndergroundLevel : Level
 {
+    public override int Depth { get; }
+
     public override int DirtColor => 222;
     public override int MonsterDensity => 4;
 
     protected override Tile TileAroundStairs => Tile.Dirt;
 
-    public UndergroundLevelGenerationProvider(int width, int height, int depth, Level parentLevel)
-        : base(width, height, depth, parentLevel)
+    public UndergroundLevel(int depth)
+        : base(128, 128)
     {
+        Depth = depth;
     }
+
+    private UndergroundLevel() : this(0) { }
 
     protected override void Generate(LevelData data)
     {
-        LevelNoise mnoise1 = new(Width, Height, 16);
-        LevelNoise mnoise2 = new(Width, Height, 16);
-        LevelNoise mnoise3 = new(Width, Height, 16);
+        LevelNoise mnoise1 = new(data.Width, Height, 16);
+        LevelNoise mnoise2 = new(data.Width, Height, 16);
+        LevelNoise mnoise3 = new(data.Width, Height, 16);
 
         LevelNoise nnoise1 = new(Width, Height, 16);
         LevelNoise nnoise2 = new(Width, Height, 16);
@@ -102,9 +107,9 @@ public class UndergroundLevelGenerationProvider : LevelGenerationProvider
 
                     if (xx >= r && yy >= r && xx < Width - r && yy < Height - r)
                     {
-                        if (data[xx, yy].ID == Tile.Rock.Key)
+                        if (data[xx, yy].ID == Tile.Rock.ID)
                         {
-                            data[xx, yy] = new LevelTile((byte)(Tile.IronOre.Key + Depth - 1));
+                            data[xx, yy] = new LevelTile((byte)(Tile.IronOre.ID + Depth - 1));
                         }
                     }
                 }
@@ -124,7 +129,7 @@ public class UndergroundLevelGenerationProvider : LevelGenerationProvider
                 {
                     for (int xx = x - 1; xx <= x + 1; xx++)
                     {
-                        if (data[xx, yy].ID != Tile.Rock.Key)
+                        if (data[xx, yy].ID != Tile.Rock.ID)
                         {
                             goto stairsLoop;
                         }
@@ -139,7 +144,7 @@ public class UndergroundLevelGenerationProvider : LevelGenerationProvider
                     break;
                 }
 
-            stairsLoop:
+stairsLoop:
                 while (false) ;
             }
         }
@@ -149,24 +154,24 @@ public class UndergroundLevelGenerationProvider : LevelGenerationProvider
     {
         int[] count = CountTiles(data);
 
-        if (count[Tile.Rock.Key] < 100)
+        if (count[Tile.Rock.ID] < 100)
         {
             return false;
         }
 
-        if (count[Tile.Dirt.Key] < 100)
+        if (count[Tile.Dirt.ID] < 100)
         {
             return false;
         }
 
-        if (count[Tile.IronOre.Key + Depth - 1] < 20)
+        if (count[Tile.IronOre.ID + Depth - 1] < 20)
         {
             return false;
         }
 
         if (Depth < 3)
         {
-            if (count[Tile.StairsDown.Key] < 2)
+            if (count[Tile.StairsDown.ID] < 2)
             {
                 return false;
             }

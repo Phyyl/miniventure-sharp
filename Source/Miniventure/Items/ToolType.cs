@@ -1,7 +1,6 @@
 namespace Miniventure.Items;
 
-//TODO: convert to record
-public class ToolType
+public record class ToolType(string Name, int Sprite)
 {
     public static readonly ToolType Shovel = new("Shvl", 0);
     public static readonly ToolType Hoe = new("Hoe", 1);
@@ -9,12 +8,6 @@ public class ToolType
     public static readonly ToolType Pickaxe = new("Pick", 3);
     public static readonly ToolType Axe = new("Axe", 4);
 
-    public string Name { get; }
-    public int Sprite { get; }
+    public static EnumDictionary<string, ToolType> All { get; } = new(v => v.Name);
 
-    private ToolType(string name, int sprite)
-    {
-        Name = name;
-        Sprite = sprite;
-    }
 }

@@ -3,6 +3,7 @@ using System.Drawing;
 using Vildmark;
 using Vildmark.Graphics.GLObjects;
 using Vildmark.Graphics.Rendering;
+using Vildmark.Helpers;
 using Vildmark.Resources;
 using Vildmark.Serialization;
 using Vildmark.Windowing;
@@ -12,6 +13,8 @@ namespace Miniventure;
 
 public class Game : VildmarkGame
 {
+    public static Game Instance { get; } = new();
+
     public const string Name = "Miniventure";
     public const int GameHeight = 200;
     public const int GameWidth = 267;
@@ -25,23 +28,14 @@ public class Game : VildmarkGame
     private Screen screen;
     private Pixels spriteSheet;
     private Screen lightScreen;
-    private InputHandler input;
 
     private readonly int[] colors = new int[256];
     private int tickCount = 0;
     private bool showDebug;
 
-    public int gameTime = 0;
+    public GameState state;
 
-    private Level level;
-    private Level[] levels = new Level[5];
-    private int currentLevel = 3;
-    public Player player;
-
-    private int playerDeadTime;
-    private int pendingLevelChange;
-    private int wonTimer = 0;
-    public bool hasWon = false;
+    public InputHandler Input { get; private set; }
 
     public Menu Menu
     {
@@ -49,35 +43,49 @@ public class Game : VildmarkGame
         set
         {
             menu = value;
-            menu?.Init(this, input);
+            menu?.Init(this, Input);
         }
     }
 
-    public void ResetGame()
+    public void NewGame()
     {
-        playerDeadTime = 0;
-        wonTimer = 0;
-        gameTime = 0;
-        hasWon = false;
-
-        levels = new Level[5];
-        currentLevel = 3;
-
-        levels[4] = new Level(new FileLevelProvider("level4.dat", new SkyLevelGenerationProvider(128, 128)));
-        levels[3] = new Level(new FileLevelProvider("level3.dat", new TopLevelGenerationProvider(128, 128, levels[4])));
-        levels[2] = new Level(new FileLevelProvider("level2.dat", new UndergroundLevelGenerationProvider(128, 128, -1, levels[3])));
-        levels[1] = new Level(new FileLevelProvider("level1.dat", new UndergroundLevelGenerationProvider(128, 128, -2, levels[2])));
-        levels[0] = new Level(new FileLevelProvider("level0.dat", new UndergroundLevelGenerationProvider(128, 128, -3, levels[1])));
-
-        level = levels[currentLevel];
-        player = new Player(this, input);
-        player.TrySpawn(level);
-
-        level.Add(player);
-
-        for (int i = 0; i < 5; i++)
+        if (!LoadGame())
         {
-            levels[i].TrySpawn(5000);
+            state = new();
+            state.Generate();
+        }
+    }
+
+    public bool LoadGame()
+    {
+        try
+        {
+            state = new();
+            state.Deserialize(new Reader(File.OpenRead("save.dat")));
+
+            return true;
+        }
+        catch (Exception ex)
+        {
+            Logger.Exception(ex);
+            return false;
+        }
+    }
+
+    public void SaveGame()
+    {
+        try
+        {
+            if (state is null)
+            {
+                return;
+            }
+
+            state.Serialize(new Writer(File.Open("save.dat", FileMode.Create)));
+        }
+        catch (Exception ex)
+        {
+            Logger.Exception(ex);
         }
     }
 
@@ -107,60 +115,66 @@ public class Game : VildmarkGame
 
     public void ChangeLevel(int dir)
     {
-        level.Remove(player);
-        currentLevel += dir;
-        level = levels[currentLevel];
-        player.X = (player.X >> 4) * 16 + 8;
-        player.Y = (player.Y >> 4) * 16 + 8;
-        level.Add(player);
+        if (state is null)
+        {
+            return;
+        }
+
+        state.level.Remove(state.player);
+        state.currentLevel += dir;
+        state.player.X = (state.player.X >> 4) * 16 + 8;
+        state.player.Y = (state.player.Y >> 4) * 16 + 8;
+        state.level.Add(state.player);
     }
 
     public void Render()
     {
-        int xScroll = player.X - screen.Width / 2;
-        int yScroll = player.Y - (screen.Height - 8) / 2;
-
-        if (xScroll < 16)
+        if (state is not null)
         {
-            xScroll = 16;
-        }
+            int xScroll = state.player.X - screen.Width / 2;
+            int yScroll = state.player.Y - (screen.Height - 8) / 2;
 
-        if (yScroll < 16)
-        {
-            yScroll = 16;
-        }
-
-        if (xScroll > level.Width * 16 - screen.Width - 16)
-        {
-            xScroll = level.Width * 16 - screen.Width - 16;
-        }
-
-        if (yScroll > level.Height * 16 - screen.Height - 16)
-        {
-            yScroll = level.Height * 16 - screen.Height - 16;
-        }
-
-        if (currentLevel > 3)
-        {
-            int col = Color.Get(20, 20, 121, 121);
-            for (int y = 0; y < 14; y++)
+            if (xScroll < 16)
             {
-                for (int x = 0; x < 24; x++)
+                xScroll = 16;
+            }
+
+            if (yScroll < 16)
+            {
+                yScroll = 16;
+            }
+
+            if (xScroll > state.level.Width * 16 - screen.Width - 16)
+            {
+                xScroll = state.level.Width * 16 - screen.Width - 16;
+            }
+
+            if (yScroll > state.level.Height * 16 - screen.Height - 16)
+            {
+                yScroll = state.level.Height * 16 - screen.Height - 16;
+            }
+
+            if (state.currentLevel > 3)
+            {
+                int col = Color.Get(20, 20, 121, 121);
+                for (int y = 0; y < 14; y++)
                 {
-                    screen.Render(x * 8 - (xScroll / 4 & 7), y * 8 - (yScroll / 4 & 7), 0, col, 0);
+                    for (int x = 0; x < 24; x++)
+                    {
+                        screen.Render(x * 8 - (xScroll / 4 & 7), y * 8 - (yScroll / 4 & 7), 0, col, 0);
+                    }
                 }
             }
-        }
 
-        level.RenderBackground(screen, xScroll, yScroll);
-        level.RenderSprites(screen, xScroll, yScroll);
+            state.level.RenderBackground(screen, xScroll, yScroll);
+            state.level.RenderSprites(screen, xScroll, yScroll);
 
-
-        if (currentLevel < 3)
-        {
-            lightScreen.Clear(0);
-            level.RenderLight(lightScreen, xScroll, yScroll);
-            screen.Overlay(lightScreen, xScroll, yScroll);
+            if (state.currentLevel < 3)
+            {
+                lightScreen.Clear(0);
+                state.level.RenderLight(lightScreen, xScroll, yScroll);
+                screen.Overlay(lightScreen, xScroll, yScroll);
+            }
         }
 
         RenderGui();
@@ -188,64 +202,64 @@ public class Game : VildmarkGame
 
     private void RenderGui()
     {
-        for (int y = 0; y < 2; y++)
+        if (state is not null)
         {
-            for (int x = 0; x < 20; x++)
+            for (int y = 0; y < 2; y++)
             {
-
-                screen.Render(x * 8, screen.Height - 16 + y * 8, 0 + 12 * 32, Color.Get(000, 000, 000, 000), 0);
-            }
-        }
-
-        for (int i = 0; i < 10; i++)
-        {
-            if (i < player.Health)
-            {
-                screen.Render(i * 8, screen.Height - 16, 0 + 12 * 32, Color.Get(000, 200, 500, 533), 0);
-            }
-            else
-            {
-                screen.Render(i * 8, screen.Height - 16, 0 + 12 * 32, Color.Get(000, 100, 000, 000), 0);
-            }
-
-            if (player.staminaRechargeDelay > 0)
-            {
-                if (player.staminaRechargeDelay / 4 % 2 == 0)
+                for (int x = 0; x < 20; x++)
                 {
-                    screen.Render(i * 8, screen.Height - 8, 1 + 12 * 32, Color.Get(000, 555, 000, 000), 0);
+
+                    screen.Render(x * 8, screen.Height - 16 + y * 8, 0 + 12 * 32, Color.Get(000, 000, 000, 000), 0);
+                }
+            }
+
+            for (int i = 0; i < 10; i++)
+            {
+                if (i < state.player.Health)
+                {
+                    screen.Render(i * 8, screen.Height - 16, 0 + 12 * 32, Color.Get(000, 200, 500, 533), 0);
                 }
                 else
                 {
-                    screen.Render(i * 8, screen.Height - 8, 1 + 12 * 32, Color.Get(000, 110, 000, 000), 0);
+                    screen.Render(i * 8, screen.Height - 16, 0 + 12 * 32, Color.Get(000, 100, 000, 000), 0);
                 }
-            }
-            else
-            {
-                if (i < player.stamina)
+
+                if (state.player.staminaRechargeDelay > 0)
                 {
-                    screen.Render(i * 8, screen.Height - 8, 1 + 12 * 32, Color.Get(000, 220, 550, 553), 0);
+                    if (state.player.staminaRechargeDelay / 4 % 2 == 0)
+                    {
+                        screen.Render(i * 8, screen.Height - 8, 1 + 12 * 32, Color.Get(000, 555, 000, 000), 0);
+                    }
+                    else
+                    {
+                        screen.Render(i * 8, screen.Height - 8, 1 + 12 * 32, Color.Get(000, 110, 000, 000), 0);
+                    }
                 }
                 else
                 {
-                    screen.Render(i * 8, screen.Height - 8, 1 + 12 * 32, Color.Get(000, 110, 000, 000), 0);
+                    if (i < state.player.stamina)
+                    {
+                        screen.Render(i * 8, screen.Height - 8, 1 + 12 * 32, Color.Get(000, 220, 550, 553), 0);
+                    }
+                    else
+                    {
+                        screen.Render(i * 8, screen.Height - 8, 1 + 12 * 32, Color.Get(000, 110, 000, 000), 0);
+                    }
                 }
+            }
+
+            if (showDebug)
+            {
+                Font.Draw($"{state.player.X / 16},{state.player.Y / 16}", screen, 0, 0, Color.Get(444));
+            }
+
+            if (state.player.activeItem != null)
+            {
+                state.player.activeItem.RenderInventory(screen, 10 * 8, screen.Height - 16);
             }
         }
 
-        if (showDebug)
-        {
-            Font.Draw($"{player.X / 16},{player.Y / 16}", screen, 0, 0, Color.Get(444));
-        }
-
-        if (player.activeItem != null)
-        {
-            player.activeItem.RenderInventory(screen, 10 * 8, screen.Height - 16);
-        }
-
-        if (menu != null)
-        {
-            menu.Render(screen);
-        }
+        menu?.Render(screen);
     }
 
     private void RenderFocusNagger()
@@ -285,78 +299,109 @@ public class Game : VildmarkGame
 
     public void ScheduleLevelChange(int dir)
     {
-        pendingLevelChange = dir;
+        if (state is null)
+        {
+            return;
+        }
+
+        state.pendingLevelChange = dir;
     }
 
     public override void Load()
     {
+        Logger.Level = LogLevel.Debug;
+
+        TypeHelper.RunStaticConstructor<Tile>();
+        TypeHelper.RunStaticConstructor<Resource>();
+        TypeHelper.RunStaticConstructor<ToolType>();
+
         renderContext = Create2DRenderContext();
         texture = new GLTexture2D(GameWidth, GameHeight, pixelInternalFormat: PixelInternalFormat.Rgb, magFilter: TextureMagFilter.Nearest);
-        input = new InputHandler(Keyboard);
+        Input = new InputHandler(Keyboard);
         spriteSheet = ResourceLoader.LoadEmbedded<Pixels>("icons.png");
         pixels = new Pixels(GameWidth, GameHeight);
         screen = new Screen(GameWidth, GameHeight, spriteSheet);
         lightScreen = new Screen(GameWidth, GameHeight, spriteSheet);
 
         InitColors();
-        ResetGame();
 
         Menu = new TitleMenu();
     }
+
+    public override void Unload()
+    {
+        base.Unload();
+
+        try
+        {
+            SaveGame();
+        }
+        catch (Exception ex)
+        {
+            Logger.Exception(ex);
+        }
+    }
+
+    public override void Close()
+    {
+        base.Close();
+    }
+
     public override void Update(float delta)
     {
         tickCount++;
 
         if (!Window.IsFocused)
         {
-            input.ReleaseAll();
+            Input.ReleaseAll();
             return;
         }
 
-        if (!player.Removed && !hasWon)
+        if (state is not null && !state.player.Removed && !state.hasWon)
         {
-            gameTime++;
+            state.gameTime++;
+
+            if (Input.Debug.Clicked)
+            {
+                showDebug = !showDebug;
+            }
         }
 
-        input.Update();
-
-        if (input.Debug.Clicked)
-        {
-            showDebug = !showDebug;
-        }
+        Input.Update();
 
         if (menu != null)
         {
             menu.Update();
         }
-        else
+        else if (state != null)
         {
-            if (player.Removed)
+            if (state.player.Removed)
             {
-                playerDeadTime++;
+                state.playerDeadTime++;
 
-                if (playerDeadTime > 60)
+                if (state.playerDeadTime > 60)
                 {
                     Menu = new DeadMenu();
                 }
             }
             else
             {
-                if (pendingLevelChange != 0)
+                if (state.pendingLevelChange != 0)
                 {
-                    Menu = new LevelTransitionMenu(pendingLevelChange);
-                    pendingLevelChange = 0;
+                    Menu = new LevelTransitionMenu(state.pendingLevelChange);
+                    state.pendingLevelChange = 0;
                 }
             }
-            if (wonTimer > 0)
+
+            if (state.wonTimer > 0)
             {
-                if (--wonTimer == 0)
+                if (--state.wonTimer == 0)
                 {
                     Menu = new WonMenu();
                 }
             }
 
-            level.Update();
+            state.level.Update();
             Tile.TickCount++;
         }
     }
@@ -380,53 +425,14 @@ public class Game : VildmarkGame
         settings.Height = GameHeight * Scale;
     }
 
-    public virtual void won()
+    public virtual void Won()
     {
-        wonTimer = 60 * 3;
-        hasWon = true;
-    }
-}
-
-public class FileLevelProvider : ILevelProvider
-{
-    public int Width { get; private set; }
-    public int Height { get; private set; }
-    public int Depth { get; private set; }
-    public int DirtColor { get; private set; }
-    public int GrassColor { get; private set; }
-    public int SandColor { get; private set; }
-    public int MonsterDensity { get; private set; }
-
-    private readonly LevelData data;
-    private readonly Entity[] entities;
-
-    public FileLevelProvider(string path, LevelGenerationProvider generationProvider)
-    {
-        if (!File.Exists(path))
+        if (state is null)
         {
-            Width = generationProvider.Width;
-            Height = generationProvider.Height;
-            Depth = generationProvider.Depth;
-            DirtColor = generationProvider.DirtColor;
-            GrassColor = generationProvider.GrassColor;
-            SandColor = generationProvider.SandColor;
-            MonsterDensity = generationProvider.MonsterDensity;
-            data = generationProvider.GetLevelData();
-            entities = generationProvider.GetEntities().ToArray();
+            return;
         }
-        else
-        {
 
-        }
-    }
-
-    public IEnumerable<Entity> GetEntities()
-    {
-        return entities;
-    }
-
-    public LevelData GetLevelData()
-    {
-        return data;
+        state.wonTimer = 60 * 3;
+        state.hasWon = true;
     }
 }

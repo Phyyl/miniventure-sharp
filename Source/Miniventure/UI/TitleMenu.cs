@@ -39,7 +39,7 @@ public class TitleMenu : Menu
             if (selected == 0)
             {
                 AudioTracks.Test.Play();
-                game.ResetGame();
+                game.NewGame();
                 game.Menu = null;
             }
             if (selected == 1)

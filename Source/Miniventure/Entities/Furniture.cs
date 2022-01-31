@@ -1,34 +1,60 @@
+using Vildmark.Serialization;
+
 namespace Miniventure.Entities;
 
-
-public class Furniture : Entity
+public abstract class Furniture : Entity
 {
     private int pushTime = 0;
     private Direction? pushDir = null;
     public int col, sprite;
     public string name;
-    private Player shouldTake;
 
-    public Furniture(string name, int x = 0, int y = 0, int horizontalRadius = 3, int verticalRadius = 3)
+    public Furniture(string name, int sprite, int col, int x = 0, int y = 0, int horizontalRadius = 3, int verticalRadius = 3)
         : base(x, y, horizontalRadius, verticalRadius)
     {
         this.name = name;
+        this.sprite = sprite;
+        this.col = col;
+    }
+
+    public override void Serialize(IWriter writer)
+    {
+        base.Serialize(writer);
+
+        writer.WriteValue(pushTime);
+
+        if (!writer.WriteIsDefault(pushDir))
+        {
+            writer.WriteValue(pushDir.Value);
+        }
+
+        writer.WriteValue(col);
+        writer.WriteValue(sprite);
+        writer.WriteString(name);
+    }
+
+    public override void Deserialize(IReader reader)
+    {
+        base.Deserialize(reader);
+
+        pushTime = reader.ReadValue<int>();
+
+        if (reader.ReadIsDefault())
+        {
+            pushDir = null;
+        }
+        else
+        {
+            pushDir = reader.ReadValue<Direction>();
+        }
+
+        col = reader.ReadValue<int>();
+        sprite = reader.ReadValue<int>();
+        name = reader.ReadString();
     }
 
     public override void Update()
     {
-        if (shouldTake != null)
-        {
-            if (shouldTake.activeItem is PowerGloveItem)
-            {
-                Remove();
-                shouldTake.inventory.Add(0, shouldTake.activeItem);
-                shouldTake.activeItem = new FurnitureItem(this);
-            }
-
-            shouldTake = null;
-        }
-
         if (pushDir == Direction.Down)
         {
             Move(0, 1);
@@ -77,10 +103,5 @@ public class Furniture : Entity
             pushDir = player.Direction;
             pushTime = 10;
         }
-    }
-
-    public virtual void Take(Player player)
-    {
-        shouldTake = player;
     }
 }

@@ -8,7 +8,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Vildmark" Version="0.21.5" />
+      <PackageReference Include="Vildmark" Version="0.22" />
     </ItemGroup>
+
 
 </Project>

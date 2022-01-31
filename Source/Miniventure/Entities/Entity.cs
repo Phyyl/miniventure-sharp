@@ -2,7 +2,7 @@ using Vildmark.Serialization;
 
 namespace Miniventure.Entities;
 
-public abstract class Entity : ISerializable
+public abstract class Entity : ISerializable, IDeserializable
 {
     protected static Random Random { get; } = new Random();
 

@@ -1,18 +1,20 @@
-namespace Miniventure.Entities;
+using Vildmark.Serialization;
 
+namespace Miniventure.Entities;
 
 public class ItemEntity : Entity
 {
-    private readonly int lifeTime;
-    public double xa, ya, za;
-    public double xx, yy, zz;
-    public Item item;
+    private int lifeTime;
     private int time = 0;
+    private double xa, ya, za;
+    private double xx, yy, zz;
+
+    public Item Item { get; private set; }
 
     public ItemEntity(Item item, int x, int y)
         : base(x, y, 3, 3)
     {
-        this.item = item;
+        Item = item;
         xx = x;
         yy = y;
 
@@ -23,6 +25,44 @@ public class ItemEntity : Entity
         za = Random.NextFloat() * 0.7 + 1;
 
         lifeTime = 60 * 10 + Random.NextInt(60);
+    }
+
+    private ItemEntity() : this(null, 0, 0) { }
+
+    public override void Serialize(IWriter writer)
+    {
+        base.Serialize(writer);
+
+        writer.WriteValue(lifeTime);
+        writer.WriteValue(time);
+       
+        writer.WriteValue(xa);
+        writer.WriteValue(ya);
+        writer.WriteValue(za);
+        
+        writer.WriteValue(xx);
+        writer.WriteValue(yy);
+        writer.WriteValue(zz);
+
+        writer.WriteObject(Item, true);
+    }
+
+    public override void Deserialize(IReader reader)
+    {
+        base.Deserialize(reader);
+
+        lifeTime = reader.ReadValue<int>();
+        time = reader.ReadValue<int>();
+
+        xa = reader.ReadValue<double>();
+        ya = reader.ReadValue<double>();
+        za = reader.ReadValue<double>();
+
+        xx = reader.ReadValue<double>();
+        yy = reader.ReadValue<double>();
+        zz = reader.ReadValue<double>();
+
+        Item = reader.ReadObject<Item>(true);
     }
 
     public override void Update()
@@ -80,8 +120,8 @@ public class ItemEntity : Entity
             }
         }
 
-        screen.Render(X - 4, Y - 4, item.GetSprite(), Color.Get(-1, 0, 0, 0), 0);
-        screen.Render(X - 4, Y - 4 - (int)zz, item.GetSprite(), item.GetColor(), 0);
+        screen.Render(X - 4, Y - 4, Item.GetSprite(), Color.Get(-1, 0, 0, 0), 0);
+        screen.Render(X - 4, Y - 4 - (int)zz, Item.GetSprite(), Item.GetColor(), 0);
     }
 
     public override void TouchedBy(Entity entity)
@@ -96,7 +136,7 @@ public class ItemEntity : Entity
     {
         AudioTracks.Pickup.Play();
         player.score++;
-        item.OnTake(this);
+        Item.OnTake(this);
         Remove();
     }
 }
