@@ -1,7 +1,3 @@
-using Miniventure.Entities;
-using Miniventure.Levels;
-using Miniventure.Levels.Tiles;
-
 namespace Miniventure.Items;
 
 public record class Resource(string Name, int Sprite, int Color) : Enumeration<Resource>

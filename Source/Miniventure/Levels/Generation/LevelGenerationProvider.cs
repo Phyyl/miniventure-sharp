@@ -1,8 +1,4 @@
-﻿using Miniventure.Entities;
-using Miniventure.Levels;
-using Miniventure.Levels.Tiles;
-
-namespace Miniventure.Levels.Generation;
+﻿namespace Miniventure.Levels.Generation;
 
 public abstract class LevelGenerationProvider : ILevelProvider
 {

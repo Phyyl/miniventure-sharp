@@ -1,6 +1,4 @@
-﻿using Miniventure.Entities;
-
-namespace Miniventure.Levels.Generation;
+﻿namespace Miniventure.Levels.Generation;
 
 public interface ILevelProvider
 {

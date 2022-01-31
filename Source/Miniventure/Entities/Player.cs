@@ -1,11 +1,3 @@
-using Miniventure.Audio;
-using Miniventure.Entities.Particles;
-using Miniventure.Graphics;
-using Miniventure.Items;
-using Miniventure.Levels;
-using Miniventure.Levels.Tiles;
-using Miniventure.UI;
-
 namespace Miniventure.Entities;
 
 public class Player : Mob
@@ -568,7 +560,7 @@ public class Player : Mob
     public override void Die()
     {
         base.Die();
-        Sound.playerDeath.Play();
+        AudioTracks.PlayerDeath.Play();
     }
 
     public override void TouchedBy(Entity entity)
@@ -586,7 +578,7 @@ public class Player : Mob
             return;
         }
 
-        Sound.playerHurt.Play();
+        AudioTracks.PlayerHurt.Play();
         Level.Add(new TextParticle("" + damage, X, Y, Color.Get(-1, 504, 504, 504)));
         Health -= damage;
         if (attackDir == Direction.Down)

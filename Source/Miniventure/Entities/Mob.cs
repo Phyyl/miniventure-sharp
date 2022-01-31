@@ -1,7 +1,3 @@
-using Miniventure.Audio;
-using Miniventure.Levels;
-using Miniventure.Levels.Tiles;
-
 namespace Miniventure.Entities;
 
 public abstract class Mob : Entity
@@ -172,7 +168,7 @@ public abstract class Mob : Entity
 
             if (xd * xd + yd * yd < 80 * 80)
             {
-                Sound.monsterHurt.Play();
+                AudioTracks.MonsterHurt.Play();
             }
         }
 

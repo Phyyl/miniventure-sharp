@@ -1,6 +1,3 @@
-using Miniventure.Graphics;
-using Miniventure.UI;
-
 namespace Miniventure.Entities;
 
 

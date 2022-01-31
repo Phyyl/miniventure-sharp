@@ -1,8 +1,3 @@
-using Miniventure.Entities;
-using Miniventure.Graphics;
-using Miniventure.Levels.Generation;
-using Miniventure.Levels.Tiles;
-
 namespace Miniventure.Levels;
 
 public record struct LevelTile(byte ID, byte Data = 0)

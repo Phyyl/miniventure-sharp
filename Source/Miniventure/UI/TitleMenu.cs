@@ -1,6 +1,3 @@
-using Miniventure.Audio;
-using Miniventure.Graphics;
-
 namespace Miniventure.UI;
 
 
@@ -41,7 +38,7 @@ public class TitleMenu : Menu
         {
             if (selected == 0)
             {
-                Sound.test.Play();
+                AudioTracks.Test.Play();
                 game.ResetGame();
                 game.Menu = null;
             }

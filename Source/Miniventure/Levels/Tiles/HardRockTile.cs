@@ -1,6 +1,3 @@
-using Miniventure.Entities;
-using Miniventure.Items;
-
 namespace Miniventure.Levels.Tiles;
 
 public class HardRockTile : RockTile

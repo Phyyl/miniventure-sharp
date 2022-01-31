@@ -1,5 +1,3 @@
-using Miniventure.Graphics;
-
 namespace Miniventure.Levels.Tiles;
 
 

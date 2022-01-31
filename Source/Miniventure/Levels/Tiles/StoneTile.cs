@@ -1,6 +1,3 @@
-using Miniventure.Entities;
-using Miniventure.Graphics;
-
 namespace Miniventure.Levels.Tiles;
 
 public class StoneTile : Tile

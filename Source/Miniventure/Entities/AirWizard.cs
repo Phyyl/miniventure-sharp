@@ -1,5 +1,3 @@
-using Miniventure.Audio;
-using Miniventure.Graphics;
 using Vildmark.Serialization;
 
 namespace Miniventure.Entities;
@@ -252,6 +250,6 @@ public class AirWizard : Mob
             Level.Player.GameWon();
         }
 
-        Sound.bossdeath.Play();
+        AudioTracks.Bossdeath.Play();
     }
 }

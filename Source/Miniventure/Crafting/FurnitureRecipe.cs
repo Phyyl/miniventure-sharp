@@ -1,5 +1,3 @@
-using Miniventure.Entities;
-using Miniventure.Items;
 using Vildmark;
 
 namespace Miniventure.Crafting;

@@ -1,7 +1,3 @@
-using Miniventure.Audio;
-using Miniventure.Graphics;
-using Miniventure.Items;
-
 namespace Miniventure.Entities;
 
 
@@ -98,7 +94,7 @@ public class ItemEntity : Entity
 
     public virtual void Take(Player player)
     {
-        Sound.pickup.Play();
+        AudioTracks.Pickup.Play();
         player.score++;
         item.OnTake(this);
         Remove();

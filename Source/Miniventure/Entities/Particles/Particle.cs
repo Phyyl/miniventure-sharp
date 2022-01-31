@@ -1,4 +1,3 @@
-using Miniventure.Entities;
 using Vildmark.Serialization;
 
 namespace Miniventure.Entities.Particles;

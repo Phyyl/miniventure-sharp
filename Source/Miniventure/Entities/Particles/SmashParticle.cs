@@ -1,6 +1,3 @@
-using Miniventure.Audio;
-using Miniventure.Graphics;
-
 namespace Miniventure.Entities.Particles;
 
 public class SmashParticle : Particle
@@ -11,7 +8,7 @@ public class SmashParticle : Particle
         X = x;
         Y = y;
 
-        Sound.monsterHurt.Play();
+        AudioTracks.MonsterHurt.Play();
     }
 
     private SmashParticle() : this(0, 0) { }

@@ -1,9 +1,3 @@
-using Miniventure.Entities;
-using Miniventure.Graphics;
-using Miniventure.Levels;
-using Miniventure.Levels.Generation;
-using Miniventure.Levels.Tiles;
-using Miniventure.UI;
 using OpenTK.Graphics.OpenGL4;
 using System.Drawing;
 using Vildmark;

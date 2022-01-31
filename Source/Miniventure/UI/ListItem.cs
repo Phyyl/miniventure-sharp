@@ -1,5 +1,3 @@
-using Miniventure.Graphics;
-
 namespace Miniventure.UI;
 
 public interface IListItem

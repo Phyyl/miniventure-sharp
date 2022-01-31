@@ -1,9 +1,3 @@
-using Miniventure.Audio;
-using Miniventure.Crafting;
-using Miniventure.Entities;
-using Miniventure.Graphics;
-using Miniventure.Items;
-
 namespace Miniventure.UI;
 
 public class CraftingMenu : Menu
@@ -99,7 +93,7 @@ public class CraftingMenu : Menu
             {
                 r.DeductCost(player.inventory);
                 r.Craft(player);
-                Sound.craft.Play();
+                AudioTracks.Craft.Play();
             }
         }
     }

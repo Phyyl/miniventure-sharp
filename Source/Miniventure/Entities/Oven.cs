@@ -1,7 +1,3 @@
-using Miniventure.Crafting;
-using Miniventure.Graphics;
-using Miniventure.UI;
-
 namespace Miniventure.Entities;
 
 public class Oven : Furniture

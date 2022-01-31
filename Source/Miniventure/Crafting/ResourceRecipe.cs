@@ -1,6 +1,3 @@
-using Miniventure.Entities;
-using Miniventure.Items;
-
 namespace Miniventure.Crafting;
 
 public class ResourceRecipe : Recipe

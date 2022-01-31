@@ -1,7 +1,3 @@
-using Miniventure.Entities;
-using Miniventure.Graphics;
-using Miniventure.Items;
-
 namespace Miniventure.Levels.Tiles;
 
 

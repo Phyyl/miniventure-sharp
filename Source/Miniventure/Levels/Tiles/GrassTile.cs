@@ -1,8 +1,3 @@
-using Miniventure.Audio;
-using Miniventure.Entities;
-using Miniventure.Graphics;
-using Miniventure.Items;
-
 namespace Miniventure.Levels.Tiles;
 
 
@@ -92,7 +87,7 @@ public class GrassTile : Tile
                 if (player.PayStamina(4 - (int)tool.Level))
                 {
                     level.SetTile(xt, yt, dirt, 0);
-                    Sound.monsterHurt.Play();
+                    AudioTracks.MonsterHurt.Play();
                     if (random.NextInt(5) == 0)
                     {
 
@@ -106,7 +101,7 @@ public class GrassTile : Tile
             {
                 if (player.PayStamina(4 - (int)tool.Level))
                 {
-                    Sound.monsterHurt.Play();
+                    AudioTracks.MonsterHurt.Play();
                     if (random.NextInt(5) == 0)
                     {
 

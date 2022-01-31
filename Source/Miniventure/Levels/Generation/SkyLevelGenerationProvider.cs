@@ -1,7 +1,4 @@
-﻿using Miniventure.Entities;
-using Miniventure.Levels.Tiles;
-
-namespace Miniventure.Levels.Generation;
+﻿namespace Miniventure.Levels.Generation;
 
 public class SkyLevelGenerationProvider : LevelGenerationProvider
 {

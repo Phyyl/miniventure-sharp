@@ -1,8 +1,3 @@
-using Miniventure.Audio;
-using Miniventure.Entities;
-using Miniventure.Graphics;
-using Miniventure.Items;
-
 namespace Miniventure.Levels.Tiles;
 
 
@@ -32,7 +27,7 @@ public class DirtTile : Tile
                 {
                     level.SetTile(xt, yt, hole, 0);
                     level.Add(new ItemEntity(new ResourceItem(Resource.dirt), xt * 16 + random.NextInt(10) + 3, yt * 16 + random.NextInt(10) + 3));
-                    Sound.monsterHurt.Play();
+                    AudioTracks.MonsterHurt.Play();
                     return true;
                 }
             }
@@ -41,7 +36,7 @@ public class DirtTile : Tile
                 if (player.PayStamina(4 - (int)tool.Level))
                 {
                     level.SetTile(xt, yt, farmland, 0);
-                    Sound.monsterHurt.Play();
+                    AudioTracks.MonsterHurt.Play();
                     return true;
                 }
             }
