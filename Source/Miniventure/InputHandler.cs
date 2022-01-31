@@ -1,4 +1,5 @@
 using OpenTK.Windowing.GraphicsLibraryFramework;
+using System.Security.Cryptography;
 using Vildmark.Windowing;
 
 namespace Miniventure;
@@ -7,95 +8,58 @@ public class InputHandler
 {
     private readonly InputKey[] keys;
 
-    public InputKey Up { get; }
-    public InputKey Down { get; }
-    public InputKey Left { get; }
-    public InputKey Right { get; }
-    public InputKey Attack { get; }
-    public InputKey Menu { get; }
-    public InputKey Debug { get; }
+    public InputKey Up { get; } = new(Keys.Up);
+    public InputKey Down { get; } = new(Keys.Down);
+    public InputKey Left { get; } = new(Keys.Left);
+    public InputKey Right { get; } = new(Keys.Right);
+    public InputKey Attack { get; } = new(Keys.C);
+    public InputKey Menu { get; } = new(Keys.X);
+    public InputKey Debug { get; } = new(Keys.F3);
+
+    public InputHandler(IKeyboard keyboard)
+    {
+        keys = new[] { Up, Down, Left, Right, Attack, Menu, Debug };
+
+        keyboard.OnKeyPressed += Keyboard_OnKeyPressed;
+        keyboard.OnKeyReleased += Keyboard_OnKeyReleased;
+    }
+
+    private void Keyboard_OnKeyReleased(Keys key)
+    {
+        foreach (var inputKey in keys)
+        {
+            if (inputKey.Key == key)
+            {
+                inputKey.Toggle(false);
+            }
+        }
+    }
+
+    private void Keyboard_OnKeyPressed(Keys key)
+    {
+        foreach (var inputKey in keys)
+        {
+            if (inputKey.Key == key)
+            {
+                inputKey.Toggle(true);
+            }
+        }
+    }
 
     public void ReleaseAll()
     {
-        for (int i = 0; i < keys.Length; i++)
+        foreach (var key in keys)
         {
-            keys[i].Down = false;
+            key.Down = false;
         }
     }
 
     public void Update()
     {
-        for (int i = 0; i < keys.Length; i++)
+        foreach (var key in keys)
         {
-            keys[i].Update();
+            key.Update();
         }
-    }
-
-    public InputHandler(IKeyboard keyboard)
-    {
-        keyboard.OnKeyPressed += Keyboard_OnKeyPressed;
-        keyboard.OnKeyReleased += Keyboard_OnKeyReleased;
-
-        keys = new[]
-        {
-            Up = new InputKey(),
-            Down = new InputKey(),
-            Left = new InputKey(),
-            Right = new InputKey(),
-            Attack = new InputKey(),
-            Menu = new InputKey(),
-            Debug = new InputKey(),
-        };
-    }
-
-    private void Keyboard_OnKeyPressed(Keys key)
-    {
-        Toggle(key, true);
-    }
-
-    private void Keyboard_OnKeyReleased(Keys key)
-    {
-        Toggle(key, false);
-    }
-
-    private void Toggle(Keys key, bool pressed)
-    {
-        InputKey inputKey = key switch
-        {
-            Keys.KeyPad8 => Up,
-            Keys.KeyPad2 => Down,
-            Keys.KeyPad4 => Left,
-            Keys.KeyPad6 => Right,
-            Keys.W => Up,
-            Keys.S => Down,
-            Keys.A => Left,
-            Keys.D => Right,
-            Keys.Up => Up,
-            Keys.Down => Down,
-            Keys.Left => Left,
-            Keys.Right => Right,
-            Keys.Tab => Menu,
-            Keys.LeftAlt => Menu,
-            Keys.RightAlt => Menu,
-            Keys.Menu => Menu,
-            Keys.Space => Attack,
-            Keys.LeftControl => Attack,
-            Keys.RightControl => Attack,
-            Keys.KeyPad0 => Attack,
-            Keys.Insert => Attack,
-            Keys.Enter => Menu,
-            Keys.X => Menu,
-            Keys.C => Attack,
-            Keys.F3 => Debug,
-            _ => default
-        };
-
-        if (inputKey is null)
-        {
-            return;
-        }
-
-        inputKey.Toggle(pressed);
     }
 
     public class InputKey
@@ -104,17 +68,11 @@ public class InputHandler
 
         public bool Down { get; set; }
         public bool Clicked { get; set; }
+        public Keys Key { get; }
 
-        public virtual void Toggle(bool pressed)
+        public InputKey(Keys key)
         {
-            if (pressed != Down)
-            {
-                Down = pressed;
-            }
-            if (pressed)
-            {
-                presses++;
-            }
+            Key = key;
         }
 
         public virtual void Update()
@@ -129,6 +87,18 @@ public class InputHandler
                 Clicked = false;
             }
         }
-    }
 
+        public void Toggle(bool pressed)
+        {
+            if (pressed != Down)
+            {
+                Down = pressed;
+            }
+
+            if (pressed)
+            {
+                presses++;
+            }
+        }
+    }
 }
