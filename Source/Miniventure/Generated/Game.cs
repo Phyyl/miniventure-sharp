@@ -1,12 +1,11 @@
-using com.mojang.ld22.gfx;
 using Miniventure.Generated.gfx;
 using OpenTK.Graphics.OpenGL4;
-using OpenTK.Mathematics;
 using System.Drawing;
 using Vildmark;
 using Vildmark.Graphics.GLObjects;
 using Vildmark.Graphics.Rendering;
 using Vildmark.Resources;
+using Vildmark.Serialization;
 using Vildmark.Windowing;
 using Font = com.mojang.ld22.gfx.Font;
 
@@ -29,8 +28,10 @@ public class Game : VildmarkGame
     private Screen lightScreen;
     private InputHandler input;
 
-    private readonly int[] colors = new int[256];
+    private int[] colors = new int[256];
     private int tickCount = 0;
+    private bool showDebug;
+
     public int gameTime = 0;
 
     private Level level;
@@ -63,14 +64,14 @@ public class Game : VildmarkGame
         levels = new Level[5];
         currentLevel = 3;
 
-        levels[4] = new Level(128, 128, 1, null); // creates the sky map
-        levels[3] = new Level(128, 128, 0, levels[4]); // creates the overworld
-        levels[2] = new Level(128, 128, -1, levels[3]); // creates the mines (iron level)
-        levels[1] = new Level(128, 128, -2, levels[2]); // creates the deep mines (water/gold level)
-        levels[0] = new Level(128, 128, -3, levels[1]); // creates the nether (lava/gem level)
+        levels[4] = new Level(new FileLevelProvider("level4.dat", new SkyLevelGenerationProvider(128, 128)));
+        levels[3] = new Level(new FileLevelProvider("level3.dat", new TopLevelGenerationProvider(128, 128, levels[4])));
+        levels[2] = new Level(new FileLevelProvider("level2.dat", new UndergroundLevelGenerationProvider(128, 128, -1, levels[3])));
+        levels[1] = new Level(new FileLevelProvider("level1.dat", new UndergroundLevelGenerationProvider(128, 128, -2, levels[2])));
+        levels[0] = new Level(new FileLevelProvider("level0.dat", new UndergroundLevelGenerationProvider(128, 128, -3, levels[1])));
 
-        level = levels[currentLevel]; 
-        player = new Player(this, input); 
+        level = levels[currentLevel];
+        player = new Player(this, input);
         player.TrySpawn(level);
 
         level.Add(player);
@@ -117,50 +118,50 @@ public class Game : VildmarkGame
 
     public void Render()
     {
-        int xScroll = player.X - (screen.Width / 2); // scrolls the screen in the x axis.
-        int yScroll = player.Y - ((screen.Height - 8) / 2); //scrolls the screen in the y axis.
+        int xScroll = player.X - (screen.Width / 2);
+        int yScroll = player.Y - ((screen.Height - 8) / 2);
 
         if (xScroll < 16)
         {
-            xScroll = 16; // if the screen is at the left border, then stop scrolling.
+            xScroll = 16;
         }
 
         if (yScroll < 16)
         {
-            yScroll = 16; // if the screen is at the top border, then stop scrolling.
+            yScroll = 16;
         }
 
         if (xScroll > (level.Width * 16) - screen.Width - 16)
         {
-            xScroll = (level.Width * 16) - screen.Width - 16; // if the screen is at the right border, then stop scrolling.
+            xScroll = (level.Width * 16) - screen.Width - 16;
         }
 
         if (yScroll > (level.Height * 16) - screen.Height - 16)
         {
-            yScroll = (level.Height * 16) - screen.Height - 16; // if the screen is at the bottom border, then stop scrolling.
+            yScroll = (level.Height * 16) - screen.Height - 16;
         }
 
         if (currentLevel > 3)
-        { // if the current level is higher than 3 (which only the sky level is)
-            int col = Color.Get(20, 20, 121, 121); // background color.
+        {
+            int col = Color.Get(20, 20, 121, 121);
             for (int y = 0; y < 14; y++)
             {
                 for (int x = 0; x < 24; x++)
                 {
-                    screen.Render((x * 8) - ((xScroll / 4) & 7), (y * 8) - ((yScroll / 4) & 7), 0, col, 0); // creates the background for the sky level.
+                    screen.Render((x * 8) - ((xScroll / 4) & 7), (y * 8) - ((yScroll / 4) & 7), 0, col, 0);
                 }
             }
         }
 
-        level.RenderBackground(screen, xScroll, yScroll); // Calls the renderBackground() method in Level.java
-        level.RenderSprites(screen, xScroll, yScroll); // Calls the renderSprites() method in Level.java
+        level.RenderBackground(screen, xScroll, yScroll);
+        level.RenderSprites(screen, xScroll, yScroll);
 
-        // this creates the fog-of-war (darkness) in the caves
+
         if (currentLevel < 3)
         {
-            lightScreen.Clear(0); //clears the light screen to a black color
-            level.RenderLight(lightScreen, xScroll, yScroll); // finds all (and renders) the light from objects (like the player, lanterns, and lava).
-            screen.Overlay(lightScreen, xScroll, yScroll); // overlays the light screen over the main screen.
+            lightScreen.Clear(0);
+            level.RenderLight(lightScreen, xScroll, yScroll);
+            screen.Overlay(lightScreen, xScroll, yScroll);
         }
 
         RenderGui();
@@ -174,16 +175,14 @@ public class Game : VildmarkGame
         {
             for (int x = 0; x < screen.Width; x++)
             {
-                //loops through all the pixels on the screen
-                int cc = screen.Pixels[x + (y * screen.Width)]; // finds a pixel on the screen.
+
+                int cc = screen.Pixels[x + (y * screen.Width)];
                 if (cc < 255)
                 {
-                    pixels[x + (y * GameWidth)] = colors[cc]; // colors the pixel accordingly.
+                    pixels[x + (y * GameWidth)] = colors[cc];
                 }
             }
         }
-
-
 
         renderContext.RenderRectangle(new RectangleF(0, 0, Window.Width, Window.Height), texture);
     }
@@ -194,7 +193,7 @@ public class Game : VildmarkGame
         {
             for (int x = 0; x < 20; x++)
             {
-                //renders a black box at the bottom of the screen.
+
                 screen.Render(x * 8, screen.Height - 16 + (y * 8), 0 + (12 * 32), Color.Get(000, 000, 000, 000), 0);
             }
         }
@@ -203,35 +202,40 @@ public class Game : VildmarkGame
         {
             if (i < player.Health)
             {
-                screen.Render(i * 8, screen.Height - 16, 0 + (12 * 32), Color.Get(000, 200, 500, 533), 0);//renders your current red hearts.
+                screen.Render(i * 8, screen.Height - 16, 0 + (12 * 32), Color.Get(000, 200, 500, 533), 0);
             }
             else
             {
-                screen.Render(i * 8, screen.Height - 16, 0 + (12 * 32), Color.Get(000, 100, 000, 000), 0);//renders black hearts for damaged health.
+                screen.Render(i * 8, screen.Height - 16, 0 + (12 * 32), Color.Get(000, 100, 000, 000), 0);
             }
 
             if (player.staminaRechargeDelay > 0)
             {
                 if (player.staminaRechargeDelay / 4 % 2 == 0)
                 {
-                    screen.Render(i * 8, screen.Height - 8, 1 + (12 * 32), Color.Get(000, 555, 000, 000), 0);//creates the blinking effect when you run out of stamina. (white part)
+                    screen.Render(i * 8, screen.Height - 8, 1 + (12 * 32), Color.Get(000, 555, 000, 000), 0);
                 }
                 else
                 {
-                    screen.Render(i * 8, screen.Height - 8, 1 + (12 * 32), Color.Get(000, 110, 000, 000), 0);//creates the blinking effect when you run out of stamina. (gray part)
+                    screen.Render(i * 8, screen.Height - 8, 1 + (12 * 32), Color.Get(000, 110, 000, 000), 0);
                 }
             }
             else
             {
                 if (i < player.stamina)
                 {
-                    screen.Render(i * 8, screen.Height - 8, 1 + (12 * 32), Color.Get(000, 220, 550, 553), 0);//renders your current stamina
+                    screen.Render(i * 8, screen.Height - 8, 1 + (12 * 32), Color.Get(000, 220, 550, 553), 0);
                 }
                 else
                 {
-                    screen.Render(i * 8, screen.Height - 8, 1 + (12 * 32), Color.Get(000, 110, 000, 000), 0);//renders your uncharged stamina (grayed)
+                    screen.Render(i * 8, screen.Height - 8, 1 + (12 * 32), Color.Get(000, 110, 000, 000), 0);
                 }
             }
+        }
+
+        if (showDebug)
+        {
+            Font.Draw($"{player.X / 16},{player.Y / 16}", screen, 0, 0, Color.Get(444));
         }
 
         if (player.activeItem != null)
@@ -304,19 +308,17 @@ public class Game : VildmarkGame
     {
         tickCount++;
 
-    TODO:
-        if (!Window.IsFocused)
-        {
-            input.ReleaseAll();
-            return;
-        }
-
         if (!player.Removed && !hasWon)
         {
             gameTime++;
         }
 
         input.Update();
+
+        if (input.Debug.Clicked)
+        {
+            showDebug = !showDebug;
+        }
 
         if (menu != null)
         {
@@ -373,9 +375,71 @@ public class Game : VildmarkGame
         settings.Height = GameHeight * Scale;
     }
 
-    public void Won()
+    public virtual void won()
     {
-        wonTimer = 60 * 3; // the pause time before the win menu shows up.
-        hasWon = true; //confirms that the player has indeed, won the game.
+        wonTimer = 60 * 3;
+        hasWon = true;
+    }
+}
+
+public class FileLevelProvider : ILevelProvider
+{
+    public int Width { get; private set; }
+    public int Height { get; private set; }
+    public int Depth { get; private set; }
+    public int DirtColor { get; private set; }
+    public int GrassColor { get; private set; }
+    public int SandColor { get; private set; }
+    public int MonsterDensity { get; private set; }
+
+    private LevelData data;
+    private Entity[] entities;
+
+    public FileLevelProvider(string path, LevelGenerationProvider generationProvider)
+    {
+        if (!File.Exists(path))
+        {
+            Width = generationProvider.Width;
+            Height = generationProvider.Height;
+            Depth = generationProvider.Depth;
+            DirtColor = generationProvider.DirtColor;
+            GrassColor = generationProvider.GrassColor;
+            SandColor = generationProvider.SandColor;
+            MonsterDensity = generationProvider.MonsterDensity;
+            data = generationProvider.GetLevelData();
+            entities = generationProvider.GetEntities().ToArray();
+
+            Save(path);
+        }
+        else
+        {
+
+        }
+    }
+
+    public IEnumerable<Entity> GetEntities()
+    {
+        return entities;
+    }
+
+    public LevelData GetLevelData()
+    {
+        return data;
+    }
+
+    private void Save(string path)
+    {
+        using MemoryStream ms = new();
+        Writer writer = new(ms);
+
+        writer.WriteValue(Width);
+        writer.WriteValue(Height);
+        writer.WriteValue(Depth);
+        writer.WriteValue(DirtColor);
+        writer.WriteValue(GrassColor);
+        writer.WriteValue(SandColor);
+        writer.WriteValue(MonsterDensity);
+        writer.WriteObject(data);
+        writer.WriteObjects(entities, true);
     }
 }

@@ -9,10 +9,11 @@ public class SmashParticle : Particle
     {
         X = x;
         Y = y;
-        
-        //TODO: Move this out
+
         Sound.monsterHurt.Play();
     }
+
+    private SmashParticle() : this(0, 0) { }
 
     public override void Render(Screen screen)
     {

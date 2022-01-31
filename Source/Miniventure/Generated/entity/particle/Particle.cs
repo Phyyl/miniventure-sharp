@@ -1,3 +1,6 @@
+using System.Runtime.InteropServices;
+using Vildmark.Serialization;
+
 namespace com.mojang.ld22.entity.particle;
 
 
@@ -21,5 +24,19 @@ public abstract class Particle : Entity
         {
             Remove();
         }
+    }
+
+    public override void Serialize(IWriter writer)
+    {
+        base.Serialize(writer);
+
+        writer.WriteValue(life);
+    }
+
+    public override void Deserialize(IReader reader)
+    {
+        base.Deserialize(reader);
+
+        life = reader.ReadValue<int>();
     }
 }

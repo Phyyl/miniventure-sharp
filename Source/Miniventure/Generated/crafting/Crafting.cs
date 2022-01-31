@@ -35,7 +35,6 @@ public class Crafting
 
             AnvilRecipes = new Recipe[]
             {
-
                 new ToolRecipe(ToolType.Sword, ToolLevel.Iron).AddCost(Resource.wood, 5).AddCost(Resource.ironIngot, 5),
                 new ToolRecipe(ToolType.Axe, ToolLevel.Iron).AddCost(Resource.wood, 5).AddCost(Resource.ironIngot, 5),
                 new ToolRecipe(ToolType.Hoe, ToolLevel.Iron).AddCost(Resource.wood, 5).AddCost(Resource.ironIngot, 5),

@@ -1,107 +1,62 @@
 namespace com.mojang.ld22.level;
 
+public record struct LevelTile(byte ID, byte Data = 0)
+{
+    public static implicit operator LevelTile(Tile tile) => new LevelTile(tile.id);
+}
+
 public class Level
 {
-    private readonly Random random = new();
+    private Random random = new();
 
-    public int Width, Height;
+    public int GrassColor { get; }
+    public int DirtColor { get; }
+    public int SandColor { get; }
+    public int MonsterDensity { get; }
 
-    public byte[] tiles;
-    public byte[] data;
+    private readonly List<Entity> entities;
+    private readonly List<List<Entity>> entitiesInTiles;
 
-    //TODO: Either convert to Dictionary or array
-    public List<List<Entity>> entitiesInTiles;
+    public int Width { get; }
+    public int Height { get; }
+    public int Depth { get; }
+    public LevelData Data { get; }
 
-    public int grassColor = 141;
-    public int dirtColor = 322;
-    public int sandColor = 550;
-    private readonly int depth;
-    public int monsterDensity = 8;
+    public Player Player { get; private set; }
 
-    public List<Entity> entities = new();
-
-    public Level(int w, int h, int level, Level parentLevel)
+    public Level(ILevelProvider provider)
     {
-        if (level < 0)
-        {
-            dirtColor = 222;
-        }
-        depth = level;
-        Width = w;
-        Height = h;
-        byte[][] maps;
+        Width = provider.Width;
+        Height = provider.Height;
+        Depth = provider.Depth;
 
-        if (level == 0)
-        {
-            maps = LevelGen.CreateAndValidateTopMap(w, h);
-        }
-        else if (level < 0)
-        {
-            maps = LevelGen.CreateAndValidateUndergroundMap(w, h, -level);
-            monsterDensity = 4;
-        }
-        else
-        {
-            maps = LevelGen.CreateAndValidateSkyMap(w, h);
-            monsterDensity = 4;
-        }
+        DirtColor = provider.DirtColor;
+        GrassColor = provider.GrassColor;
+        SandColor = provider.SandColor;
 
-        tiles = maps[0];
-        data = maps[1];
+        MonsterDensity = provider.MonsterDensity;
 
-        if (parentLevel != null)
-        {
-            for (int y = 0; y < h; y++)
-            {
-                for (int x = 0; x < w; x++)
-                {
-                    if (parentLevel.GetTile(x, y) == Tile.StairsDown)
-                    {
+        Data = provider.GetLevelData();
+        entities = provider.GetEntities().ToList();
 
-                        SetTile(x, y, Tile.StairsUp, 0);
+        //TODO: yeah no
+        entitiesInTiles = new List<List<Entity>>(Width * Height);
 
-                        Tile tile = Tile.Dirt;
-                        if (level == 0)
-                        {
-                            tile = Tile.HardRock;
-                        }
-
-                        SetTile(x - 1, y, tile, 0);
-                        SetTile(x + 1, y, tile, 0);
-                        SetTile(x, y - 1, tile, 0);
-                        SetTile(x, y + 1, tile, 0);
-                        SetTile(x - 1, y - 1, tile, 0);
-                        SetTile(x - 1, y + 1, tile, 0);
-                        SetTile(x + 1, y - 1, tile, 0);
-                        SetTile(x + 1, y + 1, tile, 0);
-                    }
-
-                }
-            }
-        }
-
-        entitiesInTiles = new List<List<Entity>>(w * h);
-        for (int i = 0; i < w * h; i++)
+        for (int i = 0; i < entitiesInTiles.Capacity; i++)
         {
             entitiesInTiles.Add(new List<Entity>());
         }
-
-        if (level == 1)
-        {
-            AirWizard aw = new();
-            aw.X = w * 8;
-            aw.Y = h * 8;
-            Add(aw);
-        }
     }
 
-    public void RenderBackground(Screen screen, int xScroll, int yScroll)
+    public virtual void RenderBackground(Screen screen, int xScroll, int yScroll)
     {
         int xo = xScroll >> 4;
         int yo = yScroll >> 4;
         int w = (screen.Width + 15) >> 4;
         int h = (screen.Height + 15) >> 4;
+
         screen.SetOffset(xScroll, yScroll);
+
         for (int y = yo; y <= h + yo; y++)
         {
             for (int x = xo; x <= w + xo; x++)
@@ -109,12 +64,9 @@ public class Level
                 GetTile(x, y).Render(screen, this, x, y);
             }
         }
+
         screen.SetOffset(0, 0);
     }
-
-    private readonly List<Entity> rowSprites = new();
-
-    public Player player;
 
     public virtual void RenderSprites(Screen screen, int xScroll, int yScroll)
     {
@@ -124,6 +76,8 @@ public class Level
         int h = (screen.Height + 15) >> 4;
 
         screen.SetOffset(xScroll, yScroll);
+
+        List<Entity> rowSprites = new();
 
         for (int y = yo; y <= h + yo; y++)
         {
@@ -190,7 +144,7 @@ public class Level
         screen.SetOffset(0, 0);
     }
 
-    private static void SortAndRender(Screen screen, List<Entity> list)
+    private void SortAndRender(Screen screen, List<Entity> list)
     {
         list.Sort((Entity e0, Entity e1) =>
         {
@@ -217,48 +171,47 @@ public class Level
     {
         if (x < 0 || y < 0 || x >= Width || y >= Height)
         {
-            return Tile.Rock;
+            return Tile.rock;
         }
 
-        return Tile.Tiles[tiles[x + (y * Width)]];
+        return Tile.tiles[Data[x, y].ID];
     }
 
-    public virtual void SetTile(int x, int y, Tile t, int dataVal)
+    public virtual void SetTile(int x, int y, Tile tile, byte tileData)
     {
         if (x < 0 || y < 0 || x >= Width || y >= Height)
         {
             return;
         }
 
-        tiles[x + (y * Width)] = t.id;
-        data[x + (y * Width)] = (byte)dataVal;
+        Data[x, y] = new(tile.id, tileData);
     }
 
-    public virtual int GetData(int x, int y)
+    public virtual byte GetData(int x, int y)
     {
         if (x < 0 || y < 0 || x >= Width || y >= Height)
         {
             return 0;
         }
 
-        return data[x + (y * Width)] & 0xff;
+        return Data[x, y].Data;
     }
 
-    public virtual void SetData(int x, int y, int val)
+    public virtual void SetData(int x, int y, byte tileData)
     {
         if (x < 0 || y < 0 || x >= Width || y >= Height)
         {
             return;
         }
 
-        data[x + (y * Width)] = (byte)val;
+        Data[x, y] = Data[x, y] with { Data = tileData };
     }
 
     public virtual void Add(Entity entity)
     {
-        if (entity is Player player1)
+        if (entity is Player)
         {
-            player = player1;
+            Player = (Player)entity;
         }
 
         entity.Removed = false;
@@ -306,11 +259,12 @@ public class Level
 
             int minLevel = 1;
             int maxLevel = 1;
-            if (depth < 0)
+
+            if (Depth < 0)
             {
-                maxLevel = (-depth) + 1;
+                maxLevel = (-Depth) + 1;
             }
-            if (depth > 0)
+            if (Depth > 0)
             {
                 minLevel = maxLevel = 4;
             }

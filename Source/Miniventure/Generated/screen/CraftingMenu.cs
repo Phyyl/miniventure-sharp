@@ -89,7 +89,6 @@ public class CraftingMenu : Menu
         {
             Recipe r = recipes[selected].Recipe;
 
-            //TODO: TryCraft maybe
             if (r.CanCraft(player.inventory))
             {
                 r.DeductCost(player.inventory);
@@ -112,32 +111,32 @@ public class CraftingMenu : Menu
             Recipe recipe = recipes[selected].Recipe;
             int hasResultItems = player.inventory.Count(recipe.resultTemplate);
             int xo = 13 * 8;
-            screen.Render(xo, 2 * 8, recipe.resultTemplate.GetSprite(), recipe.resultTemplate.GetColor(), 0); // Renders the sprites in the 'have' & 'cost' windows
-            Font.Draw("" + hasResultItems, screen, xo + 8, 2 * 8, Color.Get(-1, 555, 555, 555)); // draws the amount in the 'have' menu
+            screen.Render(xo, 2 * 8, recipe.resultTemplate.GetSprite(), recipe.resultTemplate.GetColor(), 0);
+            Font.Draw("" + hasResultItems, screen, xo + 8, 2 * 8, Color.Get(-1, 555, 555, 555));
 
-            List<Item> costs = recipe.costs; // the list items that is needed to make the recipe
+            List<Item> costs = recipe.costs;
             for (int i = 0; i < costs.Count; i++)
-            { // Loops through the costs list
-                Item item = costs[i]; // Current cost item
-                int yo = (5 + i) * 8; // y coordinate of the cost item
-                screen.Render(xo, yo, item.GetSprite(), item.GetColor(), 0); // renders the cost item
-                int requiredAmt = 1; // required amount need to craft (normally 1)
+            {
+                Item item = costs[i];
+                int yo = (5 + i) * 8;
+                screen.Render(xo, yo, item.GetSprite(), item.GetColor(), 0);
+                int requiredAmt = 1;
                 if (item is ResourceItem item1)
-                { // If the item is a params resource[]
-                    requiredAmt = item1.Count; // get's the amount needed to craft the item
+                {
+                    requiredAmt = item1.Count;
                 }
-                int has = player.inventory.Count(item); // This is the amount of the resource you have in your inventory
-                int color = Color.Get(-1, 555, 555, 555); // color in the 'cost' window
+                int has = player.inventory.Count(item);
+                int color = Color.Get(-1, 555, 555, 555);
                 if (has < requiredAmt)
-                { // If the player has less than required of the resource
-                    color = Color.Get(-1, 222, 222, 222); // then change the color to gray.
+                {
+                    color = Color.Get(-1, 222, 222, 222);
                 }
                 if (has > 99)
                 {
-                    has = 99; // if the player has over 99 of the resource, then just display 99 (for space)
+                    has = 99;
                 }
 
-                Font.Draw("" + has + "/" + requiredAmt, screen, xo + 8, yo, color); // Draw "#required/#has" text next to the icon 
+                Font.Draw("" + has + "/" + requiredAmt, screen, xo + 8, yo, color);
             }
         }
 

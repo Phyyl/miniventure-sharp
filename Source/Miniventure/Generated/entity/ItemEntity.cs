@@ -27,39 +27,39 @@ public class ItemEntity : Entity
 
     public override void Update()
     {
-        time++; 
+        time++;
 
         if (time >= lifeTime)
-        { 
-            Remove(); 
+        {
+            Remove();
 
-            return; 
+            return;
         }
         xx += xa;
-        yy += ya; 
+        yy += ya;
         zz += za;
 
         if (zz < 0)
         {
-            zz = 0; 
-            za *= -0.5; 
+            zz = 0;
+            za *= -0.5;
             xa *= 0.6;
             ya *= 0.6;
         }
 
-        za -= 0.15; 
+        za -= 0.15;
 
-        int ox = X; 
-        int oy = Y; 
-        int nx = (int)xx; 
-        int ny = (int)yy; 
-        int expectedx = nx - X; 
-        int expectedy = ny - Y; 
+        int ox = X;
+        int oy = Y;
+        int nx = (int)xx;
+        int ny = (int)yy;
+        int expectedx = nx - X;
+        int expectedy = ny - Y;
 
         Move(nx - X, ny - Y);
 
-        int gotx = X - ox; 
-        int goty = Y - oy; 
+        int gotx = X - ox;
+        int goty = Y - oy;
 
         xx += gotx - expectedx;
         yy += goty - expectedy;
@@ -73,10 +73,10 @@ public class ItemEntity : Entity
     public override void Render(Screen screen)
     {
         if (time >= lifeTime - (6 * 20))
-        { 
+        {
             if (time / 6 % 2 == 0)
             {
-                return; 
+                return;
             }
         }
 

@@ -3,44 +3,44 @@ namespace com.mojang.ld22.screen;
 
 public class LevelTransitionMenu : Menu
 {
-    private readonly int dir; // Direction that you are changing levels. (going up or down stairs)
-    private int time = 0; // Time it spends on this menu
+    private int dir;
+    private int time = 0;
 
     public LevelTransitionMenu(int dir)
     {
-        this.dir = dir; // Assigns the direction
+        this.dir = dir;
     }
 
     public override void Update()
     {
-        time += 2; // Ticks up 2 times per tick
+        time += 2;
         if (time == 30)
         {
-            game.ChangeLevel(dir); // When time equals 30, it will change the level
+            game.ChangeLevel(dir);
         }
 
         if (time == 60)
         {
-            game.Menu = null; // When time equals 60, it will get out of this menu
+            game.Menu = null;
         }
     }
 
     public override void Render(Screen screen)
     {
         for (int x = 0; x < (Game.GameWidth / 3); x++)
-        { // Loop however many times depending on the width (It's divided by 3 because the pixels are scaled up by 3)
+        {
             for (int y = 0; y < (Game.GameHeight / 3); y++)
-            { // Loop however many times depending on the height (It's divided by 3 because the pixels are scaled up by 3)
-                int dd = y + (x % 2 * 2) + (x / 3) - time; // Used as part of the positioning.
+            {
+                int dd = y + (x % 2 * 2) + (x / 3) - time;
                 if (dd < 0 && dd > -30)
                 {
                     if (dir > 0)
                     {
-                        screen.Render(x * 8, y * 8, 0, 0, 0); // If the direction is upwards then render the squares going up
+                        screen.Render(x * 8, y * 8, 0, 0, 0);
                     }
                     else
                     {
-                        screen.Render(x * 8, screen.Height - (y * 8) - 8, 0, 0, 0); // If the direction is negative, then the squares will go down.
+                        screen.Render(x * 8, screen.Height - (y * 8) - 8, 0, 0, 0);
                     }
                 }
             }

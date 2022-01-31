@@ -1,7 +1,9 @@
+using Vildmark.Serialization;
+
 namespace com.mojang.ld22.item;
 
 
-public class Item : IListItem
+public class Item : IListItem, ISerializable
 {
     public virtual int GetColor()
     {
@@ -58,5 +60,13 @@ public class Item : IListItem
     public virtual bool Matches(Item item)
     {
         return item.GetType() == GetType();
+    }
+
+    public virtual void Serialize(IWriter writer)
+    {
+    }
+
+    public virtual void Deserialize(IReader reader)
+    {
     }
 }

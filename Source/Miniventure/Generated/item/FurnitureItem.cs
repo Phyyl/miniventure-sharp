@@ -1,3 +1,5 @@
+using Vildmark.Serialization;
+
 namespace com.mojang.ld22.item;
 
 public class FurnitureItem : Item
@@ -22,13 +24,13 @@ public class FurnitureItem : Item
 
     public override void RenderIcon(Screen screen, int x, int y)
     {
-        screen.Render(x, y, GetSprite(), GetColor(), 0); // renders the icon
+        screen.Render(x, y, GetSprite(), GetColor(), 0);
     }
 
     public override void RenderInventory(Screen screen, int x, int y)
     {
-        screen.Render(x, y, GetSprite(), GetColor(), 0); // renders the icon
-        Font.Draw(furniture.name, screen, x + 8, y, Color.Get(-1, 555, 555, 555)); // draws the name of the furniture
+        screen.Render(x, y, GetSprite(), GetColor(), 0);
+        Font.Draw(furniture.name, screen, x + 8, y, Color.Get(-1, 555, 555, 555));
     }
 
     public override bool CanAttack()
@@ -39,25 +41,41 @@ public class FurnitureItem : Item
     public override bool InteractOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir)
     {
         if (tile.MayPass(level, xt, yt, furniture))
-        { // If the furniture can go on the tile
-            furniture.X = (xt * 16) + 8; // Placed furniture's X position
-            furniture.Y = (yt * 16) + 8; // Placed furniture's Y position
-            level.Add(furniture); // adds the furniture to the world
-            placed = true; // the value becomes true, which removes it from the player's active item
+        {
+            furniture.X = (xt * 16) + 8;
+            furniture.Y = (yt * 16) + 8;
+            level.Add(furniture);
+            placed = true;
             return true;
         }
         return false;
     }
 
-    /** Removes this item from the player's active item slot when depleted is true */
+
     public override bool IsDepleted()
     {
         return placed;
     }
 
-    /** Gets the name of the furniture */
+
     public override string GetName()
     {
         return furniture.name;
+    }
+
+    public override void Serialize(IWriter writer)
+    {
+        base.Serialize(writer);
+
+        writer.WriteObject(furniture, true);
+        writer.WriteValue(placed);
+    }
+
+    public override void Deserialize(IReader reader)
+    {
+        base.Deserialize(reader);
+
+        reader.ReadObject<Furniture>(true);
+        placed = reader.ReadValue<bool>();
     }
 }

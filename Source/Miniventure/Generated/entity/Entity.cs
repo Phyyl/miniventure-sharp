@@ -1,16 +1,17 @@
 using System.Linq;
 using Vildmark;
+using Vildmark.Serialization;
 
 namespace com.mojang.ld22.entity;
 
-public abstract class Entity
+public abstract class Entity : ISerializable
 {
-    protected static Random Random { get;} = new Random();
+    protected static Random Random { get; } = new Random();
 
     public int X { get; set; }
     public int Y { get; set; }
-    public int HorizontalRadius { get; }
-    public int VerticalRadius { get; }
+    public int HorizontalRadius { get; private set; }
+    public int VerticalRadius { get; private set; }
     public bool Removed { get; set; }
     public Level Level { get; set; }
 
@@ -45,7 +46,7 @@ public abstract class Entity
         return false;
     }
 
-    public virtual void Hurt(Mob mob, int dmg, Direction attackDir)
+    public virtual void Hurt(int dmg, Direction attackDir)
     {
     }
 
@@ -188,5 +189,23 @@ public abstract class Entity
     public virtual int GetLightRadius()
     {
         return 0;
+    }
+
+    public virtual void Serialize(IWriter writer)
+    {
+        writer.WriteValue(X);
+        writer.WriteValue(Y);
+        writer.WriteValue(HorizontalRadius);
+        writer.WriteValue(VerticalRadius);
+        writer.WriteValue(Removed);
+    }
+
+    public virtual void Deserialize(IReader reader)
+    {
+        X = reader.ReadValue<int>();
+        Y = reader.ReadValue<int>();
+        HorizontalRadius = reader.ReadValue<int>();
+        VerticalRadius = reader.ReadValue<int>();
+        Removed = reader.ReadValue<bool>();
     }
 }

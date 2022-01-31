@@ -26,10 +26,10 @@ public abstract class Mob : Entity
 
         TickTime++;
 
-        if (Level.GetTile(X >> 4, Y >> 4) == Tile.Lava)
+        if (Level.GetTile(X >> 4, Y >> 4) == Tile.lava)
         {
-            //TODO: Make this a responsibility of the lava tile
-            Hurt(this, 4, Direction.GetOpposite());
+
+            Hurt( 4, Direction.GetOpposite());
         }
 
         if (Health <= 0)
@@ -119,7 +119,7 @@ public abstract class Mob : Entity
     {
         Tile tile = Level.GetTile(X >> 4, Y >> 4);
 
-        return tile == Tile.Water || tile == Tile.Lava;
+        return tile == Tile.water || tile == Tile.lava;
     }
 
     public override bool Blocks(Entity e)
@@ -132,7 +132,7 @@ public abstract class Mob : Entity
         DoHurt(damage, Direction.GetOpposite());
     }
 
-    public override void Hurt(Mob mob, int damage, Direction attackDir)
+    public override void Hurt(int damage, Direction attackDir)
     {
         DoHurt(damage, attackDir);
     }
@@ -161,10 +161,10 @@ public abstract class Mob : Entity
             return;
         }
 
-        if (Level.player != null)
+        if (Level.Player != null)
         {
-            int xd = Level.player.X - X;
-            int yd = Level.player.Y - Y;
+            int xd = Level.Player.X - X;
+            int yd = Level.Player.Y - Y;
 
             if ((xd * xd) + (yd * yd) < 80 * 80)
             {
@@ -206,10 +206,10 @@ public abstract class Mob : Entity
         int xx = (x * 16) + 8;
         int yy = (y * 16) + 8;
 
-        if (level.player != null)
+        if (level.Player != null)
         {
-            int xd = level.player.X - xx; 
-            int yd = level.player.Y - yy;
+            int xd = level.Player.X - xx;
+            int yd = level.Player.Y - yy;
 
             if ((xd * xd) + (yd * yd) < 80 * 80)
             {
@@ -217,9 +217,9 @@ public abstract class Mob : Entity
             }
         }
 
-        int r = level.monsterDensity * 16;
+        int r = level.MonsterDensity * 16;
 
-        if (level.GetEntities(xx - r, yy - r, xx + r, yy + r).Any())
+        if (level.GetEntities(xx - r, yy - r, xx + r, yy + r).Count() > 0)
         {
             return false;
         }

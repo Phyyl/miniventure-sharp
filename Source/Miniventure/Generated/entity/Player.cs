@@ -42,11 +42,11 @@ public class Player : Mob
         }
 
         Tile onTile = Level.GetTile(X >> 4, Y >> 4);
-        if (onTile == Tile.StairsDown || onTile == Tile.StairsUp)
+        if (onTile == Tile.stairsDown || onTile == Tile.stairsUp)
         {
             if (onStairDelay == 0)
             {
-                ChangeLevel((onTile == Tile.StairsUp) ? 1 : -1);
+                ChangeLevel((onTile == Tile.stairsUp) ? 1 : -1);
                 onStairDelay = 10;
                 return;
             }
@@ -118,7 +118,7 @@ public class Player : Mob
             }
             else
             {
-                Hurt(this, 1, Direction.GetOpposite());
+                Hurt(1, Direction.GetOpposite());
             }
         }
 
@@ -362,7 +362,7 @@ public class Player : Mob
         {
             if (entity != this)
             {
-                entity.Hurt(this, GetAttackDamage(entity), attackDir);
+                entity.Hurt(GetAttackDamage(entity), attackDir);
             }
         }
     }
@@ -489,7 +489,7 @@ public class Player : Mob
         if (activeItem is FurnitureItem furnitureItem)
         {
             Furniture furniture = furnitureItem.furniture;
-            furniture.X = X; //?
+            furniture.X = X;
             furniture.Y = yo;
             furniture.Render(screen);
 
@@ -516,7 +516,7 @@ public class Player : Mob
             int x = Random.NextInt(level.Width);
             int y = Random.NextInt(level.Height);
 
-            if (level.GetTile(x, y) == Tile.Grass)
+            if (level.GetTile(x, y) == Tile.grass)
             {
                 X = (x * 16) + 8;
                 Y = (y * 16) + 8;
@@ -567,7 +567,7 @@ public class Player : Mob
 
     public override void TouchedBy(Entity entity)
     {
-        if (entity is not Player)
+        if (!(entity is Player))
         {
             entity.TouchedBy(this);
         }
@@ -609,7 +609,7 @@ public class Player : Mob
 
     public void GameWon()
     {
-        Level.player.invulnerableTime = 60 * 5;
-        game.Won();
+        Level.Player.invulnerableTime = 60 * 5;
+        game.won();
     }
 }

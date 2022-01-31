@@ -4,34 +4,34 @@ namespace com.mojang.ld22.item;
 
 public class ToolItem : Item
 {
-    private readonly Random random = new();
+    private Random random = new();
 
-    public static readonly int MAX_LEVEL = 5; // How many different levels of tools there are
+    public static readonly int MAX_LEVEL = 5;
     public static readonly string[] LEVEL_NAMES = {
-    "Wood", "Rock", "Iron", "Gold", "Gem" // The names of the different levels. Later levels means stronger tool
-	};
+    "Wood", "Rock", "Iron", "Gold", "Gem"
+    };
 
     public static readonly int[] LEVEL_COLORS = {
-	    Color.Get(-1, 100, 321, 431),
-	    Color.Get(-1, 100, 321, 111),
-	    Color.Get(-1, 100, 321, 555),
-	    Color.Get(-1, 100, 321, 550),
-	    Color.Get(-1, 100, 321, 055),
-	};
+        Color.Get(-1, 100, 321, 431),
+        Color.Get(-1, 100, 321, 111),
+        Color.Get(-1, 100, 321, 555),
+        Color.Get(-1, 100, 321, 550),
+        Color.Get(-1, 100, 321, 055),
+    };
 
     public ToolType Type { get; }
     public ToolLevel Level { get; }
 
-    /** Tool Item, requires a tool type (ToolType.sword, ToolType.axe, ToolType.hoe, etc) and a level (0 = wood, 2 = iron, 4 = gem, etc) */
+
     public ToolItem(ToolType type, ToolLevel level)
     {
-        Type = type; //type of tool for this item
-        Level = level; //level of tool for this item
+        Type = type;
+        Level = level;
     }
 
     public override int GetColor()
     {
-        //TODO: store the color in a record
+
         return LEVEL_COLORS[(int)Level];
     }
 
@@ -69,11 +69,11 @@ public class ToolItem : Item
     {
         if (Type == ToolType.Axe)
         {
-            return (((int)Level + 1) * 2) + random.NextInt(4); // axes: (level + 1) * 2 + random number beteween 0 and 3, do slightly less damage than swords.
+            return (((int)Level + 1) * 2) + random.NextInt(4);
         }
         if (Type == ToolType.Sword)
         {
-            return (((int)Level + 1) * 3) + random.NextInt(2 + ((int)Level * (int)Level * 2)); //swords: (level + 1) * 3 + random number between 0 and (2 + level * level * 2)
+            return (((int)Level + 1) * 3) + random.NextInt(2 + ((int)Level * (int)Level * 2));
         }
         return 1;
     }

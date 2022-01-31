@@ -10,7 +10,6 @@ public class ResourceRecipe : Recipe
         this.resource = resource;
     }
 
-    //TODO: return the object here instead (IEnumerable<Item> maybe)
     public override void Craft(Player player)
     {
         player.inventory.Add(0, new ResourceItem(resource, 1));

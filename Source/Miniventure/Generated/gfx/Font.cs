@@ -26,42 +26,42 @@ public class Font
         for (int y = y0; y <= y1; y++)
         {
             for (int x = x0; x <= x1; x++)
-            { 
-                if (x == x0 && y == y0) // if the current x & y positions are at their starting params positions[]
+            {
+                if (x == x0 && y == y0)
                 {
-                    screen.Render(x * 8, y * 8, 0 + (13 * 32), Color.Get(-1, 1, 5, 445), MirrorFlags.None); // render a corner point
+                    screen.Render(x * 8, y * 8, 0 + (13 * 32), Color.Get(-1, 1, 5, 445), MirrorFlags.None);
                 }
-                else if (x == x1 && y == y0) // if the current x position is at the end & the y is at the params start[]
+                else if (x == x1 && y == y0)
                 {
-                    screen.Render(x * 8, y * 8, 0 + (13 * 32), Color.Get(-1, 1, 5, 445), MirrorFlags.Horizontal); // render a corner point
+                    screen.Render(x * 8, y * 8, 0 + (13 * 32), Color.Get(-1, 1, 5, 445), MirrorFlags.Horizontal);
                 }
-                else if (x == x0 && y == y1) // if the x position is at the start & the y point is at the params end[]
+                else if (x == x0 && y == y1)
                 {
-                    screen.Render(x * 8, y * 8, 0 + (13 * 32), Color.Get(-1, 1, 5, 445), MirrorFlags.Vertical); // render a corner point
+                    screen.Render(x * 8, y * 8, 0 + (13 * 32), Color.Get(-1, 1, 5, 445), MirrorFlags.Vertical);
                 }
-                else if (x == x1 && y == y1) // if the current x & y positions are at their end params positions[]
+                else if (x == x1 && y == y1)
                 {
-                    screen.Render(x * 8, y * 8, 0 + (13 * 32), Color.Get(-1, 1, 5, 445), MirrorFlags.Both); // render a corner point
+                    screen.Render(x * 8, y * 8, 0 + (13 * 32), Color.Get(-1, 1, 5, 445), MirrorFlags.Both);
                 }
-                else if (y == y0) // if the y position is at it's starting params position[]
+                else if (y == y0)
                 {
-                    screen.Render(x * 8, y * 8, 1 + (13 * 32), Color.Get(-1, 1, 5, 445), MirrorFlags.None); // render a top end point
+                    screen.Render(x * 8, y * 8, 1 + (13 * 32), Color.Get(-1, 1, 5, 445), MirrorFlags.None);
                 }
-                else if (y == y1) // if the y position is at it's ending params position[]
+                else if (y == y1)
                 {
-                    screen.Render(x * 8, y * 8, 1 + (13 * 32), Color.Get(-1, 1, 5, 445), MirrorFlags.Vertical); // render a bottom end point
+                    screen.Render(x * 8, y * 8, 1 + (13 * 32), Color.Get(-1, 1, 5, 445), MirrorFlags.Vertical);
                 }
-                else if (x == x0) // if the x position is at it's begging params position[]
+                else if (x == x0)
                 {
-                    screen.Render(x * 8, y * 8, 2 + (13 * 32), Color.Get(-1, 1, 5, 445), MirrorFlags.None); // render a left end point
+                    screen.Render(x * 8, y * 8, 2 + (13 * 32), Color.Get(-1, 1, 5, 445), MirrorFlags.None);
                 }
-                else if (x == x1)  // if the x position is at it's ending params position[]
+                else if (x == x1)
                 {
-                    screen.Render(x * 8, y * 8, 2 + (13 * 32), Color.Get(-1, 1, 5, 445), MirrorFlags.Horizontal); // render a right end point
+                    screen.Render(x * 8, y * 8, 2 + (13 * 32), Color.Get(-1, 1, 5, 445), MirrorFlags.Horizontal);
                 }
                 else
                 {
-                    screen.Render(x * 8, y * 8, 2 + (13 * 32), Color.Get(5, 5, 5, 5), MirrorFlags.Horizontal); // render a blue square
+                    screen.Render(x * 8, y * 8, 2 + (13 * 32), Color.Get(5, 5, 5, 5), MirrorFlags.Horizontal);
                 }
             }
         }

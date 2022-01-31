@@ -4,7 +4,7 @@ namespace com.mojang.ld22.screen;
 
 public class Menu
 {
-    public Game game; 
+    public Game game;
     public InputHandler input;
 
     public virtual void Init(Game game, InputHandler input)
@@ -24,43 +24,43 @@ public class Menu
     public static void RenderItemList<T>(Screen screen, int xo, int yo, int x1, int y1, T[] items, int selected)
         where T : IListItem
     {
-        bool renderCursor = true;// Renders the ">" "<" arrows between a name.
+        bool renderCursor = true;
         if (selected < 0)
         {
-            selected = -selected - 1; // If the selected is smaller than 0, then it will add one.
-            renderCursor = false; // doesn't render the arrows between the name
+            selected = -selected - 1;
+            renderCursor = false;
         }
-        int w = x1 - xo; // Width variable determined by given values
-        int h = y1 - yo - 1; // Height variable determined by given values
-        int i0 = 0; // Beginning variable of the list loop
-        int i1 = items.Length; // End variable of the list loop
+        int w = x1 - xo;
+        int h = y1 - yo - 1;
+        int i0 = 0;
+        int i1 = items.Length;
         if (i1 > h)
         {
-            i1 = h; // If the end variable is larger than the height variable, then end variable will equal height variable.
+            i1 = h;
         }
 
-        int io = selected - (h / 2); // Middle of the list, (selected item). For scrolling effect
+        int io = selected - (h / 2);
 
         if (io > items.Length - h)
         {
-            io = items.Length - h; //if the middle is coming near the bottom, then the selected will change.
+            io = items.Length - h;
         }
 
         if (io < 0)
         {
-            io = 0; // if the middle is coming near the top, then the selected will change
+            io = 0;
         }
 
         for (int i = i0; i < i1; i++)
         {
-            items[i + io].RenderInventory(screen, (1 + xo) * 8, (i + 1 + yo) * 8); // this will render all the items in the inventory
+            items[i + io].RenderInventory(screen, (1 + xo) * 8, (i + 1 + yo) * 8);
         }
 
         if (renderCursor)
         {
-            int yy = selected + 1 - io + yo; // the y position of the currently selected item
-            Font.Draw(">", screen, (xo + 0) * 8, yy * 8, Color.Get(5, 555, 555, 555)); // draws the left cursor next to the name
-            Font.Draw("<", screen, (xo + w) * 8, yy * 8, Color.Get(5, 555, 555, 555)); // draws the right cursor next to the name
+            int yy = selected + 1 - io + yo;
+            Font.Draw(">", screen, (xo + 0) * 8, yy * 8, Color.Get(5, 555, 555, 555));
+            Font.Draw("<", screen, (xo + w) * 8, yy * 8, Color.Get(5, 555, 555, 555));
         }
     }
 }

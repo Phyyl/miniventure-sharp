@@ -39,8 +39,8 @@ namespace MiniventureSharp.Custom
         private static long SeedUniquifier()
         {
 
-            // L'Ecuyer, "Tables of Linear Congruential Generators of
-            // Different Sizes and Good Lattice Structure", 1999
+
+
             for (; ; )
             {
                 long current = uniquifier;
@@ -63,7 +63,7 @@ namespace MiniventureSharp.Custom
             }
             else
             {
-                // subclass might have overriden setSeed
+
                 SetSeed(seed);
             }
         }
@@ -115,7 +115,7 @@ namespace MiniventureSharp.Custom
                 throw new ArgumentException("n must be positive");
             }
 
-            if ((n & -n) == n)  // i.e., n is a power of 2
+            if ((n & -n) == n)
             {
                 return (int)((n * (long)Next(31)) >> 31);
             }
@@ -131,7 +131,7 @@ namespace MiniventureSharp.Custom
 
         public long NextLong()
         {
-            // it's okay that the bottom word remains signed.
+
             return ((long)Next(32) << 32) + Next(32);
         }
 
@@ -156,7 +156,7 @@ namespace MiniventureSharp.Custom
 
         public double NextGaussian()
         {
-            // See Knuth, ACP, Section 3.4.1 Algorithm C.
+
             if (haveNextNextGaussian)
             {
                 haveNextNextGaussian = false;
@@ -167,8 +167,8 @@ namespace MiniventureSharp.Custom
                 double v1, v2, s;
                 do
                 {
-                    v1 = (2 * NextDouble()) - 1; // between -1 and 1
-                    v2 = (2 * NextDouble()) - 1; // between -1 and 1
+                    v1 = (2 * NextDouble()) - 1;
+                    v2 = (2 * NextDouble()) - 1;
                     s = (v1 * v1) + (v2 * v2);
                 } while (s >= 1 || s == 0);
                 double multiplier = Math.Sqrt(-2 * Math.Log(s) / s);

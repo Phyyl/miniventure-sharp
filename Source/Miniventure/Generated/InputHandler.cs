@@ -13,6 +13,7 @@ public class InputHandler
     public InputKey Right { get; }
     public InputKey Attack { get; }
     public InputKey Menu { get; }
+    public InputKey Debug { get; }
 
     public void ReleaseAll()
     {
@@ -42,7 +43,8 @@ public class InputHandler
             Left = new InputKey(),
             Right = new InputKey(),
             Attack = new InputKey(),
-            Menu = new InputKey()
+            Menu = new InputKey(),
+            Debug = new InputKey(),
         };
     }
 
@@ -84,6 +86,7 @@ public class InputHandler
             Keys.Enter => Menu,
             Keys.X => Menu,
             Keys.C => Attack,
+            Keys.F3 => Debug,
             _ => default
         };
 

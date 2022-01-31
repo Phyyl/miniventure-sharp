@@ -1,4 +1,5 @@
 using Miniventure.Generated.gfx;
+using Vildmark.Serialization;
 
 namespace com.mojang.ld22.entity;
 
@@ -10,9 +11,31 @@ public class AirWizard : Mob
     private int attackTime = 0;
     private int attackType = 0;
 
-    public AirWizard()
-        : base(2000, Random.NextInt(64 * 16), Random.NextInt(64 * 16))
+    public AirWizard(int x, int y)
+        : base(2000, x, y)
     {
+    }
+
+    private AirWizard()
+        : this(Random.NextInt(64 * 16), Random.NextInt(64 * 16))
+    {
+    }
+
+    public override void Serialize(IWriter writer)
+    {
+        base.Serialize(writer);
+    }
+
+    public override void Deserialize(IReader reader)
+    {
+        base.Deserialize(reader);
+
+        xa = reader.ReadValue<int>();
+        ya = reader.ReadValue<int>();
+        randomWalkTime = reader.ReadValue<int>();
+        attackDelay = reader.ReadValue<int>();
+        attackTime = reader.ReadValue<int>();
+        attackType = reader.ReadValue<int>();
     }
 
     public override void Update()
@@ -37,15 +60,15 @@ public class AirWizard : Mob
 
                 if (Health < 1000)
                 {
-                    attackType = 1; 
+                    attackType = 1;
                 }
 
                 if (Health < 200)
                 {
-                    attackType = 2; 
+                    attackType = 2;
                 }
 
-                attackTime = 60 * 2; 
+                attackTime = 60 * 2;
             }
 
             return;
@@ -58,15 +81,15 @@ public class AirWizard : Mob
             double dir = attackTime * 0.25 * ((attackTime % 2 * 2) - 1);
             double curSpeed = 0.7 + (attackType * 0.2);
 
-            Level.Add(new Spark(this, Math.Cos(dir) * curSpeed, Math.Sin(dir) * curSpeed));
+            Level.Add(new Spark(X, Y, Math.Cos(dir) * curSpeed, Math.Sin(dir) * curSpeed));
 
             return;
         }
 
-        if (Level.player != null && randomWalkTime == 0)
+        if (Level.Player != null && randomWalkTime == 0)
         {
-            int xd = Level.player.X - X;
-            int yd = Level.player.Y - Y;
+            int xd = Level.Player.X - X;
+            int yd = Level.Player.Y - Y;
 
             if ((xd * xd) + (yd * yd) < 32 * 32)
             {
@@ -133,10 +156,10 @@ public class AirWizard : Mob
         {
             randomWalkTime--;
 
-            if (Level.player != null && randomWalkTime == 0)
+            if (Level.Player != null && randomWalkTime == 0)
             {
-                int xd = Level.player.X - X;
-                int yd = Level.player.Y - Y;
+                int xd = Level.Player.X - X;
+                int yd = Level.Player.Y - Y;
 
                 if (Random.NextInt(4) == 0 && (xd * xd) + (yd * yd) < 50 * 50)
                 {
@@ -151,84 +174,83 @@ public class AirWizard : Mob
 
     public override void Render(Screen screen)
     {
-        int xt = 8; 
+        int xt = 8;
         int yt = 14;
 
-        int flip1 = (WalkDist >> 3) & 1; 
-        int flip2 = (WalkDist >> 3) & 1; 
+        MirrorFlags flip1 = (MirrorFlags)((WalkDist >> 3) & 1);
+        MirrorFlags flip2 = (MirrorFlags)((WalkDist >> 3) & 1);
 
         if (Direction == Direction.Up)
-        { 
-            xt += 2; 
+        {
+            xt += 2;
         }
 
         if (Direction == Direction.Left || Direction == Direction.Right)
-        { 
-            flip1 = 0; 
-            flip2 = (WalkDist >> 4) & 1; 
+        {
+            flip1 = 0;
+            flip2 = (MirrorFlags)((WalkDist >> 4) & 1);
 
             if (Direction == Direction.Left)
-            { 
-                flip1 = 1; 
+            {
+                flip1 = MirrorFlags.Horizontal;
             }
-            
-            xt += 4 + (((WalkDist >> 3) & 1) * 2); 
+
+            xt += 4 + (((WalkDist >> 3) & 1) * 2);
         }
 
-        int xo = X - 8; 
-        int yo = Y - 11;  
+        int xo = X - 8;
+        int yo = Y - 11;
 
-        int col1 = Color.Get(-1, 100, 500, 555); 
-        int col2 = Color.Get(-1, 100, 500, 532); 
+        int col1 = Color.Get(-1, 100, 500, 555);
+        int col2 = Color.Get(-1, 100, 500, 532);
 
         if (Health < 200)
-        { 
+        {
             if (TickTime / 3 % 2 == 0)
-            { 
-                col1 = Color.Get(-1, 500, 100, 555); 
-                col2 = Color.Get(-1, 500, 100, 532); 
+            {
+                col1 = Color.Get(-1, 500, 100, 555);
+                col2 = Color.Get(-1, 500, 100, 532);
             }
         }
         else if (Health < 1000)
-        { 
+        {
             if (TickTime / 5 % 4 == 0)
-            { 
-                col1 = Color.Get(-1, 500, 100, 555); 
-                col2 = Color.Get(-1, 500, 100, 532); 
+            {
+                col1 = Color.Get(-1, 500, 100, 555);
+                col2 = Color.Get(-1, 500, 100, 532);
             }
         }
 
         if (ImmuneTime > 0)
         {
-            col1 = Color.Get(-1, 555, 555, 555); 
-            col2 = Color.Get(-1, 555, 555, 555); 
+            col1 = Color.Get(-1, 555, 555, 555);
+            col2 = Color.Get(-1, 555, 555, 555);
         }
 
-        //TODO: flip1 and flip2 should already be MirrorFlags
-        screen.Render(xo + (8 * flip1), yo + 0, xt + (yt * 32), col1, (MirrorFlags)flip1); 
-        screen.Render(xo + 8 - (8 * flip1), yo + 0, xt + 1 + (yt * 32), col1, (MirrorFlags)flip1); 
-        screen.Render(xo + (8 * flip2), yo + 8, xt + ((yt + 1) * 32), col2, (MirrorFlags)flip2); 
-        screen.Render(xo + 8 - (8 * flip2), yo + 8, xt + 1 + ((yt + 1) * 32), col2, (MirrorFlags)flip2); 
+        screen.Render(xo + (8 * (int)flip1), yo + 0, xt + (yt * 32), col1, flip1);
+        screen.Render(xo + 8 - (8 * (int)flip1), yo + 0, xt + 1 + (yt * 32), col1, flip1);
+        screen.Render(xo + (8 * (int)flip2), yo + 8, xt + ((yt + 1) * 32), col2, flip2);
+        screen.Render(xo + 8 - (8 * (int)flip2), yo + 8, xt + 1 + ((yt + 1) * 32), col2, flip2);
     }
 
     public override void TouchedBy(Entity entity)
     {
         if (entity is Player)
-        { 
-            entity.Hurt(this, 3, Direction); 
+        {
+            entity.Hurt(3, Direction);
         }
     }
 
     public override void Die()
     {
-        base.Die(); 
+        base.Die();
 
-        if (Level.player != null)
-        { 
-            Level.player.score += 1000; 
-            Level.player.GameWon(); 
+        if (Level.Player != null)
+        {
+            Level.Player.score += 1000;
+            Level.Player.GameWon();
         }
 
-        Sound.bossdeath.Play(); 
+        Sound.bossdeath.Play();
     }
 }

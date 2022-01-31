@@ -2,8 +2,8 @@ namespace com.mojang.ld22.crafting;
 
 public class ToolRecipe : Recipe
 {
-    private readonly ToolType type;
-    private readonly ToolLevel level;
+    private ToolType type;
+    private ToolLevel level;
 
     public ToolRecipe(ToolType type, ToolLevel level) : base(new ToolItem(type, level))
     {

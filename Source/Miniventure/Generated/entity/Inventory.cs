@@ -1,8 +1,8 @@
+using Vildmark.Serialization;
+
 namespace com.mojang.ld22.entity;
 
-
-
-public class Inventory
+public class Inventory : ISerializable
 {
     public List<Item> Items { get; } = new List<Item>();
 
@@ -78,11 +78,21 @@ public class Inventory
             {
                 if (Items[i].Matches(item))
                 {
-                    count++; // if the current item matches the one given, then the count increases.
+                    count++;
                 }
             }
-            return count; // returns the count.
+            return count;
         }
         return 0;
+    }
+
+    public void Serialize(IWriter writer)
+    {
+
+    }
+
+    public void Deserialize(IReader reader)
+    {
+
     }
 }
