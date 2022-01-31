@@ -5,7 +5,7 @@ public class TitleMenu : Menu
 {
     private int selected = 0;
 
-    private static readonly string[] options = { "Start game", "How to play", "About" };
+    private static readonly string[] options = { "New game", "How to play", "About" };
 
     public TitleMenu()
     {
@@ -13,6 +13,8 @@ public class TitleMenu : Menu
 
     public override void Update()
     {
+        options[0] = File.Exists("save.dat") ? "Load Game" : "New Game";
+
         if (input.Up.Clicked)
         {
             selected--;
@@ -58,13 +60,12 @@ public class TitleMenu : Menu
     {
         screen.Clear(0);
 
-
-
         int h = 2;
         int w = 13;
         int titleColor = Color.Get(0, 010, 131, 551);
         int xo = (screen.Width - w * 8) / 2;
         int yo = 24;
+
         for (int y = 0; y < h; y++)
         {
             for (int x = 0; x < w; x++)
@@ -72,8 +73,6 @@ public class TitleMenu : Menu
                 screen.Render(xo + x * 8, yo + y * 8, x + (y + 6) * 32, titleColor, 0);
             }
         }
-
-
 
         for (int i = 0; i < options.Length; i++)
         {
