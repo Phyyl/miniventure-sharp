@@ -111,26 +111,35 @@ public class CraftingMenu : Menu
             Recipe recipe = recipes[selected].Recipe;
             int hasResultItems = player.inventory.Count(recipe.resultTemplate);
             int xo = 13 * 8;
+
             screen.Render(xo, 2 * 8, recipe.resultTemplate.GetSprite(), recipe.resultTemplate.GetColor(), 0);
+            
             Font.Draw("" + hasResultItems, screen, xo + 8, 2 * 8, Color.Get(-1, 555, 555, 555));
 
             List<Item> costs = recipe.costs;
+
             for (int i = 0; i < costs.Count; i++)
             {
                 Item item = costs[i];
                 int yo = (5 + i) * 8;
+
                 screen.Render(xo, yo, item.GetSprite(), item.GetColor(), 0);
+
                 int requiredAmt = 1;
+
                 if (item is ResourceItem item1)
                 {
                     requiredAmt = item1.Count;
                 }
+
                 int has = player.inventory.Count(item);
                 int color = Color.Get(-1, 555, 555, 555);
+
                 if (has < requiredAmt)
                 {
                     color = Color.Get(-1, 222, 222, 222);
                 }
+
                 if (has > 99)
                 {
                     has = 99;

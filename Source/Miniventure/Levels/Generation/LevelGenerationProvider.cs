@@ -6,7 +6,7 @@ public abstract class LevelGenerationProvider : ILevelProvider
 
     private readonly Level parentLevel;
 
-    protected virtual Tile TileAroundStairs => Tile.hardRock;
+    protected virtual Tile TileAroundStairs => Tile.HardRock;
 
     public virtual int DirtColor => 322;
     public virtual int GrassColor => 141;
@@ -61,23 +61,23 @@ public abstract class LevelGenerationProvider : ILevelProvider
         {
             for (int x = 0; x < data.Width; x++)
             {
-                if (parentLevel.GetTile(x, y) != Tile.stairsDown)
+                if (parentLevel.GetTile(x, y) != Tile.StairsDown)
                 {
                     continue;
                 }
 
-                data[x, y] = new(Tile.stairsUp.id, 0);
+                data[x, y] = new(Tile.StairsUp.Key, 0);
 
                 Tile tile = TileAroundStairs;
 
-                data[x - 1, y] = new(tile.id, 0);
-                data[x + 1, y] = new(tile.id, 0);
-                data[x, y - 1] = new(tile.id, 0);
-                data[x, y + 1] = new(tile.id, 0);
-                data[x - 1, y - 1] = new(tile.id, 0);
-                data[x - 1, y + 1] = new(tile.id, 0);
-                data[x + 1, y - 1] = new(tile.id, 0);
-                data[x + 1, y + 1] = new(tile.id, 0);
+                data[x - 1, y] = new(tile.Key, 0);
+                data[x + 1, y] = new(tile.Key, 0);
+                data[x, y - 1] = new(tile.Key, 0);
+                data[x, y + 1] = new(tile.Key, 0);
+                data[x - 1, y - 1] = new(tile.Key, 0);
+                data[x - 1, y + 1] = new(tile.Key, 0);
+                data[x + 1, y - 1] = new(tile.Key, 0);
+                data[x + 1, y + 1] = new(tile.Key, 0);
 
             }
         }

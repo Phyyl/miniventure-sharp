@@ -3,7 +3,7 @@ namespace Miniventure.UI;
 
 public class LevelTransitionMenu : Menu
 {
-    private int dir;
+    private readonly int dir;
     private int time = 0;
 
     public LevelTransitionMenu(int dir)

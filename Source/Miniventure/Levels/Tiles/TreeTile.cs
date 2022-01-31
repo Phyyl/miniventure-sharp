@@ -1,11 +1,10 @@
 namespace Miniventure.Levels.Tiles;
 
-
-public class TreeTile : Tile
+public record class TreeTile : Tile
 {
-    public TreeTile(int id) : base(id)
+    public TreeTile(byte id)
+        : base(id, true)
     {
-        connectsToGrass = true;
     }
 
     public override void Render(Screen screen, Level level, int x, int y)
@@ -31,6 +30,7 @@ public class TreeTile : Tile
         {
             screen.Render(x * 16 + 0, y * 16 + 0, 9 + 0 * 32, col, 0);
         }
+
         if (u && ur && r)
         {
             screen.Render(x * 16 + 8, y * 16 + 0, 10 + 2 * 32, barkCol2, 0);
@@ -39,6 +39,7 @@ public class TreeTile : Tile
         {
             screen.Render(x * 16 + 8, y * 16 + 0, 10 + 0 * 32, col, 0);
         }
+
         if (d && dl && l)
         {
             screen.Render(x * 16 + 0, y * 16 + 8, 10 + 2 * 32, barkCol2, 0);
@@ -47,6 +48,7 @@ public class TreeTile : Tile
         {
             screen.Render(x * 16 + 0, y * 16 + 8, 9 + 1 * 32, barkCol1, 0);
         }
+
         if (d && dr && r)
         {
             screen.Render(x * 16 + 8, y * 16 + 8, 10 + 1 * 32, col, 0);
@@ -67,29 +69,25 @@ public class TreeTile : Tile
         }
     }
 
-
     public override bool MayPass(Level level, int x, int y, Entity e)
     {
         return false;
     }
 
-
     public override void Hurt(Level level, int x, int y, Mob source, int dmg, Direction attackDir)
     {
-        hurt(level, x, y, dmg);
+        Hurt(level, x, y, dmg);
     }
-
 
     public override bool Interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir)
     {
-        if (item is ToolItem)
+        if (item is ToolItem tool)
         {
-            ToolItem tool = (ToolItem)item;
             if (tool.Type == ToolType.Axe)
             {
                 if (player.PayStamina(4 - (int)tool.Level))
                 {
-                    hurt(level, xt, yt, random.NextInt(10) + (int)tool.Level * 5 + 10);
+                    Hurt(level, xt, yt, random.NextInt(10) + (int)tool.Level * 5 + 10);
                     return true;
                 }
             }
@@ -97,13 +95,13 @@ public class TreeTile : Tile
         return false;
     }
 
-    private void hurt(Level level, int x, int y, int dmg)
+    private void Hurt(Level level, int x, int y, int dmg)
     {
         {
             int count = random.NextInt(10) == 0 ? 1 : 0;
             for (int i = 0; i < count; i++)
             {
-                level.Add(new ItemEntity(new ResourceItem(Resource.apple), x * 16 + random.NextInt(10) + 3, y * 16 + random.NextInt(10) + 3));
+                level.Add(new ItemEntity(new ResourceItem(Resource.Apple), x * 16 + random.NextInt(10) + 3, y * 16 + random.NextInt(10) + 3));
             }
         }
 
@@ -118,17 +116,17 @@ public class TreeTile : Tile
 
             for (int i = 0; i < count; i++)
             {
-                level.Add(new ItemEntity(new ResourceItem(Resource.wood), x * 16 + random.NextInt(10) + 3, y * 16 + random.NextInt(10) + 3));
+                level.Add(new ItemEntity(new ResourceItem(Resource.Wood), x * 16 + random.NextInt(10) + 3, y * 16 + random.NextInt(10) + 3));
             }
 
             count = random.NextInt(random.NextInt(4) + 1);
 
             for (int i = 0; i < count; i++)
             {
-                level.Add(new ItemEntity(new ResourceItem(Resource.acorn), x * 16 + random.NextInt(10) + 3, y * 16 + random.NextInt(10) + 3));
+                level.Add(new ItemEntity(new ResourceItem(Resource.Acorn), x * 16 + random.NextInt(10) + 3, y * 16 + random.NextInt(10) + 3));
             }
 
-            level.SetTile(x, y, grass, 0);
+            level.SetTile(x, y, Grass, 0);
         }
         else
         {

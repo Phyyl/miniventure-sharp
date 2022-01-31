@@ -46,11 +46,11 @@ public class SkyLevelGenerationProvider : LevelGenerationProvider
 
                 if (val < -0.25)
                 {
-                    data[x, y] = Tile.infiniteFall;
+                    data[x, y] = Tile.InfiniteFall;
                 }
                 else
                 {
-                    data[x, y] = Tile.cloud;
+                    data[x, y] = Tile.Cloud;
                 }
             }
         }
@@ -65,14 +65,14 @@ public class SkyLevelGenerationProvider : LevelGenerationProvider
             {
                 for (int xx = x - 1; xx <= x + 1; xx++)
                 {
-                    if (data[xx, yy].ID != Tile.cloud.id)
+                    if (data[xx, yy].ID != Tile.Cloud.Key)
                     {
                         goto cactusLoop;
                     }
                 }
             }
 
-            data[x, y] = Tile.cloudCactus;
+            data[x, y] = Tile.CloudCactus;
 
         cactusLoop:
             while (false) ;
@@ -89,14 +89,14 @@ public class SkyLevelGenerationProvider : LevelGenerationProvider
             {
                 for (int xx = x - 1; xx <= x + 1; xx++)
                 {
-                    if (data[xx, yy].ID != Tile.cloud.id)
+                    if (data[xx, yy].ID != Tile.Cloud.Key)
                     {
                         goto stairsLoop;
                     }
                 }
             }
 
-            data[x, y] = Tile.stairsDown;
+            data[x, y] = Tile.StairsDown;
             count++;
 
             if (count == 2)
@@ -113,12 +113,12 @@ public class SkyLevelGenerationProvider : LevelGenerationProvider
     {
         int[] count = CountTiles(data);
 
-        if (count[Tile.cloud.id] < 2000)
+        if (count[Tile.Cloud.Key] < 2000)
         {
             return false;
         }
 
-        if (count[Tile.stairsDown.id] < 2)
+        if (count[Tile.StairsDown.Key] < 2)
         {
             return false;
         }

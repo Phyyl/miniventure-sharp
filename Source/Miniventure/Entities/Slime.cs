@@ -78,7 +78,7 @@ public class Slime : Mob
         int count = Random.NextInt(2) + 1;
         for (int i = 0; i < count; i++)
         {
-            Level.Add(new ItemEntity(new ResourceItem(Resource.slime), X + Random.NextInt(11) - 5, Y + Random.NextInt(11) - 5));
+            Level.Add(new ItemEntity(new ResourceItem(Resource.Slime), X + Random.NextInt(11) - 5, Y + Random.NextInt(11) - 5));
         }
 
         if (Level.Player != null)

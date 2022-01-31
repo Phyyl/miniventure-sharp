@@ -1,28 +1,25 @@
 namespace Miniventure.Levels.Tiles;
 
-
-public class SaplingTile : Tile
+public record class SaplingTile : Tile
 {
-    private Tile onType;
-    private Tile growsTo;
+    private readonly Tile onType;
+    private readonly Tile growsTo;
 
-    public SaplingTile(int id, Tile onType, Tile growsTo) : base(id)
+    public SaplingTile(byte id, Tile onType, Tile growsTo)
+        : base(id, onType.ConnectsToGrass, onType.ConnectsToSand, onType.ConnectsToLava, onType.ConnectsToWater)
     {
         this.onType = onType;
         this.growsTo = growsTo;
-        connectsToSand = onType.connectsToSand;
-        connectsToGrass = onType.connectsToGrass;
-        connectsToWater = onType.connectsToWater;
-        connectsToLava = onType.connectsToLava;
     }
 
     public override void Render(Screen screen, Level level, int x, int y)
     {
         onType.Render(screen, level, x, y);
+
         int col = Color.Get(10, 40, 50, -1);
+
         screen.Render(x * 16 + 4, y * 16 + 4, 11 + 3 * 32, col, 0);
     }
-
 
     public override void Update(Level level, int x, int y)
     {

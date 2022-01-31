@@ -3,10 +3,10 @@ namespace Miniventure.UI;
 
 public class ContainerMenu : Menu
 {
-    private Player player;
-    private Inventory container;
+    private readonly Player player;
+    private readonly Inventory container;
     private int selected = 0;
-    private string title;
+    private readonly string title;
     private int oSelected;
     private int window = 0;
 

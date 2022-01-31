@@ -2,7 +2,7 @@ namespace Miniventure.Graphics;
 
 public class Screen
 {
-    private static int[] dither = new int[] { 0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5, };
+    private static readonly int[] dither = new int[] { 0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5, };
 
     private readonly Pixels spriteSheet;
 

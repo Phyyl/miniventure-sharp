@@ -1,9 +1,10 @@
 namespace Miniventure.Levels.Tiles;
 
 
-public class CloudTile : Tile
+public record class CloudTile : Tile
 {
-    public CloudTile(int id) : base(id)
+    public CloudTile(byte id)
+        : base(id)
     {
     }
 
@@ -17,15 +18,15 @@ public class CloudTile : Tile
         int col = Color.Get(444, 444, 555, 555);
         int transitionColor = Color.Get(333, 444, 555, -1);
 
-        bool u = level.GetTile(x, y - 1) == infiniteFall;
-        bool d = level.GetTile(x, y + 1) == infiniteFall;
-        bool l = level.GetTile(x - 1, y) == infiniteFall;
-        bool r = level.GetTile(x + 1, y) == infiniteFall;
+        bool u = level.GetTile(x, y - 1) == InfiniteFall;
+        bool d = level.GetTile(x, y + 1) == InfiniteFall;
+        bool l = level.GetTile(x - 1, y) == InfiniteFall;
+        bool r = level.GetTile(x + 1, y) == InfiniteFall;
 
-        bool ul = level.GetTile(x - 1, y - 1) == infiniteFall;
-        bool dl = level.GetTile(x - 1, y + 1) == infiniteFall;
-        bool ur = level.GetTile(x + 1, y - 1) == infiniteFall;
-        bool dr = level.GetTile(x + 1, y + 1) == infiniteFall;
+        bool ul = level.GetTile(x - 1, y - 1) == InfiniteFall;
+        bool dl = level.GetTile(x - 1, y + 1) == InfiniteFall;
+        bool ur = level.GetTile(x + 1, y - 1) == InfiniteFall;
+        bool dr = level.GetTile(x + 1, y + 1) == InfiniteFall;
 
 
 
@@ -112,7 +113,7 @@ public class CloudTile : Tile
 
                     for (int i = 0; i < count; i++)
                     {
-                        level.Add(new ItemEntity(new ResourceItem(Resource.cloud), xt * 16 + random.NextInt(10) + 3, yt * 16 + random.NextInt(10) + 3));
+                        level.Add(new ItemEntity(new ResourceItem(Resource.Cloud), xt * 16 + random.NextInt(10) + 3, yt * 16 + random.NextInt(10) + 3));
                     }
 
                     return true;

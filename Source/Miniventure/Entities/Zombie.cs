@@ -3,7 +3,7 @@ namespace Miniventure.Entities;
 public class Zombie : Mob
 {
     private int xa, ya;
-    private int lvl;
+    private readonly int lvl;
     private int randomWalkTime = 0;
 
     public Zombie(int lvl)
@@ -136,7 +136,7 @@ public class Zombie : Mob
         int count = Random.NextInt(2) + 1;
         for (int i = 0; i < count; i++)
         {
-            Level.Add(new ItemEntity(new ResourceItem(Resource.cloth), X + Random.NextInt(11) - 5, Y + Random.NextInt(11) - 5));
+            Level.Add(new ItemEntity(new ResourceItem(Resource.Cloth), X + Random.NextInt(11) - 5, Y + Random.NextInt(11) - 5));
         }
 
         if (Level.Player != null)

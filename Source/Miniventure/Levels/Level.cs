@@ -2,12 +2,12 @@ namespace Miniventure.Levels;
 
 public record struct LevelTile(byte ID, byte Data = 0)
 {
-    public static implicit operator LevelTile(Tile tile) => new LevelTile(tile.id);
+    public static implicit operator LevelTile(Tile tile) => new LevelTile(tile.Key);
 }
 
 public class Level
 {
-    private Random random = new();
+    private readonly Random random = new();
 
     public int GrassColor { get; }
     public int DirtColor { get; }
@@ -171,7 +171,7 @@ public class Level
     {
         if (x < 0 || y < 0 || x >= Width || y >= Height)
         {
-            return Tile.rock;
+            return Tile.Rock;
         }
 
         return Tile.tiles[Data[x, y].ID];
@@ -184,7 +184,7 @@ public class Level
             return;
         }
 
-        Data[x, y] = new(tile.id, tileData);
+        Data[x, y] = new(tile.Key, tileData);
     }
 
     public virtual byte GetData(int x, int y)
@@ -209,9 +209,9 @@ public class Level
 
     public virtual void Add(Entity entity)
     {
-        if (entity is Player)
+        if (entity is Player player)
         {
-            Player = (Player)entity;
+            Player = player;
         }
 
         entity.Removed = false;

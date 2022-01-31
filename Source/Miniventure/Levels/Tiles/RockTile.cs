@@ -1,31 +1,29 @@
 namespace Miniventure.Levels.Tiles;
 
-
-public class RockTile : Tile
+public record class RockTile : Tile
 {
-    public RockTile(int id) : base(id)
+    public RockTile(byte id)
+        : base(id)
     {
-        t = this;
     }
 
-    public Tile t;
-    public int mainColor = 444;
-    public int darkColor = 111;
+    protected virtual int MainColor => 444;
+    protected virtual int DarkColor => 111;
 
     public override void Render(Screen screen, Level level, int x, int y)
     {
-        int col = Color.Get(mainColor, mainColor, mainColor - 111, mainColor - 111);
-        int transitionColor = Color.Get(darkColor, mainColor, mainColor + 111, level.DirtColor);
+        int col = Color.Get(MainColor, MainColor, MainColor - 111, MainColor - 111);
+        int transitionColor = Color.Get(DarkColor, MainColor, MainColor + 111, level.DirtColor);
 
-        bool u = level.GetTile(x, y - 1) != t;
-        bool d = level.GetTile(x, y + 1) != t;
-        bool l = level.GetTile(x - 1, y) != t;
-        bool r = level.GetTile(x + 1, y) != t;
+        bool u = level.GetTile(x, y - 1) != this;
+        bool d = level.GetTile(x, y + 1) != this;
+        bool l = level.GetTile(x - 1, y) != this;
+        bool r = level.GetTile(x + 1, y) != this;
 
-        bool ul = level.GetTile(x - 1, y - 1) != t;
-        bool dl = level.GetTile(x - 1, y + 1) != t;
-        bool ur = level.GetTile(x + 1, y - 1) != t;
-        bool dr = level.GetTile(x + 1, y + 1) != t;
+        bool ul = level.GetTile(x - 1, y - 1) != this;
+        bool dl = level.GetTile(x - 1, y + 1) != this;
+        bool ur = level.GetTile(x + 1, y - 1) != this;
+        bool dr = level.GetTile(x + 1, y + 1) != this;
 
         if (!u && !l)
         {
@@ -92,29 +90,25 @@ public class RockTile : Tile
         }
     }
 
-
     public override bool MayPass(Level level, int x, int y, Entity e)
     {
         return false;
     }
 
-
     public override void Hurt(Level level, int x, int y, Mob source, int dmg, Direction attackDir)
     {
-        hurt(level, x, y, dmg);
+        Hurt(level, x, y, dmg);
     }
-
 
     public override bool Interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir)
     {
-        if (item is ToolItem)
+        if (item is ToolItem tool)
         {
-            ToolItem tool = (ToolItem)item;
             if (tool.Type == ToolType.Pickaxe)
             {
                 if (player.PayStamina(4 - (int)tool.Level))
                 {
-                    hurt(level, xt, yt, random.NextInt(10) + (int)tool.Level * 5 + 10);
+                    Hurt(level, xt, yt, random.NextInt(10) + (int)tool.Level * 5 + 10);
                     return true;
                 }
             }
@@ -122,26 +116,30 @@ public class RockTile : Tile
         return false;
     }
 
-    public virtual void hurt(Level level, int x, int y, int dmg)
+    public void Hurt(Level level, int x, int y, int dmg)
     {
         byte damage = (byte)(level.GetData(x, y) + dmg);
+
         level.Add(new SmashParticle(x * 16 + 8, y * 16 + 8));
         level.Add(new TextParticle("" + dmg, x * 16 + 8, y * 16 + 8, Color.Get(-1, 500, 500, 500)));
+
         if (damage >= 50)
         {
             int count = random.NextInt(4) + 1;
+
             for (int i = 0; i < count; i++)
             {
-
-                level.Add(new ItemEntity(new ResourceItem(Resource.stone), x * 16 + random.NextInt(10) + 3, y * 16 + random.NextInt(10) + 3));
+                level.Add(new ItemEntity(new ResourceItem(Resource.Stone), x * 16 + random.NextInt(10) + 3, y * 16 + random.NextInt(10) + 3));
             }
+
             count = random.NextInt(2);
+
             for (int i = 0; i < count; i++)
             {
-
-                level.Add(new ItemEntity(new ResourceItem(Resource.coal), x * 16 + random.NextInt(10) + 3, y * 16 + random.NextInt(10) + 3));
+                level.Add(new ItemEntity(new ResourceItem(Resource.Coal), x * 16 + random.NextInt(10) + 3, y * 16 + random.NextInt(10) + 3));
             }
-            level.SetTile(x, y, dirt, 0);
+
+            level.SetTile(x, y, Dirt, 0);
         }
         else
         {
@@ -152,6 +150,7 @@ public class RockTile : Tile
     public override void Update(Level level, int xt, int yt)
     {
         byte damage = level.GetData(xt, yt);
+
         if (damage > 0)
         {
             level.SetData(xt, yt, (byte)(damage - 1));

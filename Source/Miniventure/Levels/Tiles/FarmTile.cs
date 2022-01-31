@@ -1,8 +1,9 @@
 namespace Miniventure.Levels.Tiles;
 
-public class FarmTile : Tile
+public record class FarmTile : Tile
 {
-    public FarmTile(int id) : base(id)
+    public FarmTile(byte id)
+        : base(id)
     {
     }
 
@@ -18,14 +19,13 @@ public class FarmTile : Tile
 
     public override bool Interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir)
     {
-        if (item is ToolItem)
+        if (item is ToolItem tool)
         {
-            ToolItem tool = (ToolItem)item;
             if (tool.Type == ToolType.Shovel)
             {
                 if (player.PayStamina(4 - (int)tool.Level))
                 {
-                    level.SetTile(xt, yt, Tile.dirt, 0);
+                    level.SetTile(xt, yt, Tile.Dirt, 0);
                     return true;
                 }
             }
@@ -57,7 +57,7 @@ public class FarmTile : Tile
             return;
         }
 
-        level.SetTile(xt, yt, Tile.dirt, 0);
+        level.SetTile(xt, yt, Tile.Dirt, 0);
 
     }
 }

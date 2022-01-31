@@ -1,9 +1,10 @@
 namespace Miniventure.Levels.Tiles;
 
 
-public class DirtTile : Tile
+public record class DirtTile : Tile
 {
-    public DirtTile(int id) : base(id)
+    public DirtTile(byte id)
+        : base(id)
     {
     }
 
@@ -18,15 +19,14 @@ public class DirtTile : Tile
 
     public override bool Interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir)
     {
-        if (item is ToolItem)
+        if (item is ToolItem tool)
         {
-            ToolItem tool = (ToolItem)item;
             if (tool.Type == ToolType.Shovel)
             {
                 if (player.PayStamina(4 - (int)tool.Level))
                 {
-                    level.SetTile(xt, yt, hole, 0);
-                    level.Add(new ItemEntity(new ResourceItem(Resource.dirt), xt * 16 + random.NextInt(10) + 3, yt * 16 + random.NextInt(10) + 3));
+                    level.SetTile(xt, yt, Hole, 0);
+                    level.Add(new ItemEntity(new ResourceItem(Resource.Dirt), xt * 16 + random.NextInt(10) + 3, yt * 16 + random.NextInt(10) + 3));
                     AudioTracks.MonsterHurt.Play();
                     return true;
                 }
@@ -35,7 +35,7 @@ public class DirtTile : Tile
             {
                 if (player.PayStamina(4 - (int)tool.Level))
                 {
-                    level.SetTile(xt, yt, farmland, 0);
+                    level.SetTile(xt, yt, Farmland, 0);
                     AudioTracks.MonsterHurt.Play();
                     return true;
                 }

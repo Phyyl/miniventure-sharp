@@ -1,12 +1,11 @@
 namespace Miniventure.Levels.Tiles;
 
 
-public class FlowerTile : GrassTile
+public record class FlowerTile : GrassTile
 {
-    public FlowerTile(int id) : base(id)
+    public FlowerTile(byte id)
+        : base(id)
     {
-        tiles[id] = this;
-        connectsToGrass = true;
     }
 
 
@@ -42,16 +41,15 @@ public class FlowerTile : GrassTile
 
     public override bool Interact(Level level, int x, int y, Player player, Item item, Direction attackDir)
     {
-        if (item is ToolItem)
+        if (item is ToolItem tool)
         {
-            ToolItem tool = (ToolItem)item;
             if (tool.Type == ToolType.Shovel)
             {
                 if (player.PayStamina(4 - (int)tool.Level))
                 {
-                    level.Add(new ItemEntity(new ResourceItem(Resource.flower), x * 16 + random.NextInt(10) + 3, y * 16 + random.NextInt(10) + 3));
-                    level.Add(new ItemEntity(new ResourceItem(Resource.flower), x * 16 + random.NextInt(10) + 3, y * 16 + random.NextInt(10) + 3));
-                    level.SetTile(x, y, grass, 0);
+                    level.Add(new ItemEntity(new ResourceItem(Resource.Flower), x * 16 + random.NextInt(10) + 3, y * 16 + random.NextInt(10) + 3));
+                    level.Add(new ItemEntity(new ResourceItem(Resource.Flower), x * 16 + random.NextInt(10) + 3, y * 16 + random.NextInt(10) + 3));
+                    level.SetTile(x, y, Grass, 0);
                     return true;
                 }
             }
@@ -65,8 +63,8 @@ public class FlowerTile : GrassTile
         int count = random.NextInt(2) + 1;
         for (int i = 0; i < count; i++)
         {
-            level.Add(new ItemEntity(new ResourceItem(Resource.flower), x * 16 + random.NextInt(10) + 3, y * 16 + random.NextInt(10) + 3));
+            level.Add(new ItemEntity(new ResourceItem(Resource.Flower), x * 16 + random.NextInt(10) + 3, y * 16 + random.NextInt(10) + 3));
         }
-        level.SetTile(x, y, grass, 0);
+        level.SetTile(x, y, Grass, 0);
     }
 }

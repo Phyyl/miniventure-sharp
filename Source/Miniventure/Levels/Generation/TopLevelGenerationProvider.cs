@@ -46,15 +46,15 @@ public class TopLevelGenerationProvider : LevelGenerationProvider
 
                 if (val < -0.5)
                 {
-                    data[x, y] = Tile.water;
+                    data[x, y] = Tile.Water;
                 }
                 else if (val > 0.5 && mval < -1.5)
                 {
-                    data[x, y] = Tile.rock;
+                    data[x, y] = Tile.Rock;
                 }
                 else
                 {
-                    data[x, y] = Tile.grass;
+                    data[x, y] = Tile.Grass;
                 }
             }
         }
@@ -80,9 +80,9 @@ public class TopLevelGenerationProvider : LevelGenerationProvider
                         {
                             if (xx >= 0 && yy >= 0 && xx < Width && yy < Height)
                             {
-                                if (data[xx, yy].ID == Tile.grass.id)
+                                if (data[xx, yy].ID == Tile.Grass.Key)
                                 {
-                                    data[xx, yy] = Tile.sand;
+                                    data[xx, yy] = Tile.Sand;
                                 }
                             }
                         }
@@ -103,9 +103,9 @@ public class TopLevelGenerationProvider : LevelGenerationProvider
 
                 if (xx >= 0 && yy >= 0 && xx < Width && yy < Height)
                 {
-                    if (data[xx, yy].ID == Tile.grass.id)
+                    if (data[xx, yy].ID == Tile.Grass.Key)
                     {
-                        data[xx, yy] = Tile.tree;
+                        data[xx, yy] = Tile.Tree;
                     }
                 }
             }
@@ -124,9 +124,9 @@ public class TopLevelGenerationProvider : LevelGenerationProvider
 
                 if (xx >= 0 && yy >= 0 && xx < Width && yy < Height)
                 {
-                    if (data[xx, yy].ID == Tile.grass.id)
+                    if (data[xx, yy].ID == Tile.Grass.Key)
                     {
-                        data[xx, yy] = new(Tile.flower.id, (byte)(col + Random.NextInt(4) * 16));
+                        data[xx, yy] = new(Tile.Flower.Key, (byte)(col + Random.NextInt(4) * 16));
                     }
                 }
             }
@@ -139,9 +139,9 @@ public class TopLevelGenerationProvider : LevelGenerationProvider
 
             if (xx >= 0 && yy >= 0 && xx < Width && yy < Height)
             {
-                if (data[xx, yy].ID == Tile.sand.id)
+                if (data[xx, yy].ID == Tile.Sand.Key)
                 {
-                    data[xx, yy] = Tile.cactus;
+                    data[xx, yy] = Tile.Cactus;
                 }
             }
         }
@@ -157,14 +157,14 @@ public class TopLevelGenerationProvider : LevelGenerationProvider
             {
                 for (int xx = x - 1; xx <= x + 1; xx++)
                 {
-                    if (data[xx, yy].ID != Tile.rock.id)
+                    if (data[xx, yy].ID != Tile.Rock.Key)
                     {
                         goto stairsLoop;
                     }
                 }
             }
 
-            data[x, y] = Tile.stairsDown;
+            data[x, y] = Tile.StairsDown;
             count++;
 
             if (count == 4)
@@ -181,27 +181,27 @@ public class TopLevelGenerationProvider : LevelGenerationProvider
     {
         int[] count = CountTiles(data);
 
-        if (count[Tile.rock.id] < 100)
+        if (count[Tile.Rock.Key] < 100)
         {
             return false;
         }
 
-        if (count[Tile.sand.id] < 100)
+        if (count[Tile.Sand.Key] < 100)
         {
             return false;
         }
 
-        if (count[Tile.grass.id] < 100)
+        if (count[Tile.Grass.Key] < 100)
         {
             return false;
         }
 
-        if (count[Tile.tree.id] < 100)
+        if (count[Tile.Tree.Key] < 100)
         {
             return false;
         }
 
-        if (count[Tile.stairsDown.id] < 2)
+        if (count[Tile.StairsDown.Key] < 2)
         {
             return false;
         }

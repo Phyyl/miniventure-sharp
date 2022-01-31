@@ -3,7 +3,7 @@ namespace Miniventure.UI;
 
 public class InventoryMenu : Menu
 {
-    private Player player;
+    private readonly Player player;
     private int selected = 0;
 
     public InventoryMenu(Player player)

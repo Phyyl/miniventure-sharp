@@ -40,11 +40,11 @@ public class Player : Mob
         }
 
         Tile onTile = Level.GetTile(X >> 4, Y >> 4);
-        if (onTile == Tile.stairsDown || onTile == Tile.stairsUp)
+        if (onTile == Tile.StairsDown || onTile == Tile.StairsUp)
         {
             if (onStairDelay == 0)
             {
-                ChangeLevel(onTile == Tile.stairsUp ? 1 : -1);
+                ChangeLevel(onTile == Tile.StairsUp ? 1 : -1);
                 onStairDelay = 10;
                 return;
             }
@@ -514,7 +514,7 @@ public class Player : Mob
             int x = Random.NextInt(level.Width);
             int y = Random.NextInt(level.Height);
 
-            if (level.GetTile(x, y) == Tile.grass)
+            if (level.GetTile(x, y) == Tile.Grass)
             {
                 X = x * 16 + 8;
                 Y = y * 16 + 8;

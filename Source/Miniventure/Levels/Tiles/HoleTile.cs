@@ -1,13 +1,10 @@
 namespace Miniventure.Levels.Tiles;
 
-
-public class HoleTile : Tile
+public record class HoleTile : Tile
 {
-    public HoleTile(int id) : base(id)
+    public HoleTile(byte id)
+        : base(id, connectsToSand: true, connectsToLava: true, connectsToWater: true)
     {
-        connectsToSand = true;
-        connectsToWater = true;
-        connectsToLava = true;
     }
 
     public override void Render(Screen screen, Level level, int x, int y)
@@ -21,10 +18,10 @@ public class HoleTile : Tile
         bool l = !level.GetTile(x - 1, y).ConnectsToLiquid();
         bool r = !level.GetTile(x + 1, y).ConnectsToLiquid();
 
-        bool su = u && level.GetTile(x, y - 1).connectsToSand;
-        bool sd = d && level.GetTile(x, y + 1).connectsToSand;
-        bool sl = l && level.GetTile(x - 1, y).connectsToSand;
-        bool sr = r && level.GetTile(x + 1, y).connectsToSand;
+        bool su = u && level.GetTile(x, y - 1).ConnectsToSand;
+        bool sd = d && level.GetTile(x, y + 1).ConnectsToSand;
+        bool sl = l && level.GetTile(x - 1, y).ConnectsToSand;
+        bool sr = r && level.GetTile(x + 1, y).ConnectsToSand;
 
         if (!u && !l)
         {
@@ -67,10 +64,8 @@ public class HoleTile : Tile
         }
     }
 
-
     public override bool MayPass(Level level, int x, int y, Entity e)
     {
         return e.CanSwim();
     }
-
 }

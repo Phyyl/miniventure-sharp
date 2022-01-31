@@ -4,7 +4,7 @@ namespace Miniventure.Items;
 
 public class ToolItem : Item
 {
-    private Random random = new();
+    private readonly Random random = new();
 
     public static readonly int MAX_LEVEL = 5;
     public static readonly string[] LEVEL_NAMES = {

@@ -1,11 +1,10 @@
 namespace Miniventure.Levels.Tiles;
 
-
-public class GrassTile : Tile
+public record class GrassTile : Tile
 {
-    public GrassTile(int id) : base(id)
+    public GrassTile(byte id)
+        : base(id, true)
     {
-        connectsToGrass = true;
     }
 
     public override void Render(Screen screen, Level level, int x, int y)
@@ -13,10 +12,10 @@ public class GrassTile : Tile
         int col = Color.Get(level.GrassColor, level.GrassColor, level.GrassColor + 111, level.GrassColor + 111);
         int transitionColor = Color.Get(level.GrassColor - 111, level.GrassColor, level.GrassColor + 111, level.DirtColor);
 
-        bool u = !level.GetTile(x, y - 1).connectsToGrass;
-        bool d = !level.GetTile(x, y + 1).connectsToGrass;
-        bool l = !level.GetTile(x - 1, y).connectsToGrass;
-        bool r = !level.GetTile(x + 1, y).connectsToGrass;
+        bool u = !level.GetTile(x, y - 1).ConnectsToGrass;
+        bool d = !level.GetTile(x, y + 1).ConnectsToGrass;
+        bool l = !level.GetTile(x - 1, y).ConnectsToGrass;
+        bool r = !level.GetTile(x + 1, y).ConnectsToGrass;
 
         if (!u && !l)
         {
@@ -55,7 +54,6 @@ public class GrassTile : Tile
         }
     }
 
-
     public override void Update(Level level, int xt, int yt)
     {
         int xn = xt;
@@ -70,7 +68,7 @@ public class GrassTile : Tile
             yn += random.NextInt(2) * 2 - 1;
         }
 
-        if (level.GetTile(xn, yn) == dirt)
+        if (level.GetTile(xn, yn) == Dirt)
         {
             level.SetTile(xn, yn, this, 0);
         }
@@ -78,20 +76,18 @@ public class GrassTile : Tile
 
     public override bool Interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir)
     {
-        if (item is ToolItem)
+        if (item is ToolItem tool)
         {
-            ToolItem tool = (ToolItem)item;
-
             if (tool.Type == ToolType.Shovel)
             {
                 if (player.PayStamina(4 - (int)tool.Level))
                 {
-                    level.SetTile(xt, yt, dirt, 0);
+                    level.SetTile(xt, yt, Dirt, 0);
                     AudioTracks.MonsterHurt.Play();
                     if (random.NextInt(5) == 0)
                     {
 
-                        level.Add(new ItemEntity(new ResourceItem(Resource.seeds), xt * 16 + random.NextInt(10) + 3, yt * 16 + random.NextInt(10) + 3));
+                        level.Add(new ItemEntity(new ResourceItem(Resource.Seeds), xt * 16 + random.NextInt(10) + 3, yt * 16 + random.NextInt(10) + 3));
                         return true;
                     }
                 }
@@ -105,15 +101,15 @@ public class GrassTile : Tile
                     if (random.NextInt(5) == 0)
                     {
 
-                        level.Add(new ItemEntity(new ResourceItem(Resource.seeds), xt * 16 + random.NextInt(10) + 3, yt * 16 + random.NextInt(10) + 3));
+                        level.Add(new ItemEntity(new ResourceItem(Resource.Seeds), xt * 16 + random.NextInt(10) + 3, yt * 16 + random.NextInt(10) + 3));
                         return true;
                     }
-                    level.SetTile(xt, yt, farmland, 0);
+                    level.SetTile(xt, yt, Farmland, 0);
                     return true;
                 }
             }
         }
-        return false;
 
+        return false;
     }
 }

@@ -1,20 +1,20 @@
 namespace Miniventure.Levels.Tiles;
 
-
-public class StairsTile : Tile
+public record class StairsTile : Tile
 {
     private readonly bool leadsUp;
 
-    public StairsTile(int id, bool leadsUp) : base(id)
+    public StairsTile(byte id, bool leadsUp)
+        : base(id)
     {
         this.leadsUp = leadsUp;
     }
-
 
     public override void Render(Screen screen, Level level, int x, int y)
     {
         int color = Color.Get(level.DirtColor, 000, 333, 444);
         int xt = 0;
+
         if (leadsUp)
         {
             xt = 2;

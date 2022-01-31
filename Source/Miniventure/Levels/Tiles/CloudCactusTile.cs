@@ -1,9 +1,9 @@
 namespace Miniventure.Levels.Tiles;
 
-
-public class CloudCactusTile : Tile
+public record class CloudCactusTile : Tile
 {
-    public CloudCactusTile(int id) : base(id)
+    public CloudCactusTile(byte id)
+        : base(id)
     {
     }
 
@@ -34,9 +34,8 @@ public class CloudCactusTile : Tile
 
     public override bool Interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir)
     {
-        if (item is ToolItem)
+        if (item is ToolItem tool)
         {
-            ToolItem tool = (ToolItem)item;
             if (tool.Type == ToolType.Pickaxe)
             {
                 if (player.PayStamina(6 - (int)tool.Level))
@@ -59,7 +58,7 @@ public class CloudCactusTile : Tile
         {
             if (damage >= 10)
             {
-                level.SetTile(x, y, cloud, 0);
+                level.SetTile(x, y, Cloud, 0);
             }
             else
             {

@@ -1,8 +1,9 @@
 namespace Miniventure.Levels.Tiles;
 
-public class InfiniteFallTile : Tile
+public record class InfiniteFallTile : Tile
 {
-    public InfiniteFallTile(int id) : base(id)
+    public InfiniteFallTile(byte id)
+        : base(id)
     {
     }
 
@@ -16,11 +17,6 @@ public class InfiniteFallTile : Tile
 
     public override bool MayPass(Level level, int x, int y, Entity e)
     {
-        if (e is AirWizard)
-        {
-            return true;
-        }
-
-        return false;
+        return e is AirWizard;
     }
 }

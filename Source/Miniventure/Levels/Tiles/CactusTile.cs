@@ -1,10 +1,10 @@
 namespace Miniventure.Levels.Tiles;
 
-public class CactusTile : Tile
+public record class CactusTile : Tile
 {
-    public CactusTile(int id) : base(id)
+    public CactusTile(byte id)
+        : base(id, connectsToSand: true)
     {
-        connectsToSand = true;
     }
 
     public override void Render(Screen screen, Level level, int x, int y)
@@ -33,9 +33,9 @@ public class CactusTile : Tile
             int count = random.NextInt(2) + 1;
             for (int i = 0; i < count; i++)
             {
-                level.Add(new ItemEntity(new ResourceItem(Resource.cactusFlower), (x * 16) + random.NextInt(10) + 3, (y * 16) + random.NextInt(10) + 3));
+                level.Add(new ItemEntity(new ResourceItem(Resource.CactusFlower), (x * 16) + random.NextInt(10) + 3, (y * 16) + random.NextInt(10) + 3));
             }
-            level.SetTile(x, y, Tile.sand, 0);
+            level.SetTile(x, y, Tile.Sand, 0);
         }
         else
         {

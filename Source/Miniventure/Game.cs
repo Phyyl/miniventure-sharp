@@ -27,7 +27,7 @@ public class Game : VildmarkGame
     private Screen lightScreen;
     private InputHandler input;
 
-    private int[] colors = new int[256];
+    private readonly int[] colors = new int[256];
     private int tickCount = 0;
     private bool showDebug;
 
@@ -391,8 +391,8 @@ public class FileLevelProvider : ILevelProvider
     public int SandColor { get; private set; }
     public int MonsterDensity { get; private set; }
 
-    private LevelData data;
-    private Entity[] entities;
+    private readonly LevelData data;
+    private readonly Entity[] entities;
 
     public FileLevelProvider(string path, LevelGenerationProvider generationProvider)
     {
@@ -407,8 +407,6 @@ public class FileLevelProvider : ILevelProvider
             MonsterDensity = generationProvider.MonsterDensity;
             data = generationProvider.GetLevelData();
             entities = generationProvider.GetEntities().ToArray();
-
-            Save(path);
         }
         else
         {
@@ -424,21 +422,5 @@ public class FileLevelProvider : ILevelProvider
     public LevelData GetLevelData()
     {
         return data;
-    }
-
-    private void Save(string path)
-    {
-        using MemoryStream ms = new();
-        Writer writer = new(ms);
-
-        writer.WriteValue(Width);
-        writer.WriteValue(Height);
-        writer.WriteValue(Depth);
-        writer.WriteValue(DirtColor);
-        writer.WriteValue(GrassColor);
-        writer.WriteValue(SandColor);
-        writer.WriteValue(MonsterDensity);
-        writer.WriteObject(data);
-        writer.WriteObjects(entities, true);
     }
 }
