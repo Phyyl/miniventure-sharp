@@ -307,6 +307,12 @@ public class Game : VildmarkGame
     {
         tickCount++;
 
+        if (!Window.IsFocused)
+        {
+            input.ReleaseAll();
+            return;
+        }
+
         if (!player.Removed && !hasWon)
         {
             gameTime++;
