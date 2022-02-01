@@ -31,6 +31,7 @@ public class Recipes
                 new ToolRecipe(ToolType.Hoe, ToolLevel.Stone).AddCost(Resource.Wood, 5).AddCost(Resource.Stone, 5),
                 new ToolRecipe(ToolType.Pickaxe, ToolLevel.Stone).AddCost(Resource.Wood, 5).AddCost(Resource.Stone, 5),
                 new ToolRecipe(ToolType.Shovel, ToolLevel.Stone).AddCost(Resource.Wood, 5).AddCost(Resource.Stone, 5),
+                new ItemRecipe<PowerGloveItem>().AddCost(Resource.Cloth, 10).AddCost(Resource.IronIngot, 5)
             };
 
             AnvilRecipes = new Recipe[]
