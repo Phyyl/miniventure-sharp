@@ -1,6 +1,6 @@
 using Vildmark.Serialization;
 
-namespace Miniventure.Items;
+namespace Miniventure.Items.Tools;
 
 public class ToolItem : Item
 {

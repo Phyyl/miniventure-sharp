@@ -1,3 +1,5 @@
+using Miniventure.Items.Tools;
+
 namespace Miniventure.Crafting;
 
 public class ToolRecipe : Recipe

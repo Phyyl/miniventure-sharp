@@ -1,3 +1,5 @@
+using Miniventure.Items.Tools;
+
 namespace Miniventure.Entities;
 
 public class Workbench : CraftingStation

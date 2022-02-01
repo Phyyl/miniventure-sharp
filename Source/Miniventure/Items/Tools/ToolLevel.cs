@@ -1,4 +1,4 @@
-﻿namespace Miniventure.Crafting;
+﻿namespace Miniventure.Items.Tools;
 
 public enum ToolLevel : byte
 {

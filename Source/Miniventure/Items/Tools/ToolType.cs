@@ -1,4 +1,4 @@
-namespace Miniventure.Items;
+namespace Miniventure.Items.Tools;
 
 public record class ToolType(string Name, int Sprite)
 {

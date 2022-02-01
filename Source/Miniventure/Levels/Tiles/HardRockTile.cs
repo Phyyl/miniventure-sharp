@@ -1,3 +1,5 @@
+using Miniventure.Items.Tools;
+
 namespace Miniventure.Levels.Tiles;
 
 public record class HardRockTile : RockTile
