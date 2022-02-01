@@ -12,7 +12,7 @@ public class UndergroundLevel : Level
     public UndergroundLevel(int depth)
         : base(128, 128)
     {
-        Depth = depth;
+        Depth = -depth;
     }
 
     private UndergroundLevel() : this(0) { }
