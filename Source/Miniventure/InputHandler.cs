@@ -13,12 +13,13 @@ public class InputHandler
     public InputKey Left { get; } = new(Keys.Left);
     public InputKey Right { get; } = new(Keys.Right);
     public InputKey Attack { get; } = new(Keys.C);
+    public InputKey Pause { get; } = new(Keys.Escape);
     public InputKey Menu { get; } = new(Keys.X);
     public InputKey Debug { get; } = new(Keys.F3);
 
     public InputHandler(IKeyboard keyboard)
     {
-        keys = new[] { Up, Down, Left, Right, Attack, Menu, Debug };
+        keys = new[] { Up, Down, Left, Right, Attack, Menu, Debug, Pause };
 
         keyboard.OnKeyPressed += Keyboard_OnKeyPressed;
         keyboard.OnKeyReleased += Keyboard_OnKeyReleased;

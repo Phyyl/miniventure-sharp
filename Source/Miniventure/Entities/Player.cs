@@ -195,6 +195,11 @@ public class Player : Mob
             }
         }
 
+        if (Game.Instance.Input.Pause.Clicked)
+        {
+            Game.Instance.Menu = new PauseMenu();
+        }
+
         if (attackTime > 0)
         {
             attackTime--;

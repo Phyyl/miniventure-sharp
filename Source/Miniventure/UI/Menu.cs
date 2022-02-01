@@ -1,7 +1,5 @@
 namespace Miniventure.UI;
 
-
-
 public class Menu
 {
     public Game game;
