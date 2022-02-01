@@ -5,21 +5,13 @@ namespace Miniventure.Crafting;
 public class FurnitureRecipe<TFurniture> : Recipe
     where TFurniture : Furniture, new()
 {
-    public FurnitureRecipe()
-        : base(new FurnitureItem(new TFurniture()))
+    public FurnitureRecipe(params ResourceItem[] costs)
+        : base(new FurnitureItem(new TFurniture()), costs)
     {
     }
 
-    public override void Craft(Player player)
+    public override Item CreateItem()
     {
-        try
-        {
-            player.inventory.Add(0, new FurnitureItem(new TFurniture()));
-        }
-        catch (Exception ex)
-        {
-            Logger.Exception(ex);
-            throw;
-        }
+        return new FurnitureItem(new TFurniture());
     }
 }

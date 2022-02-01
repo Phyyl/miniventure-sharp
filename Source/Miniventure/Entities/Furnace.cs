@@ -9,9 +9,9 @@ public class Furnace : CraftingStation
 
     public override IEnumerable<Recipe> GetRecipes(Player player)
     {
-        yield return new ResourceRecipe(Resource.IronIngot).AddCost(Resource.IronOre, 4).AddCost(Resource.Coal, 1);
-        yield return new ResourceRecipe(Resource.GoldIngot).AddCost(Resource.GoldOre, 4).AddCost(Resource.Coal, 1);
-        yield return new ResourceRecipe(Resource.Glass).AddCost(Resource.Sand, 4).AddCost(Resource.Coal, 1);
-        yield return new ResourceRecipe(Resource.Coal).AddCost(Resource.Wood, 10);
+        yield return new ResourceRecipe(Resource.IronIngot, new ResourceItem(Resource.IronOre, 4), new ResourceItem(Resource.Coal, 1));
+        yield return new ResourceRecipe(Resource.GoldIngot, new ResourceItem(Resource.GoldOre, 4), new ResourceItem(Resource.Coal, 1));
+        yield return new ResourceRecipe(Resource.Glass, new ResourceItem(Resource.Sand, 4), new ResourceItem(Resource.Coal, 1));
+        yield return new ResourceRecipe(Resource.Coal, new ResourceItem(Resource.Wood, 10));
     }
 }

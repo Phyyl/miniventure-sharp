@@ -9,6 +9,6 @@ public class Oven : CraftingStation
 
     public override IEnumerable<Recipe> GetRecipes(Player player)
     {
-        yield return new ResourceRecipe(Resource.bread).AddCost(Resource.Wheat, 4);
+        yield return new ResourceRecipe(Resource.Bread, new ResourceItem(Resource.Wheat, 4));
     }
 }

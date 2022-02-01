@@ -9,14 +9,14 @@ namespace Miniventure.Crafting
     public class ItemRecipe<TItem> : Recipe
         where TItem : Item, new()
     {
-        public ItemRecipe() 
-            : base(new TItem())
+        public ItemRecipe(params ResourceItem[] costs) 
+            : base(new TItem(), costs)
         {
         }
 
-        public override void Craft(Player player)
+        public override Item CreateItem()
         {
-            player.inventory.Add(new TItem());
+            return new TItem();
         }
     }
 }

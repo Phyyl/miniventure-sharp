@@ -1,3 +1,5 @@
+using System.Collections.Immutable;
+
 namespace Miniventure.UI;
 
 public class CraftingMenu : Menu
@@ -22,11 +24,11 @@ public class CraftingMenu : Menu
 
         public void RenderInventory(Screen screen, int x, int y)
         {
-            screen.Render(x, y, Recipe.resultTemplate.GetSprite(), Recipe.resultTemplate.GetColor(), 0);
+            screen.Render(x, y, Recipe.ResultTemplate.GetSprite(), Recipe.ResultTemplate.GetColor(), 0);
 
             int textColor = Recipe.CanCraft(Inventory) ? Color.Get(-1, 555, 555, 555) : Color.Get(-1, 222, 222, 222);
 
-            Font.Draw(Recipe.resultTemplate.GetName(), screen, x + 8, y, textColor);
+            Font.Draw(Recipe.ResultTemplate.GetName(), screen, x + 8, y, textColor);
         }
     }
 
@@ -89,10 +91,8 @@ public class CraftingMenu : Menu
         {
             Recipe r = recipes[selected].Recipe;
 
-            if (r.CanCraft(player.inventory))
+            if (r.Craft(player.inventory))
             {
-                r.DeductCost(player.inventory);
-                r.Craft(player);
                 AudioTracks.Craft.Play();
             }
         }
@@ -109,18 +109,19 @@ public class CraftingMenu : Menu
         if (recipes.Length > 0)
         {
             Recipe recipe = recipes[selected].Recipe;
-            int hasResultItems = player.inventory.Count(recipe.resultTemplate);
+            int hasResultItems = player.inventory.Count(recipe.ResultTemplate);
             int xo = 13 * 8;
 
-            screen.Render(xo, 2 * 8, recipe.resultTemplate.GetSprite(), recipe.resultTemplate.GetColor(), 0);
+            screen.Render(xo, 2 * 8, recipe.ResultTemplate.GetSprite(), recipe.ResultTemplate.GetColor(), 0);
             
             Font.Draw("" + hasResultItems, screen, xo + 8, 2 * 8, Color.Get(-1, 555, 555, 555));
 
-            List<Item> costs = recipe.costs;
+            ImmutableArray<ResourceItem> costs = recipe.Costs;
 
-            for (int i = 0; i < costs.Count; i++)
+            for (int i = 0; i < costs.Length; i++)
             {
-                Item item = costs[i];
+                ResourceItem item = costs[i];
+
                 int yo = (5 + i) * 8;
 
                 screen.Render(xo, yo, item.GetSprite(), item.GetColor(), 0);

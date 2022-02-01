@@ -9,22 +9,22 @@ public class Anvil : CraftingStation
 
     public override IEnumerable<Recipe> GetRecipes(Player player)
     {
-        yield return new ToolRecipe(ToolType.Sword, ToolLevel.Iron).AddCost(Resource.Wood, 5).AddCost(Resource.IronIngot, 5);
-        yield return new ToolRecipe(ToolType.Axe, ToolLevel.Iron).AddCost(Resource.Wood, 5).AddCost(Resource.IronIngot, 5);
-        yield return new ToolRecipe(ToolType.Hoe, ToolLevel.Iron).AddCost(Resource.Wood, 5).AddCost(Resource.IronIngot, 5);
-        yield return new ToolRecipe(ToolType.Pickaxe, ToolLevel.Iron).AddCost(Resource.Wood, 5).AddCost(Resource.IronIngot, 5);
-        yield return new ToolRecipe(ToolType.Shovel, ToolLevel.Iron).AddCost(Resource.Wood, 5).AddCost(Resource.IronIngot, 5);
+        yield return new ToolRecipe(ToolType.Sword, ToolLevel.Iron, new ResourceItem(Resource.Wood, 5), new ResourceItem(Resource.IronIngot, 5));
+        yield return new ToolRecipe(ToolType.Axe, ToolLevel.Iron, new ResourceItem(Resource.Wood, 5), new ResourceItem(Resource.IronIngot, 5));
+        yield return new ToolRecipe(ToolType.Hoe, ToolLevel.Iron, new ResourceItem(Resource.Wood, 5), new ResourceItem(Resource.IronIngot, 5));
+        yield return new ToolRecipe(ToolType.Pickaxe, ToolLevel.Iron, new ResourceItem(Resource.Wood, 5), new ResourceItem(Resource.IronIngot, 5));
+        yield return new ToolRecipe(ToolType.Shovel, ToolLevel.Iron, new ResourceItem(Resource.Wood, 5), new ResourceItem(Resource.IronIngot, 5));
 
-        yield return new ToolRecipe(ToolType.Sword, ToolLevel.Gold).AddCost(Resource.Wood, 5).AddCost(Resource.GoldIngot, 5);
-        yield return new ToolRecipe(ToolType.Axe, ToolLevel.Gold).AddCost(Resource.Wood, 5).AddCost(Resource.GoldIngot, 5);
-        yield return new ToolRecipe(ToolType.Hoe, ToolLevel.Gold).AddCost(Resource.Wood, 5).AddCost(Resource.GoldIngot, 5);
-        yield return new ToolRecipe(ToolType.Pickaxe, ToolLevel.Gold).AddCost(Resource.Wood, 5).AddCost(Resource.GoldIngot, 5);
-        yield return new ToolRecipe(ToolType.Shovel, ToolLevel.Gold).AddCost(Resource.Wood, 5).AddCost(Resource.GoldIngot, 5);
+        yield return new ToolRecipe(ToolType.Sword, ToolLevel.Gold, new ResourceItem(Resource.Wood, 5), new ResourceItem(Resource.GoldIngot, 5));
+        yield return new ToolRecipe(ToolType.Axe, ToolLevel.Gold, new ResourceItem(Resource.Wood, 5), new ResourceItem(Resource.GoldIngot, 5));
+        yield return new ToolRecipe(ToolType.Hoe, ToolLevel.Gold, new ResourceItem(Resource.Wood, 5), new ResourceItem(Resource.GoldIngot, 5));
+        yield return new ToolRecipe(ToolType.Pickaxe, ToolLevel.Gold, new ResourceItem(Resource.Wood, 5), new ResourceItem(Resource.GoldIngot, 5));
+        yield return new ToolRecipe(ToolType.Shovel, ToolLevel.Gold, new ResourceItem(Resource.Wood, 5), new ResourceItem(Resource.GoldIngot, 5));
 
-        yield return new ToolRecipe(ToolType.Sword, ToolLevel.Gem).AddCost(Resource.Wood, 5).AddCost(Resource.Gem, 50);
-        yield return new ToolRecipe(ToolType.Axe, ToolLevel.Gem).AddCost(Resource.Wood, 5).AddCost(Resource.Gem, 50);
-        yield return new ToolRecipe(ToolType.Hoe, ToolLevel.Gem).AddCost(Resource.Wood, 5).AddCost(Resource.Gem, 50);
-        yield return new ToolRecipe(ToolType.Pickaxe, ToolLevel.Gem).AddCost(Resource.Wood, 5).AddCost(Resource.Gem, 50);
-        yield return new ToolRecipe(ToolType.Shovel, ToolLevel.Gem).AddCost(Resource.Wood, 5).AddCost(Resource.Gem, 50);
+        yield return new ToolRecipe(ToolType.Sword, ToolLevel.Gem, new ResourceItem(Resource.Wood, 5), new ResourceItem(Resource.Gem, 50));
+        yield return new ToolRecipe(ToolType.Axe, ToolLevel.Gem, new ResourceItem(Resource.Wood, 5), new ResourceItem(Resource.Gem, 50));
+        yield return new ToolRecipe(ToolType.Hoe, ToolLevel.Gem, new ResourceItem(Resource.Wood, 5), new ResourceItem(Resource.Gem, 50));
+        yield return new ToolRecipe(ToolType.Pickaxe, ToolLevel.Gem, new ResourceItem(Resource.Wood, 5), new ResourceItem(Resource.Gem, 50));
+        yield return new ToolRecipe(ToolType.Shovel, ToolLevel.Gem, new ResourceItem(Resource.Wood, 5), new ResourceItem(Resource.Gem, 50));
     }
 }

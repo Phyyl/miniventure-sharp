@@ -2,16 +2,16 @@ namespace Miniventure.Crafting;
 
 public class ResourceRecipe : Recipe
 {
-    private readonly Resource resource;
+    public Resource Resource { get; }
 
-    public ResourceRecipe(Resource resource)
-        : base(new ResourceItem(resource, 1))
+    public ResourceRecipe(Resource resource, params ResourceItem[] costs)
+        : base(new ResourceItem(resource, 1), costs)
     {
-        this.resource = resource;
+        Resource = resource;
     }
 
-    public override void Craft(Player player)
+    public override Item CreateItem()
     {
-        player.inventory.Add(0, new ResourceItem(resource, 1));
+        return new ResourceItem(Resource, 1);
     }
 }

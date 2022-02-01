@@ -11,7 +11,7 @@ public record class Resource(string Name, int Sprite, int Color)
     public static readonly Resource CactusFlower = new PlantableResource("Cactus", 4 + 4 * 32, Graphics.Color.Get(-1, 10, 40, 50), Tile.CactusSapling, Tile.Sand);
     public static readonly Resource Seeds = new PlantableResource("Seeds", 5 + 4 * 32, Graphics.Color.Get(-1, 10, 40, 50), Tile.Wheat, Tile.Farmland);
     public static readonly Resource Wheat = new("Wheat", 6 + 4 * 32, Graphics.Color.Get(-1, 110, 330, 550));
-    public static readonly Resource bread = new FoodResource("Bread", 8 + 4 * 32, Graphics.Color.Get(-1, 110, 330, 550), 2, 5);
+    public static readonly Resource Bread = new FoodResource("Bread", 8 + 4 * 32, Graphics.Color.Get(-1, 110, 330, 550), 2, 5);
     public static readonly Resource Apple = new FoodResource("Apple", 9 + 4 * 32, Graphics.Color.Get(-1, 100, 300, 500), 1, 5);
     public static readonly Resource Coal = new("COAL", 10 + 4 * 32, Graphics.Color.Get(-1, 000, 111, 111));
     public static readonly Resource IronOre = new("I.ORE", 10 + 4 * 32, Graphics.Color.Get(-1, 100, 322, 544));

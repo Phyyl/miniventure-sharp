@@ -2,17 +2,18 @@ namespace Miniventure.Crafting;
 
 public class ToolRecipe : Recipe
 {
-    private readonly ToolType type;
-    private readonly ToolLevel level;
+    public ToolType Type { get; }
+    public ToolLevel Level { get; }
 
-    public ToolRecipe(ToolType type, ToolLevel level) : base(new ToolItem(type, level))
+    public ToolRecipe(ToolType type, ToolLevel level, params ResourceItem[] costs) 
+        : base(new ToolItem(type, level), costs)
     {
-        this.type = type;
-        this.level = level;
+        Type = type;
+        Level = level;
     }
 
-    public override void Craft(Player player)
+    public override Item CreateItem()
     {
-        player.inventory.Add(0, new ToolItem(type, level));
+        return new ToolItem(Type, Level);
     }
 }

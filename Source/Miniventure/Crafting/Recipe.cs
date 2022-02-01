@@ -1,27 +1,23 @@
+using System.Collections.Immutable;
+
 namespace Miniventure.Crafting;
 
-//TODO: Make immutable
 public abstract class Recipe
 {
-    public List<Item> costs = new();
-    public Item resultTemplate;
+    public ImmutableArray<ResourceItem> Costs { get; }
+    public Item ResultTemplate { get; }
 
-    public Recipe(Item resultTemplate)
+    public Recipe(Item resultTemplate, ResourceItem[] costs)
     {
-        this.resultTemplate = resultTemplate;
+        Costs = costs.ToImmutableArray();
+        ResultTemplate = resultTemplate;
     }
 
-    public abstract void Craft(Player player);
-
-    public virtual Recipe AddCost(Resource resource, int count)
-    {
-        costs.Add(new ResourceItem(resource, count));
-        return this;
-    }
+    public abstract Item CreateItem();
 
     public virtual bool CanCraft(Inventory inventory)
     {
-        foreach (var item in costs.OfType<ResourceItem>())
+        foreach (var item in Costs)
         {
             if (!inventory.HasResources(item.Resource, item.Count))
             {
@@ -32,11 +28,20 @@ public abstract class Recipe
         return true;
     }
 
-    public virtual void DeductCost(Inventory inventory)
+    public bool Craft(Inventory inventory)
     {
-        foreach (var item in costs.OfType<ResourceItem>())
+        if (!CanCraft(inventory))
+        {
+            return false;
+        }
+
+        foreach (var item in Costs)
         {
             inventory.RemoveResource(item.Resource, item.Count);
         }
+
+        inventory.Add(0, CreateItem());
+
+        return true;
     }
 }
