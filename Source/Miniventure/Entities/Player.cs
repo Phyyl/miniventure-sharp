@@ -73,6 +73,7 @@ public class Player : Mob
     {
         if (activeItem is not null)
         {
+            furniture.Remove();
             inventory.Add(0, activeItem);
             activeItem = new FurnitureItem(furniture);
         }
