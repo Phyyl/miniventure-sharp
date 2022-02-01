@@ -199,7 +199,11 @@ public class Game : VildmarkGame
                 return;
             }
 
-            state.Serialize(new Writer(File.Open("save.dat", FileMode.Create)));
+            using Stream stream = File.Open("save.dat", FileMode.Create);
+            state.Serialize(new Writer(stream));
+
+            stream.Flush();
+            stream.Close();
         }
         catch (Exception ex)
         {
