@@ -26,5 +26,6 @@ public class Workbench : CraftingStation
         yield return new ToolRecipe(ToolType.Pickaxe, ToolLevel.Stone, new ResourceItem(Resource.Wood, 5), new ResourceItem(Resource.Stone, 5));
         yield return new ToolRecipe(ToolType.Shovel, ToolLevel.Stone, new ResourceItem(Resource.Wood, 5), new ResourceItem(Resource.Stone, 5));
         yield return new ItemRecipe<PowerGloveItem>(new ResourceItem(Resource.Cloth, 10), new ResourceItem(Resource.IronIngot, 5));
+        yield return new ResourceRecipe(Resource.Sand, new ResourceItem(Resource.Dirt), new ResourceItem(Resource.Stone));
     }
 }
