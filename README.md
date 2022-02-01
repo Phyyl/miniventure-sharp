@@ -1,14 +1,16 @@
 # miniventure-sharp
 
-Minicraft clone base on [shylor/miniventure](https://github.com/shylor/miniventure). 
+Minicraft clone base on [shylor/miniventure](https://github.com/shylor/miniventure). The goal of this project is to translate Miniventure from Java to C#, and add features such as saves, new crafting recipes, new levels, and multiplayer (hopefully).
 
-## Generator
+## Project structure
 
-Converts the original java code into C# using regexes and string replace.
+- Generator: Code for the Java to C# translator
+- Source: Initially generated, now refactored, improved source code
 
-## Source
+## Running the project
 
-Refactored, fixed and improved version of the generated code.
+- Terminal (requires dotnet-sdk 6): `dotnet run --project .\Source\Miniventure\Miniventure.csproj`
+- Visual Studio: Open `.\Source\Miniventure.sln`
 
 ## Added features (so far)
 
