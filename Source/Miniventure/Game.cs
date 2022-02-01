@@ -18,7 +18,7 @@ public class Game : VildmarkGame
     public const string Name = "Miniventure";
     public const int GameHeight = 200;
     public const int GameWidth = 267;
-    public const int Scale = 3;
+    public const int Scale = 5;
 
     private RenderContext renderContext;
     private GLTexture2D texture;
@@ -180,20 +180,6 @@ public class Game : VildmarkGame
         {
             state = new();
             state.Deserialize(new Reader(File.OpenRead("save.dat")));
-
-            foreach (var level in state.levels.OfType<UndergroundLevel>())
-            {
-                for (int y = 0; y < level.Data.Height; y++)
-                {
-                    for (int x = 0; x < level.Data.Width; x++)
-                    {
-                        if (level.Data[x,y].ID == (Tile.IronOre.ID - level.Depth - 1))
-                        {
-                            level.Data[x, y] = new((byte)(Tile.IronOre.ID + level.Depth - 1), level.Data[x, y].Data);
-                        }
-                    }
-                }
-            }
 
             return true;
         }

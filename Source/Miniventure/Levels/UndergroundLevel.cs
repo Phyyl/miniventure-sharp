@@ -12,7 +12,7 @@ public class UndergroundLevel : Level
     public UndergroundLevel(int depth)
         : base(128, 128)
     {
-        Depth = -depth;
+        Depth = depth;
     }
 
     private UndergroundLevel() : this(0) { }
@@ -70,9 +70,9 @@ public class UndergroundLevel : Level
                 dist = dist * dist * dist * dist;
                 val = val + 1 - dist * 20;
 
-                if (val > -2 && wval < -2.0 + Depth / 2 * 3)
+                if (val > -2 && wval < -2.0 - Depth / 2 * 3)
                 {
-                    if (Depth > 2)
+                    if (Depth < -2)
                     {
                         data[x, y] = Tile.Lava;
                     }
@@ -109,14 +109,14 @@ public class UndergroundLevel : Level
                     {
                         if (data[xx, yy].ID == Tile.Rock.ID)
                         {
-                            data[xx, yy] = new LevelTile((byte)(Tile.IronOre.ID + Depth - 1));
+                            data[xx, yy] = new LevelTile((byte)(Tile.IronOre.ID - Depth - 1));
                         }
                     }
                 }
             }
         }
 
-        if (Depth < 3)
+        if (Depth > -3)
         {
             int count = 0;
 
@@ -164,12 +164,12 @@ stairsLoop:
             return false;
         }
 
-        if (count[Tile.IronOre.ID + Depth - 1] < 20)
+        if (count[Tile.IronOre.ID - Depth - 1] < 20)
         {
             return false;
         }
 
-        if (Depth < 3)
+        if (Depth > -3)
         {
             if (count[Tile.StairsDown.ID] < 2)
             {
