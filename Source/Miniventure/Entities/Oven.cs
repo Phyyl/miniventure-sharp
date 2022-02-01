@@ -1,16 +1,14 @@
 namespace Miniventure.Entities;
 
-public class Oven : Furniture
+public class Oven : CraftingStation
 {
-    public Oven() 
+    public Oven()
         : base("Oven", 2, Color.Get(-1, 000, 332, 442), horizontalRadius: 3, verticalRadius: 2)
     {
     }
 
-    public override bool Use(Player player, Direction attackDir)
+    public override IEnumerable<Recipe> GetRecipes(Player player)
     {
-        Game.Instance.Menu = new CraftingMenu(Recipes.OvenRecipes, player);
-
-        return true;
+        yield return new ResourceRecipe(Resource.bread).AddCost(Resource.Wheat, 4);
     }
 }
