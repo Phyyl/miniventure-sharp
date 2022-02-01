@@ -16,10 +16,11 @@ public class InputHandler
     public InputKey Pause { get; } = new(Keys.Escape);
     public InputKey Menu { get; } = new(Keys.X);
     public InputKey Debug { get; } = new(Keys.F3);
+    public InputKey Throw { get; } = new(Keys.Z);
 
     public InputHandler(IKeyboard keyboard)
     {
-        keys = new[] { Up, Down, Left, Right, Attack, Menu, Debug, Pause };
+        keys = new[] { Up, Down, Left, Right, Attack, Menu, Debug, Pause, Throw };
 
         keyboard.OnKeyPressed += Keyboard_OnKeyPressed;
         keyboard.OnKeyReleased += Keyboard_OnKeyReleased;

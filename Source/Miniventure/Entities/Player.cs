@@ -66,7 +66,6 @@ public class Player : Mob
         inventory = reader.ReadObject<Inventory>();
         attackItem = reader.ReadObject<Item>(true);
         activeItem = reader.ReadObject<Item>(true);
-
     }
 
     public void Take(Furniture furniture)
@@ -155,6 +154,23 @@ public class Player : Mob
         if (Game.Instance.Input.Right.Down)
         {
             xa++;
+        }
+
+        if (Game.Instance.Input.Throw.Clicked)
+        {
+            if (activeItem is not null)
+            {
+                (double xxa, double yya) = Direction switch
+                {
+                    Direction.Down => (0, 1),
+                    Direction.Up => (0, -1),
+                    Direction.Left => (-1, 0),
+                    _ => (1, 0)
+                };
+
+                Level.Add(new ItemEntity(activeItem, X, Y, xxa, yya, 60 * 60));
+                activeItem = null;
+            }
         }
 
         if (IsSwimming() && TickTime % 60 == 0)

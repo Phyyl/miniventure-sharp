@@ -11,20 +11,22 @@ public class ItemEntity : Entity
 
     public Item Item { get; private set; }
 
-    public ItemEntity(Item item, int x, int y)
+    public ItemEntity(Item item, int x, int y) : this(item, x, y, Random.NextGaussian() * 0.3, Random.NextGaussian() * 0.2, 60 * 10 + Random.NextInt(60)) { }
+
+    public ItemEntity(Item item, int x, int y, double xa, double ya, int lifeTime)
         : base(x, y, 3, 3)
     {
+        this.xa = xa;
+        this.ya = ya;
+        this.lifeTime = lifeTime;
+
         Item = item;
         xx = x;
         yy = y;
 
         zz = 2;
 
-        xa = Random.NextGaussian() * 0.3;
-        ya = Random.NextGaussian() * 0.2;
         za = Random.NextFloat() * 0.7 + 1;
-
-        lifeTime = 60 * 10 + Random.NextInt(60);
     }
 
     private ItemEntity() : this(null, 0, 0) { }
@@ -35,11 +37,11 @@ public class ItemEntity : Entity
 
         writer.WriteValue(lifeTime);
         writer.WriteValue(time);
-       
+
         writer.WriteValue(xa);
         writer.WriteValue(ya);
         writer.WriteValue(za);
-        
+
         writer.WriteValue(xx);
         writer.WriteValue(yy);
         writer.WriteValue(zz);
@@ -75,6 +77,7 @@ public class ItemEntity : Entity
 
             return;
         }
+
         xx += xa;
         yy += ya;
         zz += za;
