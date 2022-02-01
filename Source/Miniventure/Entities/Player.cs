@@ -528,7 +528,7 @@ public class Player : Mob
             }
         }
 
-        if (attackTime > 0 && attackDir == Direction.Left)
+        if (attackTime > 0 && attackDir == Direction.Down)
         {
             screen.Render(xo + 0, yo + 8 + 4, 6 + 13 * 32, Color.Get(-1, 555, 555, 555), MirrorFlags.Vertical);
             screen.Render(xo + 8, yo + 8 + 4, 6 + 13 * 32, Color.Get(-1, 555, 555, 555), MirrorFlags.Both);
