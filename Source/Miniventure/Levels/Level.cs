@@ -7,7 +7,6 @@ public abstract class Level : ISerializable, IDeserializable
     protected Random Random { get; } = new();
 
     private readonly List<Entity> entities = new();
-    private readonly List<List<Entity>> entitiesInTiles;
 
     protected virtual Tile TileAroundStairs => Tile.HardRock;
 
@@ -26,13 +25,6 @@ public abstract class Level : ISerializable, IDeserializable
     public Level(int width, int height)
     {
         Data = new LevelData(width, height);
-
-        //TODO: yeah no
-        entitiesInTiles = new(width * height);
-        for (int i = 0; i < entitiesInTiles.Capacity; i++)
-        {
-            entitiesInTiles.Add(new List<Entity>());
-        }
     }
 
     public virtual void Serialize(IWriter writer)
@@ -134,27 +126,10 @@ public abstract class Level : ISerializable, IDeserializable
 
         screen.SetOffset(xScroll, yScroll);
 
-        List<Entity> rowSprites = new();
+        IEnumerable<Entity> entities = GetTileEntities(xo, yo, xo + w, yo + h);
 
-        for (int y = yo; y <= h + yo; y++)
-        {
-            for (int x = xo; x <= w + xo; x++)
-            {
-                if (x < 0 || y < 0 || x >= Width || y >= Height)
-                {
-                    continue;
-                }
+        SortAndRender(screen, entities);
 
-                rowSprites.AddRange(entitiesInTiles[x + y * Width]);
-            }
-
-            if (rowSprites.Count > 0)
-            {
-                SortAndRender(screen, rowSprites);
-            }
-
-            rowSprites.Clear();
-        }
         screen.SetOffset(0, 0);
     }
 
@@ -168,6 +143,18 @@ public abstract class Level : ISerializable, IDeserializable
         screen.SetOffset(xScroll, yScroll);
         int r = 4;
 
+        IEnumerable<Entity> entities = GetTileEntities(xo - r, yo - r, xo + r + w, yo + r + h);
+
+        foreach (var entity in entities)
+        {
+            int elr = entity.GetLightRadius();
+
+            if (elr > 0)
+            {
+                screen.RenderLight(entity.X - 1, entity.Y - 4, elr * 8);
+            }
+        }
+
         for (int y = yo - r; y <= h + yo + r; y++)
         {
             for (int x = xo - r; x <= w + xo + r; x++)
@@ -175,18 +162,6 @@ public abstract class Level : ISerializable, IDeserializable
                 if (x < 0 || y < 0 || x >= Width || y >= Height)
                 {
                     continue;
-                }
-
-                List<Entity> entities = entitiesInTiles[x + y * Width];
-
-                foreach (var entity in entities)
-                {
-                    int elr = entity.GetLightRadius();
-
-                    if (elr > 0)
-                    {
-                        screen.RenderLight(entity.X - 1, entity.Y - 4, elr * 8);
-                    }
                 }
 
                 int lr = GetTile(x, y).GetLightRadius(this, x, y);
@@ -201,24 +176,9 @@ public abstract class Level : ISerializable, IDeserializable
         screen.SetOffset(0, 0);
     }
 
-    private void SortAndRender(Screen screen, List<Entity> list)
+    private void SortAndRender(Screen screen, IEnumerable<Entity> entities)
     {
-        list.Sort((e0, e1) =>
-        {
-            if (e1.Y < e0.Y)
-            {
-                return 1;
-            }
-
-            if (e1.Y > e0.Y)
-            {
-                return -1;
-            }
-
-            return 0;
-        });
-
-        foreach (var item in list)
+        foreach (var item in entities.OrderBy(e => e.Y))
         {
             item.Render(screen);
         }
@@ -274,38 +234,11 @@ public abstract class Level : ISerializable, IDeserializable
         entity.Removed = false;
         entities.Add(entity);
         entity.Level = this;
-
-        InsertEntity(entity.X >> 4, entity.Y >> 4, entity);
     }
 
     public virtual void Remove(Entity e)
     {
         entities.Remove(e);
-
-        int xto = e.X >> 4;
-        int yto = e.Y >> 4;
-
-        RemoveEntity(xto, yto, e);
-    }
-
-    private void InsertEntity(int x, int y, Entity e)
-    {
-        if (x < 0 || y < 0 || x >= Width || y >= Height)
-        {
-            return;
-        }
-
-        entitiesInTiles[x + y * Width].Add(e);
-    }
-
-    private void RemoveEntity(int x, int y, Entity e)
-    {
-        if (x < 0 || y < 0 || x >= Width || y >= Height)
-        {
-            return;
-        }
-
-        entitiesInTiles[x + y * Width].Remove(e);
     }
 
     public virtual void TrySpawn(int count)
@@ -359,57 +292,19 @@ public abstract class Level : ISerializable, IDeserializable
         {
             Entity e = entities[i];
 
-            int xto = e.X >> 4;
-            int yto = e.Y >> 4;
-
             e.Update();
 
             if (e.Removed)
             {
                 entities.RemoveAt(i--);
-                RemoveEntity(xto, yto, e);
-            }
-            else
-            {
-                int xt = e.X >> 4;
-                int yt = e.Y >> 4;
-
-                if (xto != xt || yto != yt)
-                {
-                    RemoveEntity(xto, yto, e);
-                    InsertEntity(xt, yt, e);
-                }
             }
         }
     }
 
+    public IEnumerable<Entity> GetTileEntities(int x0, int y0, int x1, int y1) => GetEntities(x0 << 4 - 1, y0 << 4 - 1, x1 << 4 + 1, y1 << 4 + 1);
     public IEnumerable<Entity> GetEntities(int x0, int y0, int x1, int y1)
     {
-        int xt0 = (x0 >> 4) - 1;
-        int yt0 = (y0 >> 4) - 1;
-        int xt1 = (x1 >> 4) + 1;
-        int yt1 = (y1 >> 4) + 1;
-
-        for (int y = yt0; y <= yt1; y++)
-        {
-            for (int x = xt0; x <= xt1; x++)
-            {
-                if (x < 0 || y < 0 || x >= Width || y >= Height)
-                {
-                    continue;
-                }
-
-                Entity[] entities = entitiesInTiles[x + y * Width].ToArray();
-
-                foreach (var entity in entities)
-                {
-                    if (entity.Intersects(x0, y0, x1, y1))
-                    {
-                        yield return entity;
-                    }
-                }
-            }
-        }
+        return entities.Where(e => e.Intersects(x0, y0, x1, y1)).ToArray();
     }
 
     protected static int[] CountTiles(LevelData data)

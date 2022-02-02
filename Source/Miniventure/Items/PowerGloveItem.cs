@@ -33,7 +33,6 @@ public class PowerGloveItem : Item
     {
         if (entity is Furniture furniture)
         {
-            furniture.Remove();
             player.Take(furniture);
 
             return true;
