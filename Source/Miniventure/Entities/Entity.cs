@@ -165,10 +165,6 @@ public abstract class Entity : ISerializable, IDeserializable
         return true;
     }
 
-    public virtual void TouchItem(ItemEntity itemEntity)
-    {
-    }
-
     public virtual bool CanSwim()
     {
         return false;

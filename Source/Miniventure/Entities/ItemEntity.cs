@@ -11,6 +11,8 @@ public class ItemEntity : Entity
 
     public Item Item { get; private set; }
 
+    public bool CanPickup => time > 30;
+
     public ItemEntity(Item item, int x, int y) : this(item, x, y, Random.NextGaussian() * 0.3, Random.NextGaussian() * 0.2, 60 * 10 + Random.NextInt(60)) { }
 
     public ItemEntity(Item item, int x, int y, double xa, double ya, int lifeTime)
@@ -125,14 +127,6 @@ public class ItemEntity : Entity
 
         screen.Render(X - 4, Y - 4, Item.GetSprite(), Color.Get(-1, 0, 0, 0), 0);
         screen.Render(X - 4, Y - 4 - (int)zz, Item.GetSprite(), Item.GetColor(), 0);
-    }
-
-    public override void TouchedBy(Entity entity)
-    {
-        if (time > 30)
-        {
-            entity.TouchItem(this);
-        }
     }
 
     public virtual void Take(Player player)

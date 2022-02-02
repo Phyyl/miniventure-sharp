@@ -5,6 +5,7 @@ namespace Miniventure.Entities;
 public class Player : Mob
 {
     public const int maxStamina = 10;
+    public const int pickupRange = 12;
 
     private int onStairDelay;
     private int attackTime;
@@ -202,6 +203,21 @@ public class Player : Mob
                 staminaRecharge = 0;
                 Attack();
             }
+        }
+
+        bool InPickupRange(Entity entity)
+        {
+            int dx = entity.X - X;
+            int dy = entity.Y - Y;
+
+            return (dx * dx + dy * dy) < pickupRange * pickupRange;
+        }
+
+        foreach (var entity in Level.GetEntities(X - 16, Y - 16, X + 16, Y + 16).OfType<ItemEntity>().Where(e => e.CanPickup && InPickupRange(e)))
+        {
+            entity.Take(this);
+
+            inventory.Add(entity.Item);
         }
 
         if (Game.Instance.Input.Menu.Clicked)
@@ -562,13 +578,6 @@ public class Player : Mob
             furniture.Render(screen);
 
         }
-    }
-
-    public override void TouchItem(ItemEntity itemEntity)
-    {
-        itemEntity.Take(this);
-
-        inventory.Add(itemEntity.Item);
     }
 
     public override bool CanSwim()
