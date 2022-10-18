@@ -280,7 +280,7 @@ public abstract class Level : ISerializable, IDeserializable
     {
         TrySpawn(1);
 
-        for (int i = 0; i < Width * Height / 50; i++)
+        for (int i = 0; i < Width * Height / 120; i++)
         {
             int xt = Random.NextInt(Width);
             int yt = Random.NextInt(Height);

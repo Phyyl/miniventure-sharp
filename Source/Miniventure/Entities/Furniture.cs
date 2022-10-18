@@ -98,7 +98,7 @@ public abstract class Furniture : Entity
 
     public override void TouchedBy(Entity entity)
     {
-        if (entity is Player player && pushTime == 0)
+        if (entity is Player player && pushTime == 0 && player.activeItem is PowerGloveItem)
         {
             pushDir = player.Direction;
             pushTime = 10;

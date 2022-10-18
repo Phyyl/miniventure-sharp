@@ -17,3 +17,4 @@ Minicraft clone base on [shylor/miniventure](https://github.com/shylor/miniventu
 - Save game when closing the game
 - Throw active item by pressing Z
 - Create coal in furnace using 10 wood
+- Can only push furniture while holding the power glove
