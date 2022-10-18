@@ -1,5 +1,3 @@
-using Vildmark;
-
 namespace Miniventure.Crafting;
 
 public class FurnitureRecipe<TFurniture> : Recipe

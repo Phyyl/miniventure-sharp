@@ -1,22 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace Miniventure.Crafting;
 
-namespace Miniventure.Crafting
+public class ItemRecipe<TItem> : Recipe
+    where TItem : Item, new()
 {
-    public class ItemRecipe<TItem> : Recipe
-        where TItem : Item, new()
+    public ItemRecipe(params ResourceItem[] costs) 
+        : base(new TItem(), costs)
     {
-        public ItemRecipe(params ResourceItem[] costs) 
-            : base(new TItem(), costs)
-        {
-        }
+    }
 
-        public override Item CreateItem()
-        {
-            return new TItem();
-        }
+    public override Item CreateItem()
+    {
+        return new TItem();
     }
 }

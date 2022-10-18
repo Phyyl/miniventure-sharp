@@ -1,3 +1,1 @@
-﻿using Miniventure;
-
-Game.Instance.Run();
+﻿Game.Instance.Run();

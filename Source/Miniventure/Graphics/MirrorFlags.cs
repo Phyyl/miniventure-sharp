@@ -1,11 +1,10 @@
-﻿namespace Miniventure.Graphics
+﻿namespace Miniventure.Graphics;
+
+[Flags]
+public enum MirrorFlags : byte
 {
-    [Flags]
-    public enum MirrorFlags : byte
-    {
-        None = 0,
-        Horizontal = 1,
-        Vertical = 2,
-        Both = Horizontal | Vertical
-    }
+    None = 0,
+    Horizontal = 1,
+    Vertical = 2,
+    Both = Horizontal | Vertical
 }

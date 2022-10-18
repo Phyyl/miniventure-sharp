@@ -1,5 +1,4 @@
 using OpenTK.Windowing.GraphicsLibraryFramework;
-using System.Security.Cryptography;
 using Vildmark.Windowing;
 
 namespace Miniventure;
