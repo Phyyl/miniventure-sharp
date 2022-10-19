@@ -2,7 +2,6 @@ using Vildmark.Serialization;
 
 namespace Miniventure.Entities.Particles;
 
-
 public class TextParticle : Particle
 {
     private string msg;

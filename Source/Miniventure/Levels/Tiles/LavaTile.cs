@@ -62,7 +62,6 @@ public record class LavaTile : Tile
         }
     }
 
-
     public override bool MayPass(Level level, int x, int y, Entity e)
     {
         return e.CanSwim();

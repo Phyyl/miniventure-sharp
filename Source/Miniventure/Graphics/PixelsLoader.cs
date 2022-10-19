@@ -1,27 +1,29 @@
-﻿using System.Drawing;
+﻿using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
+using System.Buffers;
+using System.Drawing;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Xml.Linq;
 using Vildmark.Resources;
 
 namespace Miniventure.Graphics;
 
-[Register(typeof(IResourceLoader<Pixels>))]
 public class PixelsLoader : IResourceLoader<Pixels>
 {
-    public Pixels Load(Stream stream, Assembly assembly, string resourceName)
+    public Pixels Load(string name, ResourceLoadContext context)
     {
-        Bitmap bitmap = new(stream);
+        Image baseImage = Image.Load(context.GetStream(name));
+        using var image = baseImage.CloneAs<Bgra32>();
 
-        var bits = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), System.Drawing.Imaging.ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppRgb);
-        int[] data = new int[bitmap.Width * bitmap.Height];
-        Marshal.Copy(bits.Scan0, data, 0, data.Length);
-        bitmap.UnlockBits(bits);
+        int[] data = new int[image.Width * image.Height];
+        image.CopyPixelDataTo(MemoryMarshal.Cast<int, Bgra32>(data));
 
         for (int i = 0; i < data.Length; i++)
         {
             data[i] = (data[i] & 0xff) / 64;
         }
 
-        return new Pixels(bitmap.Width, bitmap.Height, data);
+        return new Pixels(image.Width, image.Height, data);
     }
 }

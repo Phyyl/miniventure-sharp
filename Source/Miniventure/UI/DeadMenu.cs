@@ -1,16 +1,12 @@
 namespace Miniventure.UI;
 
-
 public class DeadMenu : Menu
 {
     private int inputDelay = 60;
 
-
-
     public DeadMenu()
     {
     }
-
 
     public override void Update()
     {
@@ -23,7 +19,6 @@ public class DeadMenu : Menu
             game.Menu = new TitleMenu();
         }
     }
-
 
     public override void Render(Screen screen)
     {

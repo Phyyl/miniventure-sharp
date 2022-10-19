@@ -18,7 +18,6 @@ public record class CloudCactusTile : Tile
         screen.Render(x * 16 + 8, y * 16 + 8, 18 + 2 * 32, color, 0);
     }
 
-
     public override bool MayPass(Level level, int x, int y, Entity e)
     {
         if (e is AirWizard)
@@ -49,7 +48,6 @@ public record class CloudCactusTile : Tile
         }
         return false;
     }
-
 
     public virtual void hurt(Level level, int x, int y, int dmg)
     {

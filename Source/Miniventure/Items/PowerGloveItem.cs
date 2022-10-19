@@ -1,6 +1,5 @@
 namespace Miniventure.Items;
 
-
 public class PowerGloveItem : Item
 {
     public override int GetColor()

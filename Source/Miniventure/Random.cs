@@ -33,8 +33,6 @@ public class Random
     private static long SeedUniquifier()
     {
 
-
-
         for (; ; )
         {
             long current = uniquifier;

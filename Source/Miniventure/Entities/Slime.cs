@@ -53,7 +53,6 @@ public class Slime : Mob
                     int xd = Level.Player.X - X;
                     int yd = Level.Player.Y - Y;
 
-
                     if (xd * xd + yd * yd < 50 * 50)
                     {
 
@@ -117,7 +116,6 @@ public class Slime : Mob
         int xt = 0;
         int yt = 18;
 
-
         int xo = X - 8;
         int yo = Y - 11;
 
@@ -147,8 +145,6 @@ public class Slime : Mob
         {
             col = Color.Get(-1, 555, 555, 555);
         }
-
-
 
         screen.Render(xo + 0, yo + 0, xt + yt * 32, col, 0);
         screen.Render(xo + 8, yo + 0, xt + 1 + yt * 32, col, 0);

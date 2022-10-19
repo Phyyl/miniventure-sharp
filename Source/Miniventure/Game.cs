@@ -1,28 +1,28 @@
 using Miniventure.Items.Tools;
-using OpenTK.Graphics.OpenGL4;
+using OpenTK.Mathematics;
+using OpenTK.Windowing.Desktop;
 using System.Drawing;
 using Vildmark;
-using Vildmark.Graphics.GLObjects;
-using Vildmark.Graphics.Rendering;
+using Vildmark.Graphics.Cameras;
+using Vildmark.Graphics.Textures;
 using Vildmark.Helpers;
+using Vildmark.Logging;
 using Vildmark.Resources;
 using Vildmark.Serialization;
-using Vildmark.Windowing;
 using Font = Miniventure.Graphics.Font;
 
 namespace Miniventure;
 
-public class Game : VildmarkGame
+[WindowSettings(Border = OpenTK.Windowing.Common.WindowBorder.Fixed, Width = GameWidth * Scale, Height = GameHeight * Scale)]
+public class Game : VildmarkGame<Game>
 {
-    public static Game Instance { get; } = new();
-
     public const string Name = "Miniventure";
     public const int GameHeight = 200;
     public const int GameWidth = 267;
     public const int Scale = 5;
 
-    private RenderContext renderContext;
-    private GLTexture2D texture;
+    private Camera camera = CreateAutoOrthographicOffCenterCamera();
+    private Texture2D texture;
     private Menu menu;
 
     private Pixels pixels;
@@ -48,17 +48,16 @@ public class Game : VildmarkGame
         }
     }
 
-    public override void Load()
+    protected override void Load()
     {
-        Logger.Level = LogLevel.Debug;
+        Logger.EnableLogType(LogType.Debug);
 
         TypeHelper.RunStaticConstructor<Tile>();
         TypeHelper.RunStaticConstructor<Resource>();
         TypeHelper.RunStaticConstructor<ToolType>();
 
-        renderContext = Create2DRenderContext();
-        texture = new GLTexture2D(GameWidth, GameHeight, pixelInternalFormat: PixelInternalFormat.Rgb, magFilter: TextureMagFilter.Nearest);
-        Input = new InputHandler(Keyboard);
+        texture = new Texture2D(GameWidth, GameHeight);
+        Input = new InputHandler();
         spriteSheet = ResourceLoader.LoadEmbedded<Pixels>("icons.png");
         pixels = new Pixels(GameWidth, GameHeight);
         screen = new Screen(GameWidth, GameHeight, spriteSheet);
@@ -69,7 +68,7 @@ public class Game : VildmarkGame
         Menu = new TitleMenu();
     }
 
-    public override void Unload()
+    protected override void Unload()
     {
         base.Unload();
 
@@ -83,20 +82,22 @@ public class Game : VildmarkGame
         }
     }
 
-    public override void Close()
+    protected override bool ShouldClose()
     {
-        base.Close();
+        return base.ShouldClose();
     }
 
-    public override void Update(float delta)
+    protected override void Update(float delta)
     {
         tickCount++;
 
-        if (!Window.IsFocused)
+#if !DEBUG
+        if (!IsFocused)
         {
             Input.ReleaseAll();
             return;
         }
+#endif
 
         if (state is not null && !state.player.Removed && !state.hasWon)
         {
@@ -147,23 +148,14 @@ public class Game : VildmarkGame
         }
     }
 
-    public override void Render(float delta)
+    protected override void Render(float delta)
     {
         Render();
         texture.SetData(pixels.Width, pixels.Height, pixels.Data.AsSpan());
 
-        renderContext.Begin();
-        renderContext.RenderRectangle(new RectangleF(0, 0, Window.Size.X, Window.Size.Y), texture);
-        renderContext.End();
-    }
-
-    protected override void InitializeWindowSettings(WindowSettings settings)
-    {
-        base.InitializeWindowSettings(settings);
-
-        settings.Border = OpenTK.Windowing.Common.WindowBorder.Fixed;
-        settings.Width = GameWidth * Scale;
-        settings.Height = GameHeight * Scale;
+        Renderer.Begin(camera);
+        Renderer.RenderRectangle(new Box2(0, 0, Size.X, Size.Y), texture);
+        Renderer.End();
     }
 
     public void NewGame()
@@ -264,10 +256,12 @@ public class Game : VildmarkGame
 
         RenderGui();
 
-        if (!Window.IsFocused)
+#if !DEBUG
+        if (!IsFocused)
         {
             RenderFocusNagger();
         }
+#endif
 
         for (int y = 0; y < screen.Height; y++)
         {
@@ -282,7 +276,7 @@ public class Game : VildmarkGame
             }
         }
 
-        renderContext.RenderRectangle(new RectangleF(0, 0, Window.Width, Window.Height), texture);
+        //Renderer.RenderRectangle(new Box2(0, 0, Width, Height), texture);
     }
 
     private void InitColors()

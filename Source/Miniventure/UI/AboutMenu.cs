@@ -1,16 +1,13 @@
 namespace Miniventure.UI;
 
-
 public class AboutMenu : Menu
 {
     private readonly Menu parent;
-
 
     public AboutMenu(Menu parent)
     {
         this.parent = parent;
     }
-
 
     public override void Update()
     {
@@ -20,12 +17,9 @@ public class AboutMenu : Menu
         }
     }
 
-
     public override void Render(Screen screen)
     {
         screen.Clear(0);
-
-
 
         Font.Draw("About Minicraft", screen, 2 * 8 + 4, 1 * 8, Color.Get(0, 555, 555, 555));
         Font.Draw("Minicraft was made", screen, 0 * 8 + 4, 3 * 8, Color.Get(0, 333, 333, 333));

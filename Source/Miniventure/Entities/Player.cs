@@ -496,7 +496,6 @@ public class Player : Mob
         {
             yo += 4;
 
-
             int waterColor = Color.Get(-1, -1, 115, 335);
 
             if (TickTime / 8 % 2 == 0)

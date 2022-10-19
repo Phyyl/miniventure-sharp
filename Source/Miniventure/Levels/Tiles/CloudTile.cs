@@ -2,7 +2,6 @@ using Miniventure.Items.Tools;
 
 namespace Miniventure.Levels.Tiles;
 
-
 public record class CloudTile : Tile
 {
     public CloudTile(byte id)
@@ -29,8 +28,6 @@ public record class CloudTile : Tile
         bool dl = level.GetTile(x - 1, y + 1) == InfiniteFall;
         bool ur = level.GetTile(x + 1, y - 1) == InfiniteFall;
         bool dr = level.GetTile(x + 1, y + 1) == InfiniteFall;
-
-
 
         if (!u && !l)
         {
@@ -96,7 +93,6 @@ public record class CloudTile : Tile
             screen.Render(x * 16 + 8, y * 16 + 8, (r ? 4 : 5) + (d ? 0 : 1) * 32, transitionColor, MirrorFlags.Both);
         }
     }
-
 
     public override bool MayPass(Level level, int x, int y, Entity e)
     {

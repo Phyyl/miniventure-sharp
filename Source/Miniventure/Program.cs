@@ -1,1 +1,3 @@
-﻿Game.Instance.Run();
+﻿using Vildmark;
+
+VildmarkGame.Run<Game>();

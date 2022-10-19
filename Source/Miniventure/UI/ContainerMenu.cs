@@ -1,6 +1,5 @@
 namespace Miniventure.UI;
 
-
 public class ContainerMenu : Menu
 {
     private readonly Player player;
@@ -9,7 +8,6 @@ public class ContainerMenu : Menu
     private readonly string title;
     private int oSelected;
     private int window = 0;
-
 
     public ContainerMenu(Player player, string title, Inventory container)
     {
@@ -28,34 +26,14 @@ public class ContainerMenu : Menu
         if (input.Left.Clicked)
         {
             window = 0;
-            int tmp = selected;
-            selected = oSelected;
-            oSelected = tmp;
+            (oSelected, selected) = (selected, oSelected);
         }
+
         if (input.Right.Clicked)
         {
             window = 1;
-            int tmp = selected;
-            selected = oSelected;
-            oSelected = tmp;
+            (oSelected, selected) = (selected, oSelected);
         }
-
-        /* Below is an example of the "ternary operator"  
-		  
-		  which is read like (example): 
-		  'bool statement ? true result : false result;'
-		  
-		  It's the exact same thing as:
-		  
-		  if (bool statement) {
-    		true result;
-			} else {
-    		false result;
-		  }
-		  
-		  It's just for convince sake, Google " ternary operator " for more info
-		  
-		 * */
 
         Inventory i = window == 1 ? player.inventory : container;
         Inventory i2 = window == 0 ? player.inventory : container;

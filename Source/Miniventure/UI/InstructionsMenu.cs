@@ -1,10 +1,8 @@
 namespace Miniventure.UI;
 
-
 public class InstructionsMenu : Menu
 {
     private readonly Menu parent;
-
 
     public InstructionsMenu(Menu parent)
     {
@@ -19,12 +17,9 @@ public class InstructionsMenu : Menu
         }
     }
 
-
     public override void Render(Screen screen)
     {
         screen.Clear(0);
-
-
 
         Font.Draw("HOW TO PLAY", screen, 4 * 8 + 4, 1 * 8, Color.Get(0, 555, 555, 555));
         Font.Draw("Move your character", screen, 0 * 8 + 4, 3 * 8, Color.Get(0, 333, 333, 333));

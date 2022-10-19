@@ -53,12 +53,10 @@ public class FurnitureItem : Item
         return false;
     }
 
-
     public override bool IsDepleted()
     {
         return placed;
     }
-
 
     public override string GetName()
     {

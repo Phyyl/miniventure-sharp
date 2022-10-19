@@ -1,6 +1,5 @@
 namespace Miniventure.UI;
 
-
 public class TitleMenu : Menu
 {
     private int selected = 0;

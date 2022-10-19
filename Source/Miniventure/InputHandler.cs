@@ -1,5 +1,5 @@
 using OpenTK.Windowing.GraphicsLibraryFramework;
-using Vildmark.Windowing;
+using Vildmark.Input;
 
 namespace Miniventure;
 
@@ -17,12 +17,12 @@ public class InputHandler
     public InputKey Debug { get; } = new(Keys.F3);
     public InputKey Throw { get; } = new(Keys.Z);
 
-    public InputHandler(IKeyboard keyboard)
+    public InputHandler()
     {
         keys = new[] { Up, Down, Left, Right, Attack, Menu, Debug, Pause, Throw };
 
-        keyboard.OnKeyPressed += Keyboard_OnKeyPressed;
-        keyboard.OnKeyReleased += Keyboard_OnKeyReleased;
+        Keyboard.OnKeyPressed += Keyboard_OnKeyPressed;
+        Keyboard.OnKeyReleased += Keyboard_OnKeyReleased;
     }
 
     private void Keyboard_OnKeyReleased(Keys key)

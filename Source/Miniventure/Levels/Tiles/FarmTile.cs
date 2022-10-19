@@ -18,7 +18,6 @@ public record class FarmTile : Tile
         screen.Render((x * 16) + 8, (y * 16) + 8, 2 + 32, col, MirrorFlags.Horizontal);
     }
 
-
     public override bool Interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir)
     {
         if (item is ToolItem tool)
@@ -44,7 +43,6 @@ public record class FarmTile : Tile
             level.SetData(xt, yt, (byte)(age + 1));
         }
     }
-
 
     public override void SteppedOn(Level level, int xt, int yt, Entity entity)
     {

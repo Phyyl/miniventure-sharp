@@ -70,8 +70,6 @@ public class Zombie : Mob
             }
         }
 
-
-
         int speed = TickTime & 1;
         if (!Move(xa * speed, ya * speed) || Random.NextInt(200) == 0)
         {
@@ -90,7 +88,6 @@ public class Zombie : Mob
 
         int xt = 0;
         int yt = 14;
-
 
         int flip1 = WalkDist >> 3 & 1;
         int flip2 = WalkDist >> 3 & 1;
@@ -137,7 +134,6 @@ public class Zombie : Mob
         {
             col = Color.Get(-1, 555, 555, 555);
         }
-
 
         screen.Render(xo + 8 * flip1, yo + 0, xt + yt * 32, col, (MirrorFlags)flip1);
         screen.Render(xo + 8 - 8 * flip1, yo + 0, xt + 1 + yt * 32, col, (MirrorFlags)flip1);

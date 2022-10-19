@@ -1,6 +1,5 @@
 namespace Miniventure.UI;
 
-
 public class InventoryMenu : Menu
 {
     private readonly Player player;

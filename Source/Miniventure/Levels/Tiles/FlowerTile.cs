@@ -2,14 +2,12 @@ using Miniventure.Items.Tools;
 
 namespace Miniventure.Levels.Tiles;
 
-
 public record class FlowerTile : GrassTile
 {
     public FlowerTile(byte id)
         : base(id)
     {
     }
-
 
     public override void Render(Screen screen, Level level, int x, int y)
     {
@@ -40,7 +38,6 @@ public record class FlowerTile : GrassTile
         }
     }
 
-
     public override bool Interact(Level level, int x, int y, Player player, Item item, Direction attackDir)
     {
         if (item is ToolItem tool)
@@ -58,7 +55,6 @@ public record class FlowerTile : GrassTile
         }
         return false;
     }
-
 
     public override void Hurt(Level level, int x, int y, Mob source, int dmg, Direction attackDir)
     {

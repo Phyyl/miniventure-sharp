@@ -2,7 +2,6 @@ using Miniventure.Items.Tools;
 
 namespace Miniventure.Levels.Tiles;
 
-
 public record class OreTile : Tile
 {
     private readonly Resource toDrop;

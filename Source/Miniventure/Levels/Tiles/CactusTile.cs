@@ -16,12 +16,10 @@ public record class CactusTile : Tile
         screen.Render((x * 16) + 8, (y * 16) + 8, 9 + (3 * 32), col, 0);
     }
 
-
     public override bool MayPass(Level level, int x, int y, Entity e)
     {
         return false;
     }
-
 
     public override void Hurt(Level level, int x, int y, Mob source, int dmg, Direction attackDir)
     {

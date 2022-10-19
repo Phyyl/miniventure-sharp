@@ -48,7 +48,6 @@ public class SkyLevel : Level
             }
         }
 
-
         for (int i = 0; i < Width * Height / 50; i++)
         {
             int x = Random.NextInt(Width - 2) + 1;

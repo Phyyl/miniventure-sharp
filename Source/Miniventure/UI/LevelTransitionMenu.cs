@@ -1,6 +1,5 @@
 namespace Miniventure.UI;
 
-
 public class LevelTransitionMenu : Menu
 {
     private readonly int dir;

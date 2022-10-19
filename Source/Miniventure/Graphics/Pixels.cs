@@ -1,5 +1,8 @@
-﻿namespace Miniventure.Graphics;
+﻿using Vildmark.Resources;
 
+namespace Miniventure.Graphics;
+
+[ResourceLoader(typeof(PixelsLoader))]
 public class Pixels
 {
     public int[] Data { get; private set; }

@@ -18,7 +18,6 @@ public class Spark : Entity
         this.xa = xa;
         this.ya = ya;
 
-
         lifeTime = 60 * 10 + Random.NextInt(30);
     }
 
@@ -39,7 +38,6 @@ public class Spark : Entity
         X = (int)xx;
         Y = (int)yy;
 
-
         foreach (var entity in Level.GetEntities(X, Y, X, Y))
         {
             if (entity is Mob mob && entity is not AirWizard)
@@ -49,12 +47,10 @@ public class Spark : Entity
         }
     }
 
-
     public override bool IsBlockableBy(Mob mob)
     {
         return false;
     }
-
 
     public override void Render(Screen screen)
     {
