@@ -5,7 +5,6 @@ namespace Miniventure.Entities;
 public class Player : Mob
 {
     public const int maxStamina = 10;
-    public const int pickupRange = 12;
 
     private int onStairDelay;
     private int attackTime;
@@ -20,6 +19,8 @@ public class Player : Mob
     public Inventory inventory = new();
     public Item attackItem;
     public Item activeItem;
+
+    public int PickupRange => activeItem is PowerGloveItem ? 24 : 12;
 
     public Player()
         : base(10)
@@ -205,15 +206,17 @@ public class Player : Mob
             }
         }
 
+        int range = PickupRange;
+
         bool InPickupRange(Entity entity)
         {
             int dx = entity.X - X;
             int dy = entity.Y - Y;
 
-            return (dx * dx + dy * dy) < pickupRange * pickupRange;
+            return (dx * dx + dy * dy) < range * range;
         }
 
-        foreach (var entity in Level.GetEntities(X - 16, Y - 16, X + 16, Y + 16).OfType<ItemEntity>().Where(e => e.CanPickup && InPickupRange(e)))
+        foreach (var entity in Level.GetEntities(X - range - 16, Y - range - 16, X + range + 16, Y + range + 16).OfType<ItemEntity>().Where(e => e.CanPickup && InPickupRange(e)))
         {
             entity.Take(this);
 
